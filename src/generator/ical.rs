@@ -165,7 +165,7 @@ impl Emitter for IcalTimeZoneTransition {
 }
 
 macro_rules! generate_emitter {
-    ($struct:ident, $key:literal, $($prop:ident),+) => {
+    ($struct:ty, $key:literal, $($prop:ident),+) => {
         impl Emitter for $struct {
             fn generate(&self) -> String {
                 let mut text = String::from("BEGIN:") + $key + "\r\n";
