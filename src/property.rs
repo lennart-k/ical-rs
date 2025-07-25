@@ -86,6 +86,14 @@ impl Property {
             value: None,
         }
     }
+
+    pub fn get_param(&self, name: &str) -> Option<&str> {
+        self.params
+            .as_ref()?
+            .iter()
+            .find(|(key, _)| name == key)
+            .and_then(|(_, value)| value.iter().map(String::as_str).next())
+    }
 }
 
 impl fmt::Display for Property {
