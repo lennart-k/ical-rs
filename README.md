@@ -3,7 +3,7 @@
 [![Latest version](https://img.shields.io/crates/v/ical.svg)](https://crates.io/crates/ical)
 [![Documentation](https://docs.rs/ical/badge.svg)](https://docs.rs/ical)
 
-> ![NOTE]
+> [!NOTE]
 > This is a fork of [ical-rs](https://github.com/Peltoche/ical-rs) aiming to add some more validation and accessors to calendar components,
 > e.g. to verify whether a `VTIMEZONE` has exactly one `TZID` and to provide more ergonomic getters for properties.
 > I'll keep this a fork until I converge on an implementation and then see if it makes sense to open up a pull request.
