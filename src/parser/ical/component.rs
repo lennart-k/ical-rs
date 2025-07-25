@@ -361,6 +361,13 @@ impl IcalTimeZone {
             .as_ref()
             .expect("we already verified this exists")
     }
+
+    /// This is a common property containing a timezone identifier from the IANA TZDB
+    pub fn get_lic_location(&self) -> Option<&str> {
+        self.get_property("X-LIC-LOCATION")
+            .as_ref()
+            .and_then(|prop| prop.value.as_deref())
+    }
 }
 
 impl IcalTimeZone<false> {
