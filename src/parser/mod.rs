@@ -34,10 +34,13 @@ pub enum ParserError {
 /// This is also implemented by verified components
 pub trait Component {
     type Unverified: ComponentMut;
-    /// Find a given property.
-    fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property>;
 
+    fn get_properties(&self) -> &Vec<Property>;
     fn mutable(self) -> Self::Unverified;
+
+    fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
+        self.get_properties().iter().find(|p| p.name == name)
+    }
 }
 
 /// A mutable interface for an Ical/Vcard component.
@@ -54,10 +57,26 @@ pub trait ComponentMut: Component {
         line_parser: &RefCell<PropertyParser<B>>,
     ) -> Result<(), ParserError>;
 
-    /// Add the givent property.
-    fn add_property(&mut self, property: Property);
+    fn get_properties_mut(&mut self) -> &mut Vec<Property>;
 
-    fn get_property_mut<'c>(&'c mut self, name: &str) -> Option<&'c mut Property>;
+    /// Add the givent property.
+    fn add_property(&mut self, property: Property) {
+        self.get_properties_mut().push(property);
+    }
+
+    fn get_property_mut<'c>(&'c mut self, name: &str) -> Option<&'c mut Property> {
+        self.get_properties_mut()
+            .iter_mut()
+            .find(|p| p.name == name)
+    }
+
+    fn remove_property(&mut self, name: &str) {
+        self.get_properties_mut().retain(|prop| prop.name != name);
+    }
+    fn set_property(&mut self, prop: Property) {
+        self.remove_property(&prop.name);
+        self.add_property(prop);
+    }
 
     fn verify(self) -> Result<Self::Verified, ParserError>;
 

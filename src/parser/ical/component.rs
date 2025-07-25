@@ -41,8 +41,8 @@ impl IcalCalendar<false> {
 impl<const VERIFIED: bool> Component for IcalCalendar<VERIFIED> {
     type Unverified = IcalCalendar<false>;
 
-    fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
-        self.properties.iter().find(|p| p.name == name)
+    fn get_properties(&self) -> &Vec<Property> {
+        &self.properties
     }
 
     fn mutable(self) -> Self::Unverified {
@@ -61,12 +61,8 @@ impl<const VERIFIED: bool> Component for IcalCalendar<VERIFIED> {
 impl ComponentMut for IcalCalendar<false> {
     type Verified = IcalCalendar<true>;
 
-    fn add_property(&mut self, property: Property) {
-        self.properties.push(property);
-    }
-
-    fn get_property_mut<'c>(&'c mut self, name: &str) -> Option<&'c mut Property> {
-        self.properties.iter_mut().find(|p| p.name == name)
+    fn get_properties_mut(&mut self) -> &mut Vec<Property> {
+        &mut self.properties
     }
 
     fn add_sub_component<B: BufRead>(
@@ -141,8 +137,8 @@ impl IcalAlarm<false> {
 impl<const VERIFIED: bool> Component for IcalAlarm<VERIFIED> {
     type Unverified = IcalAlarm<false>;
 
-    fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
-        self.properties.iter().find(|p| p.name == name)
+    fn get_properties(&self) -> &Vec<Property> {
+        &self.properties
     }
 
     fn mutable(self) -> Self::Unverified {
@@ -155,12 +151,8 @@ impl<const VERIFIED: bool> Component for IcalAlarm<VERIFIED> {
 impl ComponentMut for IcalAlarm<false> {
     type Verified = IcalAlarm<true>;
 
-    fn add_property(&mut self, property: Property) {
-        self.properties.push(property);
-    }
-
-    fn get_property_mut<'c>(&'c mut self, name: &str) -> Option<&'c mut Property> {
-        self.properties.iter_mut().find(|p| p.name == name)
+    fn get_properties_mut(&mut self) -> &mut Vec<Property> {
+        &mut self.properties
     }
 
     fn add_sub_component<B: BufRead>(
@@ -197,8 +189,8 @@ impl IcalEvent<false> {
 impl<const VERIFIED: bool> Component for IcalEvent<VERIFIED> {
     type Unverified = IcalEvent<false>;
 
-    fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
-        self.properties.iter().find(|p| p.name == name)
+    fn get_properties(&self) -> &Vec<Property> {
+        &self.properties
     }
 
     fn mutable(self) -> Self::Unverified {
@@ -212,12 +204,8 @@ impl<const VERIFIED: bool> Component for IcalEvent<VERIFIED> {
 impl ComponentMut for IcalEvent<false> {
     type Verified = IcalEvent<true>;
 
-    fn add_property(&mut self, property: Property) {
-        self.properties.push(property);
-    }
-
-    fn get_property_mut<'c>(&'c mut self, name: &str) -> Option<&'c mut Property> {
-        self.properties.iter_mut().find(|p| p.name == name)
+    fn get_properties_mut(&mut self) -> &mut Vec<Property> {
+        &mut self.properties
     }
 
     fn add_sub_component<B: BufRead>(
@@ -262,8 +250,8 @@ impl IcalJournal<false> {
 impl<const VERIFIED: bool> Component for IcalJournal<VERIFIED> {
     type Unverified = IcalJournal<false>;
 
-    fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
-        self.properties.iter().find(|p| p.name == name)
+    fn get_properties(&self) -> &Vec<Property> {
+        &self.properties
     }
 
     fn mutable(self) -> Self::Unverified {
@@ -276,12 +264,8 @@ impl<const VERIFIED: bool> Component for IcalJournal<VERIFIED> {
 impl ComponentMut for IcalJournal<false> {
     type Verified = IcalJournal<true>;
 
-    fn add_property(&mut self, property: Property) {
-        self.properties.push(property);
-    }
-
-    fn get_property_mut<'c>(&'c mut self, name: &str) -> Option<&'c mut Property> {
-        self.properties.iter_mut().find(|p| p.name == name)
+    fn get_properties_mut(&mut self) -> &mut Vec<Property> {
+        &mut self.properties
     }
 
     fn add_sub_component<B: BufRead>(
@@ -318,8 +302,8 @@ impl IcalTodo<false> {
 impl<const VERIFIED: bool> Component for IcalTodo<VERIFIED> {
     type Unverified = IcalTodo<false>;
 
-    fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
-        self.properties.iter().find(|p| p.name == name)
+    fn get_properties(&self) -> &Vec<Property> {
+        &self.properties
     }
 
     fn mutable(self) -> Self::Unverified {
@@ -333,12 +317,8 @@ impl<const VERIFIED: bool> Component for IcalTodo<VERIFIED> {
 impl ComponentMut for IcalTodo<false> {
     type Verified = IcalTodo<true>;
 
-    fn add_property(&mut self, property: Property) {
-        self.properties.push(property);
-    }
-
-    fn get_property_mut<'c>(&'c mut self, name: &str) -> Option<&'c mut Property> {
-        self.properties.iter_mut().find(|p| p.name == name)
+    fn get_properties_mut(&mut self) -> &mut Vec<Property> {
+        &mut self.properties
     }
 
     fn add_sub_component<B: BufRead>(
@@ -395,8 +375,8 @@ impl IcalTimeZone<false> {
 impl<const VERIFIED: bool> Component for IcalTimeZone<VERIFIED> {
     type Unverified = IcalTimeZone<false>;
 
-    fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
-        self.properties.iter().find(|p| p.name == name)
+    fn get_properties(&self) -> &Vec<Property> {
+        &self.properties
     }
 
     fn mutable(self) -> Self::Unverified {
@@ -410,12 +390,8 @@ impl<const VERIFIED: bool> Component for IcalTimeZone<VERIFIED> {
 impl ComponentMut for IcalTimeZone<false> {
     type Verified = IcalTimeZone<true>;
 
-    fn add_property(&mut self, property: Property) {
-        self.properties.push(property);
-    }
-
-    fn get_property_mut<'c>(&'c mut self, name: &str) -> Option<&'c mut Property> {
-        self.properties.iter_mut().find(|p| p.name == name)
+    fn get_properties_mut(&mut self) -> &mut Vec<Property> {
+        &mut self.properties
     }
 
     fn add_sub_component<B: BufRead>(
@@ -484,8 +460,8 @@ impl IcalTimeZoneTransition<false> {
 impl<const VERIFIED: bool> Component for IcalTimeZoneTransition<VERIFIED> {
     type Unverified = IcalTimeZoneTransition<false>;
 
-    fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
-        self.properties.iter().find(|p| p.name == name)
+    fn get_properties(&self) -> &Vec<Property> {
+        &self.properties
     }
 
     fn mutable(self) -> Self::Unverified {
@@ -499,12 +475,8 @@ impl<const VERIFIED: bool> Component for IcalTimeZoneTransition<VERIFIED> {
 impl ComponentMut for IcalTimeZoneTransition<false> {
     type Verified = IcalTimeZoneTransition<true>;
 
-    fn add_property(&mut self, property: Property) {
-        self.properties.push(property);
-    }
-
-    fn get_property_mut<'c>(&'c mut self, name: &str) -> Option<&'c mut Property> {
-        self.properties.iter_mut().find(|p| p.name == name)
+    fn get_properties_mut(&mut self) -> &mut Vec<Property> {
+        &mut self.properties
     }
 
     fn add_sub_component<B: BufRead>(
@@ -540,8 +512,8 @@ impl IcalFreeBusy<false> {
 impl<const VERIFIED: bool> Component for IcalFreeBusy<VERIFIED> {
     type Unverified = IcalFreeBusy<false>;
 
-    fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
-        self.properties.iter().find(|p| p.name == name)
+    fn get_properties(&self) -> &Vec<Property> {
+        &self.properties
     }
 
     fn mutable(self) -> Self::Unverified {
@@ -554,12 +526,8 @@ impl<const VERIFIED: bool> Component for IcalFreeBusy<VERIFIED> {
 impl ComponentMut for IcalFreeBusy<false> {
     type Verified = IcalFreeBusy<true>;
 
-    fn add_property(&mut self, property: Property) {
-        self.properties.push(property);
-    }
-
-    fn get_property_mut<'c>(&'c mut self, name: &str) -> Option<&'c mut Property> {
-        self.properties.iter_mut().find(|p| p.name == name)
+    fn get_properties_mut(&mut self) -> &mut Vec<Property> {
+        &mut self.properties
     }
 
     fn add_sub_component<B: BufRead>(

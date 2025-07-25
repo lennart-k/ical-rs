@@ -27,8 +27,8 @@ impl VcardContact<false> {
 impl<const VERIFIED: bool> Component for VcardContact<VERIFIED> {
     type Unverified = VcardContact<false>;
 
-    fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
-        self.properties.iter().find(|p| p.name == name)
+    fn get_properties(&self) -> &Vec<Property> {
+        &self.properties
     }
 
     fn mutable(self) -> Self::Unverified {
@@ -41,12 +41,8 @@ impl<const VERIFIED: bool> Component for VcardContact<VERIFIED> {
 impl ComponentMut for VcardContact<false> {
     type Verified = VcardContact<true>;
 
-    fn add_property(&mut self, property: Property) {
-        self.properties.push(property);
-    }
-
-    fn get_property_mut<'c>(&'c mut self, name: &str) -> Option<&'c mut Property> {
-        self.properties.iter_mut().find(|p| p.name == name)
+    fn get_properties_mut(&mut self) -> &mut Vec<Property> {
+        &mut self.properties
     }
 
     fn add_sub_component<B: BufRead>(
