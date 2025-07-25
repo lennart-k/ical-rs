@@ -268,3 +268,67 @@ pub mod generator {
         assert_eq!(&generated, &original);
     }
 }
+
+#[cfg(all(feature = "ical", feature = "chrono-tz"))]
+pub mod chrono_tz {
+    extern crate ical;
+    use self::ical::{
+        parser::{ical::component::IcalTimeZone, ComponentMut},
+        PropertyParser,
+    };
+    use std::{cell::RefCell, convert::TryInto};
+
+    const VTIMEZONE_DIFFERENT_TZID_BERLIN: &str = r#"
+TZID:HELLO_Europe/Berlin
+LAST-MODIFIED:20250723T154628Z
+X-LIC-LOCATION:Europe/Berlin
+BEGIN:DAYLIGHT
+TZNAME:CEST
+TZOFFSETFROM:+0100
+TZOFFSETTO:+0200
+DTSTART:19700329T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU
+END:DAYLIGHT
+BEGIN:STANDARD
+TZNAME:CET
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0100
+DTSTART:19701025T030000
+RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
+END:STANDARD
+END:VTIMEZONE
+    "#;
+
+    const VTIMEZONE_BERLIN: &str = r#"
+TZID:Europe/Berlin
+LAST-MODIFIED:20250723T154628Z
+X-LIC-LOCATION:Europe/Berlin
+BEGIN:DAYLIGHT
+TZNAME:CEST
+TZOFFSETFROM:+0100
+TZOFFSETTO:+0200
+DTSTART:19700329T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU
+END:DAYLIGHT
+BEGIN:STANDARD
+TZNAME:CET
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0100
+DTSTART:19701025T030000
+RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
+END:STANDARD
+END:VTIMEZONE
+    "#;
+
+    #[test]
+    fn try_from_icaldatetime() {
+        for input in [VTIMEZONE_BERLIN, VTIMEZONE_DIFFERENT_TZID_BERLIN] {
+            let parser = PropertyParser::new(ical::LineReader::new(input.as_bytes()));
+            let mut vtimezone = IcalTimeZone::new();
+            vtimezone.parse(&RefCell::new(parser)).unwrap();
+            let vtimezone = &vtimezone.verify().unwrap();
+
+            assert_eq!(chrono_tz::Tz::Europe__Berlin, vtimezone.try_into().unwrap());
+        }
+    }
+}
