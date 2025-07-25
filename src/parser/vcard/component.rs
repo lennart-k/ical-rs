@@ -12,7 +12,7 @@ use crate::property::{Property, PropertyParser};
 #[derive(Debug, Clone, Default, Eq, PartialEq, Hash)]
 #[cfg_attr(feature = "serde-derive", derive(serde::Serialize, serde::Deserialize))]
 /// A VCARD contact.
-pub struct VcardContact<const VERIFIED: bool = false> {
+pub struct VcardContact<const VERIFIED: bool = true> {
     pub properties: Vec<Property>,
 }
 
