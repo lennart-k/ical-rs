@@ -32,66 +32,7 @@
 //! ```
 
 pub mod component;
+use crate::parser::ComponentParser;
+use component::VcardContact;
 
-// Sys mods
-use crate::parser::{ComponentMut, ParserError};
-use std::cell::RefCell;
-use std::io::BufRead;
-
-// Internal mods
-use crate::line::LineReader;
-use crate::property::PropertyParser;
-
-/// Reader returning `VcardContact` object from a `BufRead`.
-pub struct VcardParser<B> {
-    line_parser: RefCell<PropertyParser<B>>,
-}
-
-impl<B: BufRead> VcardParser<B> {
-    /// Create a new `VcardParser` from a reader.
-    pub fn new(reader: B) -> VcardParser<B> {
-        let line_reader = LineReader::new(reader);
-        let line_parser = PropertyParser::new(line_reader);
-
-        VcardParser {
-            line_parser: RefCell::new(line_parser),
-        }
-    }
-
-    /// Read the next line and check if it's a valid VCARD start.
-    fn check_header(&mut self) -> Result<Option<()>, ParserError> {
-        let line = match self.line_parser.borrow_mut().next() {
-            Some(val) => val.map_err(ParserError::PropertyError)?,
-            None => return Ok(None),
-        };
-
-        if line.name.to_uppercase() != "BEGIN"
-            || line.value.is_none()
-            || line.value.unwrap().to_uppercase() != "VCARD"
-            || line.params.is_some()
-        {
-            return Err(ParserError::MissingHeader);
-        }
-
-        Ok(Some(()))
-    }
-}
-
-impl<B: BufRead> Iterator for VcardParser<B> {
-    type Item = Result<component::VcardContact, ParserError>;
-
-    fn next(&mut self) -> Option<Result<component::VcardContact, ParserError>> {
-        match self.check_header() {
-            Ok(res) => res?,
-            Err(err) => return Some(Err(err)),
-        };
-
-        let mut contact = component::VcardContact::new();
-        let result = match contact.parse(&self.line_parser) {
-            Ok(_) => contact.verify(),
-            Err(err) => Err(err),
-        };
-
-        Some(result)
-    }
-}
+pub type VcardParser<B> = ComponentParser<B, VcardContact>;

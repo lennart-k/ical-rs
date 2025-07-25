@@ -32,6 +32,7 @@ impl VcardContact<true> {
 }
 
 impl<const VERIFIED: bool> Component for VcardContact<VERIFIED> {
+    const NAMES: &[&str] = &["VCARD"];
     type Unverified = VcardContact<false>;
 
     fn get_properties(&self) -> &Vec<Property> {

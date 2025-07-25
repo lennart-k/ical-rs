@@ -41,6 +41,7 @@ impl IcalCalendar<false> {
 }
 
 impl<const VERIFIED: bool> Component for IcalCalendar<VERIFIED> {
+    const NAMES: &[&str] = &["VCALENDAR"];
     type Unverified = IcalCalendar<false>;
 
     fn get_properties(&self) -> &Vec<Property> {
@@ -137,6 +138,7 @@ impl IcalAlarm<false> {
 }
 
 impl<const VERIFIED: bool> Component for IcalAlarm<VERIFIED> {
+    const NAMES: &[&str] = &["VALARM"];
     type Unverified = IcalAlarm<false>;
 
     fn get_properties(&self) -> &Vec<Property> {
@@ -189,6 +191,7 @@ impl IcalEvent<false> {
 }
 
 impl<const VERIFIED: bool> Component for IcalEvent<VERIFIED> {
+    const NAMES: &[&str] = &["VEVENT"];
     type Unverified = IcalEvent<false>;
 
     fn get_properties(&self) -> &Vec<Property> {
@@ -250,6 +253,7 @@ impl IcalJournal<false> {
 }
 
 impl<const VERIFIED: bool> Component for IcalJournal<VERIFIED> {
+    const NAMES: &[&str] = &["VJOURNAL"];
     type Unverified = IcalJournal<false>;
 
     fn get_properties(&self) -> &Vec<Property> {
@@ -302,6 +306,7 @@ impl IcalTodo<false> {
 }
 
 impl<const VERIFIED: bool> Component for IcalTodo<VERIFIED> {
+    const NAMES: &[&str] = &["VTODO"];
     type Unverified = IcalTodo<false>;
 
     fn get_properties(&self) -> &Vec<Property> {
@@ -394,6 +399,7 @@ impl IcalTimeZone<false> {
 }
 
 impl<const VERIFIED: bool> Component for IcalTimeZone<VERIFIED> {
+    const NAMES: &[&str] = &["VTIMEZONE"];
     type Unverified = IcalTimeZone<false>;
 
     fn get_properties(&self) -> &Vec<Property> {
@@ -479,6 +485,7 @@ impl IcalTimeZoneTransition<false> {
 }
 
 impl<const VERIFIED: bool> Component for IcalTimeZoneTransition<VERIFIED> {
+    const NAMES: &[&str] = &["STANDARD", "DAYLIGHT"];
     type Unverified = IcalTimeZoneTransition<false>;
 
     fn get_properties(&self) -> &Vec<Property> {
@@ -531,6 +538,7 @@ impl IcalFreeBusy<false> {
 }
 
 impl<const VERIFIED: bool> Component for IcalFreeBusy<VERIFIED> {
+    const NAMES: &[&str] = &["VFREEBUSY"];
     type Unverified = IcalFreeBusy<false>;
 
     fn get_properties(&self) -> &Vec<Property> {

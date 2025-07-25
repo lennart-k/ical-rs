@@ -33,66 +33,9 @@
 //! ```
 
 pub mod component;
+use component::IcalCalendar;
 
-// Sys mods.
-use std::cell::RefCell;
-use std::io::BufRead;
-
-// Internal mods
-use crate::line::LineReader;
-use crate::parser::{ComponentMut, ParserError};
-use crate::property::PropertyParser;
+use crate::parser::ComponentParser;
 
 /// Reader returning `IcalCalendar` object from a `BufRead`.
-pub struct IcalParser<B> {
-    line_parser: RefCell<PropertyParser<B>>,
-}
-
-impl<B: BufRead> IcalParser<B> {
-    /// Return a new `IcalParser` from a `Reader`.
-    pub fn new(reader: B) -> IcalParser<B> {
-        let line_reader = LineReader::new(reader);
-        let line_parser = PropertyParser::new(line_reader);
-
-        IcalParser {
-            line_parser: RefCell::new(line_parser),
-        }
-    }
-
-    /// Read the next line and check if it's a valid VCALENDAR start.
-    fn check_header(&mut self) -> Result<Option<()>, ParserError> {
-        let line = match self.line_parser.borrow_mut().next() {
-            Some(val) => val.map_err(ParserError::PropertyError)?,
-            None => return Ok(None),
-        };
-
-        if line.name != "BEGIN"
-            || line.value.is_none()
-            || line.value.unwrap() != "VCALENDAR"
-            || line.params.is_some()
-        {
-            return Err(ParserError::MissingHeader);
-        }
-
-        Ok(Some(()))
-    }
-}
-
-impl<B: BufRead> Iterator for IcalParser<B> {
-    type Item = Result<component::IcalCalendar, ParserError>;
-
-    fn next(&mut self) -> Option<Result<component::IcalCalendar, ParserError>> {
-        match self.check_header() {
-            Ok(res) => res?,
-            Err(err) => return Some(Err(err)),
-        };
-
-        let mut calendar = component::IcalCalendar::new();
-        let result = match calendar.parse(&self.line_parser) {
-            Ok(_) => calendar.verify(),
-            Err(err) => Err(err),
-        };
-
-        Some(result)
-    }
-}
+pub type IcalParser<B> = ComponentParser<B, IcalCalendar>;

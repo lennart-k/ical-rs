@@ -10,11 +10,14 @@ pub mod ical;
 pub mod vcard;
 
 // Sys mods
-use std::cell::RefCell;
 use std::io::BufRead;
+use std::{cell::RefCell, marker::PhantomData};
 
 // Internal mods
-use crate::property::{Property, PropertyError, PropertyParser};
+use crate::{
+    LineReader,
+    property::{Property, PropertyError, PropertyParser},
+};
 
 #[derive(Debug, thiserror::Error)]
 pub enum ParserError {
@@ -33,6 +36,8 @@ pub enum ParserError {
 /// An immutable interface for an Ical/Vcard component.
 /// This is also implemented by verified components
 pub trait Component {
+    const NAMES: &[&str];
+
     type Unverified: ComponentMut;
 
     fn get_properties(&self) -> &Vec<Property>;
@@ -47,7 +52,7 @@ pub trait Component {
 ///
 /// It take a `PropertyParser` and fill the component with. It's also able to create
 /// sub-component used by event and alarms.
-pub trait ComponentMut: Component {
+pub trait ComponentMut: Component + Default {
     type Verified: Component;
 
     /// Add the givent sub component.
@@ -106,5 +111,61 @@ pub trait ComponentMut: Component {
             };
         }
         Ok(())
+    }
+}
+
+/// Reader returning `IcalCalendar` object from a `BufRead`.
+pub struct ComponentParser<B, T: Component> {
+    line_parser: RefCell<PropertyParser<B>>,
+    _t: PhantomData<T>,
+}
+
+impl<B: BufRead, T: Component> ComponentParser<B, T> {
+    /// Return a new `IcalParser` from a `Reader`.
+    pub fn new(reader: B) -> ComponentParser<B, T> {
+        let line_reader = LineReader::new(reader);
+        let line_parser = PropertyParser::new(line_reader);
+
+        ComponentParser {
+            line_parser: RefCell::new(line_parser),
+            _t: Default::default(),
+        }
+    }
+
+    /// Read the next line and check if it's a valid VCALENDAR start.
+    fn check_header(&mut self) -> Result<Option<()>, ParserError> {
+        let line = match self.line_parser.borrow_mut().next() {
+            Some(val) => val.map_err(ParserError::PropertyError)?,
+            None => return Ok(None),
+        };
+
+        if line.name.to_uppercase() != "BEGIN"
+            || line.value.is_none()
+            || !T::NAMES.contains(&line.value.as_ref().unwrap().to_uppercase().as_str())
+            || line.params.is_some()
+        {
+            return Err(ParserError::MissingHeader);
+        }
+
+        Ok(Some(()))
+    }
+}
+
+impl<B: BufRead, T: Component> Iterator for ComponentParser<B, T> {
+    type Item = Result<<T::Unverified as ComponentMut>::Verified, ParserError>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        match self.check_header() {
+            Ok(res) => res?,
+            Err(err) => return Some(Err(err)),
+        };
+
+        let mut comp = T::Unverified::default();
+        let result = match comp.parse(&self.line_parser) {
+            Ok(_) => comp.verify(),
+            Err(err) => Err(err),
+        };
+
+        Some(result)
     }
 }

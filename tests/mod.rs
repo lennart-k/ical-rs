@@ -272,13 +272,12 @@ pub mod generator {
 #[cfg(all(feature = "ical", feature = "chrono-tz"))]
 pub mod chrono_tz {
     extern crate ical;
-    use self::ical::{
-        parser::{ical::component::IcalTimeZone, ComponentMut},
-        PropertyParser,
-    };
-    use std::{cell::RefCell, convert::TryInto};
+    use self::ical::parser::ical::component::IcalTimeZone;
+    use ical::parser::ComponentParser;
+    use std::convert::TryInto;
 
     const VTIMEZONE_DIFFERENT_TZID_BERLIN: &str = r#"
+BEGIN:VTIMEZONE
 TZID:HELLO_Europe/Berlin
 LAST-MODIFIED:20250723T154628Z
 X-LIC-LOCATION:Europe/Berlin
@@ -300,6 +299,7 @@ END:VTIMEZONE
     "#;
 
     const VTIMEZONE_BERLIN: &str = r#"
+BEGIN:VTIMEZONE
 TZID:Europe/Berlin
 LAST-MODIFIED:20250723T154628Z
 X-LIC-LOCATION:Europe/Berlin
@@ -323,12 +323,15 @@ END:VTIMEZONE
     #[test]
     fn try_from_icaldatetime() {
         for input in [VTIMEZONE_BERLIN, VTIMEZONE_DIFFERENT_TZID_BERLIN] {
-            let parser = PropertyParser::new(ical::LineReader::new(input.as_bytes()));
-            let mut vtimezone = IcalTimeZone::new();
-            vtimezone.parse(&RefCell::new(parser)).unwrap();
-            let vtimezone = &vtimezone.verify().unwrap();
+            let vtimezone: IcalTimeZone = ComponentParser::<_, IcalTimeZone>::new(input.as_bytes())
+                .next()
+                .unwrap()
+                .unwrap();
 
-            assert_eq!(chrono_tz::Tz::Europe__Berlin, vtimezone.try_into().unwrap());
+            assert_eq!(
+                chrono_tz::Tz::Europe__Berlin,
+                (&vtimezone).try_into().unwrap()
+            );
         }
     }
 }
