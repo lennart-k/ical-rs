@@ -1,12 +1,12 @@
+use crate::parser::ical::component::{IcalCalendar, IcalEvent, IcalTimeZone};
+use crate::property::Property;
 use crate::{
     ical_property,
     parser::{
-        ical::component::{IcalAlarm, IcalJournal, IcalTodo},
         ComponentMut, ParserError,
+        ical::component::{IcalAlarm, IcalJournal, IcalTodo},
     },
 };
-use parser::ical::component::{IcalCalendar, IcalEvent, IcalTimeZone};
-use property::Property;
 
 pub struct IcalCalendarBuilder {
     cal: IcalCalendar<false>,

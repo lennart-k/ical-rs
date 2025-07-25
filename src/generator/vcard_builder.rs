@@ -1,6 +1,6 @@
 use crate::ical_property;
-use parser::vcard::component::VcardContact;
-use property::Property;
+use crate::parser::vcard::component::VcardContact;
+use crate::property::Property;
 
 pub struct IcalVcardBuilder {
     vcard: VcardContact,

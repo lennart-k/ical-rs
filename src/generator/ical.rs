@@ -1,9 +1,9 @@
-use crate::{PARAM_DELIMITER, PARAM_VALUE_DELIMITER, VALUE_DELIMITER};
-use parser::ical::component::{
+use crate::parser::ical::component::{
     IcalAlarm, IcalCalendar, IcalEvent, IcalFreeBusy, IcalJournal, IcalTimeZone,
     IcalTimeZoneTransition, IcalTodo,
 };
-use property::Property;
+use crate::property::Property;
+use crate::{PARAM_DELIMITER, PARAM_VALUE_DELIMITER, VALUE_DELIMITER};
 
 ///
 /// Emits the content of the Component in ical-format.
@@ -84,8 +84,8 @@ pub(crate) fn protect_params(param: &String) -> String {
 
 #[allow(unused)]
 mod should {
-    use generator::protect_params;
-    use generator::split_line;
+    use crate::generator::protect_params;
+    use crate::generator::split_line;
 
     #[test]
     fn split_long_line() {
@@ -191,7 +191,7 @@ macro_rules! generate_emitter {
 }
 
 #[cfg(feature = "vcard")]
-use parser::vcard::component::VcardContact;
+use crate::parser::vcard::component::VcardContact;
 
 #[cfg(feature = "vcard")]
 generate_emitter!(VcardContact, "VCARD", properties);

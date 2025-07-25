@@ -1,8 +1,7 @@
+use crate::parser::ical::component::IcalEvent;
 use crate::parser::{ComponentMut, ParserError};
-use parser::ical::component::IcalEvent;
-use property::Property;
-
-use {ical_param, ical_property};
+use crate::property::Property;
+use crate::{ical_param, ical_property};
 
 #[allow(dead_code)]
 pub const ICAL_DATE_FORMAT: &str = "%Y%m%dT%H%M%S";

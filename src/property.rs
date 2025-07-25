@@ -46,9 +46,12 @@ use std::iter::Iterator;
 extern crate serde;
 
 // Internal mods
-use crate::line::{Line, LineReader};
+use crate::{
+    PARAM_DELIMITER, PARAM_NAME_DELIMITER, PARAM_QUOTE, PARAM_VALUE_DELIMITER, VALUE_DELIMITER,
+    line::{Line, LineReader},
+};
 
-#[derive(Debug, Error)]
+#[derive(Debug, thiserror::Error)]
 pub enum PropertyError {
     #[error("Line {}: Missing property name.", line)]
     MissingName { line: usize },
@@ -122,8 +125,8 @@ impl<B: BufRead> PropertyParser<B> {
         // Parse name.
         let end_name_index;
 
-        let mut param_index = to_parse.find(::PARAM_DELIMITER).unwrap_or(usize::MAX);
-        let mut value_index = to_parse.find(::VALUE_DELIMITER).unwrap_or(usize::MAX);
+        let mut param_index = to_parse.find(PARAM_DELIMITER).unwrap_or(usize::MAX);
+        let mut value_index = to_parse.find(VALUE_DELIMITER).unwrap_or(usize::MAX);
 
         if param_index < value_index && param_index != 0 {
             end_name_index = param_index;
@@ -142,19 +145,19 @@ impl<B: BufRead> PropertyParser<B> {
         }
 
         // Parse parameters.
-        value_index = to_parse.find(::VALUE_DELIMITER).unwrap_or(usize::MAX);
-        param_index = to_parse.find(::PARAM_DELIMITER).unwrap_or(usize::MAX);
+        value_index = to_parse.find(VALUE_DELIMITER).unwrap_or(usize::MAX);
+        param_index = to_parse.find(PARAM_DELIMITER).unwrap_or(usize::MAX);
 
         // If there is a PARAM_DELIMITER and it not after the VALUE_DELIMITER
         // there is arguments.
         if param_index != usize::MAX && value_index > param_index {
             let mut param_list = Vec::new();
 
-            while to_parse.starts_with(::PARAM_DELIMITER) {
-                to_parse = to_parse.trim_start_matches(::PARAM_DELIMITER);
+            while to_parse.starts_with(PARAM_DELIMITER) {
+                to_parse = to_parse.trim_start_matches(PARAM_DELIMITER);
 
                 // Split the param key and the rest of the line
-                let mut param_elements = to_parse.splitn(2, ::PARAM_NAME_DELIMITER);
+                let mut param_elements = to_parse.splitn(2, PARAM_NAME_DELIMITER);
 
                 let key = param_elements
                     .next()
@@ -173,7 +176,7 @@ impl<B: BufRead> PropertyParser<B> {
                     param_elements
                         .next()
                         .ok_or_else(|| PropertyError::MissingDelimiter {
-                            delimiter: ::PARAM_NAME_DELIMITER,
+                            delimiter: PARAM_NAME_DELIMITER,
                             line: line.number(),
                         })?;
 
@@ -186,7 +189,7 @@ impl<B: BufRead> PropertyParser<B> {
                     i -= 1;
                     if to_parse.starts_with('"') {
                         // This is a dquoted value. (NAME:Foo="Bar":value)
-                        let mut elements = to_parse.splitn(3, ::PARAM_QUOTE).skip(1);
+                        let mut elements = to_parse.splitn(3, PARAM_QUOTE).skip(1);
                         // unwrap is safe here as we have already check above if there is on '"'.
                         values.push(
                             elements
@@ -207,12 +210,10 @@ impl<B: BufRead> PropertyParser<B> {
                         // This is a 'raw' value. (NAME;Foo=Bar:value)
 
                         // Try to find the next param separator.
-                        let param_delimiter =
-                            to_parse.find(::PARAM_DELIMITER).unwrap_or(usize::MAX);
-                        let value_delimiter =
-                            to_parse.find(::VALUE_DELIMITER).unwrap_or(usize::MAX);
+                        let param_delimiter = to_parse.find(PARAM_DELIMITER).unwrap_or(usize::MAX);
+                        let value_delimiter = to_parse.find(VALUE_DELIMITER).unwrap_or(usize::MAX);
                         let param_value_delimiter =
-                            to_parse.find(::PARAM_VALUE_DELIMITER).unwrap_or(usize::MAX);
+                            to_parse.find(PARAM_VALUE_DELIMITER).unwrap_or(usize::MAX);
 
                         let end_param_value = {
                             if param_value_delimiter < value_delimiter
@@ -227,7 +228,7 @@ impl<B: BufRead> PropertyParser<B> {
                                 Ok(value_delimiter)
                             } else {
                                 Err(PropertyError::MissingContentAfter {
-                                    letter: ::PARAM_NAME_DELIMITER,
+                                    letter: PARAM_NAME_DELIMITER,
                                     line: line.number(),
                                 })
                             }
@@ -238,11 +239,11 @@ impl<B: BufRead> PropertyParser<B> {
                         to_parse = elements.1;
                     }
 
-                    if !to_parse.starts_with(::PARAM_VALUE_DELIMITER) {
+                    if !to_parse.starts_with(PARAM_VALUE_DELIMITER) {
                         break;
                     }
 
-                    to_parse = to_parse.trim_start_matches(::PARAM_VALUE_DELIMITER);
+                    to_parse = to_parse.trim_start_matches(PARAM_VALUE_DELIMITER);
                 }
 
                 param_list.push((key.to_uppercase(), values));
@@ -254,7 +255,7 @@ impl<B: BufRead> PropertyParser<B> {
         }
 
         // Parse value
-        to_parse = to_parse.trim_start_matches(::VALUE_DELIMITER);
+        to_parse = to_parse.trim_start_matches(VALUE_DELIMITER);
         if to_parse.is_empty() {
             property.value = None;
         } else {

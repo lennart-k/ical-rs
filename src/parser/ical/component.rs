@@ -1,8 +1,6 @@
 // Sys mods
 use std::cell::RefCell;
 #[cfg(feature = "chrono-tz")]
-use std::convert::Infallible;
-#[cfg(feature = "chrono-tz")]
 use std::convert::TryFrom;
 use std::io::BufRead;
 
