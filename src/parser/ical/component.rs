@@ -325,6 +325,16 @@ pub struct IcalTimeZone<const VERIFIED: bool = true> {
     pub transitions: Vec<IcalTimeZoneTransition<true>>,
 }
 
+impl IcalTimeZone {
+    pub fn get_tzid(&self) -> &str {
+        self.get_property("TZID")
+            .expect("we already verified this exists")
+            .value
+            .as_ref()
+            .expect("we already verified this exists")
+    }
+}
+
 impl IcalTimeZone<false> {
     pub fn new() -> IcalTimeZone<false> {
         IcalTimeZone {
@@ -376,6 +386,13 @@ impl ComponentMut for IcalTimeZone<false> {
     }
 
     fn verify(self) -> Result<IcalTimeZone<true>, ParserError> {
+        if !matches!(
+            self.get_property("TZID"),
+            Some(&Property { value: Some(_), .. }),
+        ) {
+            return Err(ParserError::MissingProperty("TZID"));
+        }
+
         Ok(IcalTimeZone {
             properties: self.properties,
             transitions: self.transitions,
