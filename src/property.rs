@@ -3,7 +3,7 @@
 //! Split the result of `LineReader` into property. A property contains:
 //! - A name formated in uppercase.
 //! - An optional list of parameters represented by a vector of `(key/value)` tuple . The key is
-//! formatted in uppercase and the value stay untouched.
+//!   formatted in uppercase and the value stay untouched.
 //! - A value stay untouched.
 //!
 //! It work for both the Vcard and Ical format.
@@ -122,16 +122,12 @@ impl<B: BufRead> PropertyParser<B> {
         // Parse name.
         let end_name_index;
 
-        let mut param_index = to_parse
-            .find(::PARAM_DELIMITER)
-            .unwrap_or(usize::max_value());
-        let mut value_index = to_parse
-            .find(::VALUE_DELIMITER)
-            .unwrap_or(usize::max_value());
+        let mut param_index = to_parse.find(::PARAM_DELIMITER).unwrap_or(usize::MAX);
+        let mut value_index = to_parse.find(::VALUE_DELIMITER).unwrap_or(usize::MAX);
 
         if param_index < value_index && param_index != 0 {
             end_name_index = param_index;
-        } else if value_index != usize::max_value() && value_index != 0 {
+        } else if value_index != usize::MAX && value_index != 0 {
             end_name_index = value_index;
         } else {
             return Err(PropertyError::MissingName {
@@ -146,16 +142,12 @@ impl<B: BufRead> PropertyParser<B> {
         }
 
         // Parse parameters.
-        value_index = to_parse
-            .find(::VALUE_DELIMITER)
-            .unwrap_or(usize::max_value());
-        param_index = to_parse
-            .find(::PARAM_DELIMITER)
-            .unwrap_or(usize::max_value());
+        value_index = to_parse.find(::VALUE_DELIMITER).unwrap_or(usize::MAX);
+        param_index = to_parse.find(::PARAM_DELIMITER).unwrap_or(usize::MAX);
 
         // If there is a PARAM_DELIMITER and it not after the VALUE_DELIMITER
         // there is arguments.
-        if param_index != usize::max_value() && value_index > param_index {
+        if param_index != usize::MAX && value_index > param_index {
             let mut param_list = Vec::new();
 
             while to_parse.starts_with(::PARAM_DELIMITER) {
@@ -215,15 +207,12 @@ impl<B: BufRead> PropertyParser<B> {
                         // This is a 'raw' value. (NAME;Foo=Bar:value)
 
                         // Try to find the next param separator.
-                        let param_delimiter = to_parse
-                            .find(::PARAM_DELIMITER)
-                            .unwrap_or(usize::max_value());
-                        let value_delimiter = to_parse
-                            .find(::VALUE_DELIMITER)
-                            .unwrap_or(usize::max_value());
-                        let param_value_delimiter = to_parse
-                            .find(::PARAM_VALUE_DELIMITER)
-                            .unwrap_or(usize::max_value());
+                        let param_delimiter =
+                            to_parse.find(::PARAM_DELIMITER).unwrap_or(usize::MAX);
+                        let value_delimiter =
+                            to_parse.find(::VALUE_DELIMITER).unwrap_or(usize::MAX);
+                        let param_value_delimiter =
+                            to_parse.find(::PARAM_VALUE_DELIMITER).unwrap_or(usize::MAX);
 
                         let end_param_value = {
                             if param_value_delimiter < value_delimiter
@@ -234,7 +223,7 @@ impl<B: BufRead> PropertyParser<B> {
                                 && param_delimiter < param_value_delimiter
                             {
                                 Ok(param_delimiter)
-                            } else if value_delimiter != usize::max_value() {
+                            } else if value_delimiter != usize::MAX {
                                 Ok(value_delimiter)
                             } else {
                                 Err(PropertyError::MissingContentAfter {

@@ -143,7 +143,7 @@ impl FormattedName {
         let formatted_name = add_sep(self.names.get(3), " ")
             + &add_sep(self.names.get(1), " ")
             + &add_sep(self.names.get(2), " ")
-            + &add_sep(self.names.get(0), " ")
+            + &add_sep(self.names.first(), " ")
             + &add_sep(self.names.get(4), " ");
 
         Self::formatted_name(self, formatted_name.trim())

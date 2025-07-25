@@ -140,7 +140,7 @@ fn get_params(params: &Option<Vec<(String, Vec<String>)>>) -> String {
                 .map(|(name, values)| {
                     let mut value = values.iter().map(protect_params).collect::<String>();
                     value.pop(); // remove last comma
-                    format!("{}{}={}", PARAM_DELIMITER, name, value)
+                    format!("{PARAM_DELIMITER}{name}={value}")
                 })
                 .collect::<String>()
         }
