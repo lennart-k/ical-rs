@@ -14,19 +14,19 @@ use crate::property::{Property, PropertyParser};
 #[derive(Debug, Clone, Default)]
 #[cfg_attr(feature = "serde-derive", derive(serde::Serialize, serde::Deserialize))]
 /// An ICAL calendar.
-pub struct IcalCalendar {
+pub struct IcalCalendar<const VERIFIED: bool = true> {
     pub properties: Vec<Property>,
     pub events: Vec<IcalEvent>,
     pub alarms: Vec<IcalAlarm>,
     pub todos: Vec<IcalTodo>,
     pub journals: Vec<IcalJournal>,
     pub free_busys: Vec<IcalFreeBusy>,
-    pub timezones: Vec<IcalTimeZone<true>>,
+    pub timezones: Vec<IcalTimeZone>,
 }
 
-impl IcalCalendar {
-    pub fn new() -> IcalCalendar {
-        IcalCalendar {
+impl IcalCalendar<false> {
+    pub fn new() -> Self {
+        Self {
             properties: Vec::new(),
             events: Vec::new(),
             alarms: Vec::new(),
@@ -38,13 +38,15 @@ impl IcalCalendar {
     }
 }
 
-impl Component for IcalCalendar {
+impl<const VERIFIED: bool> Component for IcalCalendar<VERIFIED> {
     fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
         self.properties.iter().find(|p| p.name == name)
     }
 }
 
-impl ComponentMut for IcalCalendar {
+impl ComponentMut for IcalCalendar<false> {
+    type Verified = IcalCalendar<true>;
+
     fn add_property(&mut self, property: Property) {
         self.properties.push(property);
     }
@@ -62,27 +64,27 @@ impl ComponentMut for IcalCalendar {
             "VALARM" => {
                 let mut alarm = IcalAlarm::new();
                 alarm.parse(line_parser)?;
-                self.alarms.push(alarm);
+                self.alarms.push(alarm.verify()?);
             }
             "VEVENT" => {
                 let mut event = IcalEvent::new();
                 event.parse(line_parser)?;
-                self.events.push(event);
+                self.events.push(event.verify()?);
             }
             "VTODO" => {
                 let mut todo = IcalTodo::new();
                 todo.parse(line_parser)?;
-                self.todos.push(todo);
+                self.todos.push(todo.verify()?);
             }
             "VJOURNAL" => {
                 let mut journal = IcalJournal::new();
                 journal.parse(line_parser)?;
-                self.journals.push(journal);
+                self.journals.push(journal.verify()?);
             }
             "VFREEBUSY" => {
                 let mut free_busy = IcalFreeBusy::new();
                 free_busy.parse(line_parser)?;
-                self.free_busys.push(free_busy);
+                self.free_busys.push(free_busy.verify()?);
             }
             "VTIMEZONE" => {
                 let mut timezone = IcalTimeZone::new();
@@ -94,29 +96,43 @@ impl ComponentMut for IcalCalendar {
 
         Ok(())
     }
+
+    fn verify(self) -> Result<Self::Verified, ParserError> {
+        Ok(IcalCalendar {
+            properties: self.properties,
+            events: self.events,
+            alarms: self.alarms,
+            todos: self.todos,
+            journals: self.journals,
+            free_busys: self.free_busys,
+            timezones: self.timezones,
+        })
+    }
 }
 
 #[derive(Debug, Clone, Default)]
 #[cfg_attr(feature = "serde-derive", derive(serde::Serialize, serde::Deserialize))]
-pub struct IcalAlarm {
+pub struct IcalAlarm<const VERIFIED: bool = true> {
     pub properties: Vec<Property>,
 }
 
-impl IcalAlarm {
-    pub fn new() -> IcalAlarm {
-        IcalAlarm {
+impl IcalAlarm<false> {
+    pub fn new() -> Self {
+        Self {
             properties: Vec::new(),
         }
     }
 }
 
-impl Component for IcalAlarm {
+impl<const VERIFIED: bool> Component for IcalAlarm<VERIFIED> {
     fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
         self.properties.iter().find(|p| p.name == name)
     }
 }
 
-impl ComponentMut for IcalAlarm {
+impl ComponentMut for IcalAlarm<false> {
+    type Verified = IcalAlarm<true>;
+
     fn add_property(&mut self, property: Property) {
         self.properties.push(property);
     }
@@ -132,31 +148,39 @@ impl ComponentMut for IcalAlarm {
     ) -> Result<(), ParserError> {
         Err(ParserError::InvalidComponent)
     }
+
+    fn verify(self) -> Result<IcalAlarm<true>, ParserError> {
+        Ok(IcalAlarm {
+            properties: self.properties,
+        })
+    }
 }
 
 #[derive(Debug, Clone, Default)]
 #[cfg_attr(feature = "serde-derive", derive(serde::Serialize, serde::Deserialize))]
-pub struct IcalEvent {
+pub struct IcalEvent<const VERIFIED: bool = true> {
     pub properties: Vec<Property>,
     pub alarms: Vec<IcalAlarm>,
 }
 
-impl IcalEvent {
-    pub fn new() -> IcalEvent {
-        IcalEvent {
+impl IcalEvent<false> {
+    pub fn new() -> Self {
+        Self {
             properties: Vec::new(),
             alarms: Vec::new(),
         }
     }
 }
 
-impl Component for IcalEvent {
+impl<const VERIFIED: bool> Component for IcalEvent<VERIFIED> {
     fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
         self.properties.iter().find(|p| p.name == name)
     }
 }
 
-impl ComponentMut for IcalEvent {
+impl ComponentMut for IcalEvent<false> {
+    type Verified = IcalEvent<true>;
+
     fn add_property(&mut self, property: Property) {
         self.properties.push(property);
     }
@@ -174,36 +198,45 @@ impl ComponentMut for IcalEvent {
             "VALARM" => {
                 let mut alarm = IcalAlarm::new();
                 alarm.parse(line_parser)?;
-                self.alarms.push(alarm);
+                self.alarms.push(alarm.verify()?);
             }
             _ => return Err(ParserError::InvalidComponent),
         };
 
         Ok(())
     }
+
+    fn verify(self) -> Result<IcalEvent<true>, ParserError> {
+        Ok(IcalEvent {
+            properties: self.properties,
+            alarms: self.alarms,
+        })
+    }
 }
 
 #[derive(Debug, Clone, Default)]
 #[cfg_attr(feature = "serde-derive", derive(serde::Serialize, serde::Deserialize))]
-pub struct IcalJournal {
+pub struct IcalJournal<const VERIFIED: bool = true> {
     pub properties: Vec<Property>,
 }
 
-impl IcalJournal {
-    pub fn new() -> IcalJournal {
-        IcalJournal {
+impl IcalJournal<false> {
+    pub fn new() -> Self {
+        Self {
             properties: Vec::new(),
         }
     }
 }
 
-impl Component for IcalJournal {
+impl<const VERIFIED: bool> Component for IcalJournal<VERIFIED> {
     fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
         self.properties.iter().find(|p| p.name == name)
     }
 }
 
-impl ComponentMut for IcalJournal {
+impl ComponentMut for IcalJournal<false> {
+    type Verified = IcalJournal<true>;
+
     fn add_property(&mut self, property: Property) {
         self.properties.push(property);
     }
@@ -219,31 +252,39 @@ impl ComponentMut for IcalJournal {
     ) -> Result<(), ParserError> {
         Err(ParserError::InvalidComponent)
     }
+
+    fn verify(self) -> Result<IcalJournal<true>, ParserError> {
+        Ok(IcalJournal {
+            properties: self.properties,
+        })
+    }
 }
 
 #[derive(Debug, Clone, Default)]
 #[cfg_attr(feature = "serde-derive", derive(serde::Serialize, serde::Deserialize))]
-pub struct IcalTodo {
+pub struct IcalTodo<const VERIFIED: bool = true> {
     pub properties: Vec<Property>,
     pub alarms: Vec<IcalAlarm>,
 }
 
-impl IcalTodo {
-    pub fn new() -> IcalTodo {
-        IcalTodo {
+impl IcalTodo<false> {
+    pub fn new() -> Self {
+        Self {
             properties: Vec::new(),
             alarms: Vec::new(),
         }
     }
 }
 
-impl Component for IcalTodo {
+impl<const VERIFIED: bool> Component for IcalTodo<VERIFIED> {
     fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
         self.properties.iter().find(|p| p.name == name)
     }
 }
 
-impl ComponentMut for IcalTodo {
+impl ComponentMut for IcalTodo<false> {
+    type Verified = IcalTodo<true>;
+
     fn add_property(&mut self, property: Property) {
         self.properties.push(property);
     }
@@ -261,20 +302,27 @@ impl ComponentMut for IcalTodo {
             "VALARM" => {
                 let mut alarm = IcalAlarm::new();
                 alarm.parse(line_parser)?;
-                self.alarms.push(alarm);
+                self.alarms.push(alarm.verify()?);
             }
             _ => return Err(ParserError::InvalidComponent),
         };
 
         Ok(())
     }
+
+    fn verify(self) -> Result<IcalTodo<true>, ParserError> {
+        Ok(IcalTodo {
+            properties: self.properties,
+            alarms: self.alarms,
+        })
+    }
 }
 
 #[derive(Debug, Clone, Default)]
 #[cfg_attr(feature = "serde-derive", derive(serde::Serialize, serde::Deserialize))]
-pub struct IcalTimeZone<const VERIFIED: bool> {
+pub struct IcalTimeZone<const VERIFIED: bool = true> {
     pub properties: Vec<Property>,
-    pub transitions: Vec<IcalTimeZoneTransition>,
+    pub transitions: Vec<IcalTimeZoneTransition<true>>,
 }
 
 impl IcalTimeZone<false> {
@@ -283,13 +331,6 @@ impl IcalTimeZone<false> {
             properties: Vec::new(),
             transitions: Vec::new(),
         }
-    }
-
-    pub fn verify(self) -> Result<IcalTimeZone<true>, ParserError> {
-        Ok(IcalTimeZone {
-            properties: self.properties,
-            transitions: self.transitions,
-        })
     }
 }
 
@@ -300,6 +341,8 @@ impl<const VERIFIED: bool> Component for IcalTimeZone<VERIFIED> {
 }
 
 impl ComponentMut for IcalTimeZone<false> {
+    type Verified = IcalTimeZone<true>;
+
     fn add_property(&mut self, property: Property) {
         self.properties.push(property);
     }
@@ -319,17 +362,24 @@ impl ComponentMut for IcalTimeZone<false> {
             "STANDARD" => {
                 let mut transition = IcalTimeZoneTransition::new(STANDARD);
                 transition.parse(line_parser)?;
-                self.transitions.push(transition);
+                self.transitions.push(transition.verify()?);
             }
             "DAYLIGHT" => {
                 let mut transition = IcalTimeZoneTransition::new(DAYLIGHT);
                 transition.parse(line_parser)?;
-                self.transitions.push(transition);
+                self.transitions.push(transition.verify()?);
             }
             _ => return Err(ParserError::InvalidComponent),
         };
 
         Ok(())
+    }
+
+    fn verify(self) -> Result<IcalTimeZone<true>, ParserError> {
+        Ok(IcalTimeZone {
+            properties: self.properties,
+            transitions: self.transitions,
+        })
     }
 }
 
@@ -343,27 +393,29 @@ pub enum IcalTimeZoneTransitionType {
 
 #[derive(Debug, Clone, Default)]
 #[cfg_attr(feature = "serde-derive", derive(serde::Serialize, serde::Deserialize))]
-pub struct IcalTimeZoneTransition {
+pub struct IcalTimeZoneTransition<const VERIFIED: bool = true> {
     pub transition: IcalTimeZoneTransitionType,
     pub properties: Vec<Property>,
 }
 
-impl IcalTimeZoneTransition {
-    pub fn new(transition: IcalTimeZoneTransitionType) -> IcalTimeZoneTransition {
-        IcalTimeZoneTransition {
+impl IcalTimeZoneTransition<false> {
+    pub fn new(transition: IcalTimeZoneTransitionType) -> Self {
+        Self {
             transition,
             properties: Vec::new(),
         }
     }
 }
 
-impl Component for IcalTimeZoneTransition {
+impl<const VERIFIED: bool> Component for IcalTimeZoneTransition<VERIFIED> {
     fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
         self.properties.iter().find(|p| p.name == name)
     }
 }
 
-impl ComponentMut for IcalTimeZoneTransition {
+impl ComponentMut for IcalTimeZoneTransition<false> {
+    type Verified = IcalTimeZoneTransition<true>;
+
     fn add_property(&mut self, property: Property) {
         self.properties.push(property);
     }
@@ -378,30 +430,39 @@ impl ComponentMut for IcalTimeZoneTransition {
         _: &RefCell<PropertyParser<B>>,
     ) -> Result<(), ParserError> {
         Err(ParserError::InvalidComponent)
+    }
+
+    fn verify(self) -> Result<IcalTimeZoneTransition<true>, ParserError> {
+        Ok(IcalTimeZoneTransition {
+            transition: self.transition,
+            properties: self.properties,
+        })
     }
 }
 
 #[derive(Debug, Clone, Default)]
 #[cfg_attr(feature = "serde-derive", derive(serde::Serialize, serde::Deserialize))]
-pub struct IcalFreeBusy {
+pub struct IcalFreeBusy<const VERIFIED: bool = true> {
     pub properties: Vec<Property>,
 }
 
-impl IcalFreeBusy {
-    pub fn new() -> IcalFreeBusy {
-        IcalFreeBusy {
+impl IcalFreeBusy<false> {
+    pub fn new() -> Self {
+        Self {
             properties: Vec::new(),
         }
     }
 }
 
-impl Component for IcalFreeBusy {
+impl<const VERIFIED: bool> Component for IcalFreeBusy<VERIFIED> {
     fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
         self.properties.iter().find(|p| p.name == name)
     }
 }
 
-impl ComponentMut for IcalFreeBusy {
+impl ComponentMut for IcalFreeBusy<false> {
+    type Verified = IcalFreeBusy<true>;
+
     fn add_property(&mut self, property: Property) {
         self.properties.push(property);
     }
@@ -416,5 +477,11 @@ impl ComponentMut for IcalFreeBusy {
         _: &RefCell<PropertyParser<B>>,
     ) -> Result<(), ParserError> {
         Err(ParserError::InvalidComponent)
+    }
+
+    fn verify(self) -> Result<IcalFreeBusy<true>, ParserError> {
+        Ok(IcalFreeBusy {
+            properties: self.properties,
+        })
     }
 }

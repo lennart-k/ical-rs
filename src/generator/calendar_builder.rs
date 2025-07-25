@@ -1,9 +1,12 @@
-use crate::ical_property;
+use crate::{
+    ical_property,
+    parser::{ComponentMut, ParserError},
+};
 use parser::ical::component::{IcalCalendar, IcalEvent, IcalTimeZone};
 use property::Property;
 
 pub struct IcalCalendarBuilder {
-    cal: IcalCalendar,
+    cal: IcalCalendar<false>,
 }
 pub struct CalScale(IcalCalendarBuilder);
 pub struct ProdId(IcalCalendarBuilder);
@@ -68,8 +71,8 @@ impl ProdId {
 
 impl Finalizer {
     /// creates a complete IcalCalendar-object.
-    pub fn build(self) -> IcalCalendar {
-        self.0.cal
+    pub fn build(self) -> Result<IcalCalendar, ParserError> {
+        self.0.cal.verify()
     }
 
     pub fn set(mut self, property: Property) -> Self {

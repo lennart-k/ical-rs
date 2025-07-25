@@ -42,6 +42,8 @@ pub trait Component {
 /// It take a `PropertyParser` and fill the component with. It's also able to create
 /// sub-component used by event and alarms.
 pub trait ComponentMut: Component {
+    type Verified: Component;
+
     /// Add the givent sub component.
     fn add_sub_component<B: BufRead>(
         &mut self,
@@ -53,6 +55,8 @@ pub trait ComponentMut: Component {
     fn add_property(&mut self, property: Property);
 
     fn get_property_mut<'c>(&'c mut self, name: &str) -> Option<&'c mut Property>;
+
+    fn verify(self) -> Result<Self::Verified, ParserError>;
 
     /// Parse the content from `line_parser` and fill the component with.
     fn parse<B: BufRead>(

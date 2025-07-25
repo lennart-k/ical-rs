@@ -1,5 +1,7 @@
+use crate::parser::{ComponentMut, ParserError};
 use parser::ical::component::IcalEvent;
 use property::Property;
+
 use {ical_param, ical_property};
 
 #[allow(dead_code)]
@@ -7,7 +9,7 @@ pub const ICAL_DATE_FORMAT: &str = "%Y%m%dT%H%M%S";
 
 pub struct IcalEventBuilder {
     tzid: String,
-    event: IcalEvent,
+    event: IcalEvent<false>,
 }
 pub struct Uid(IcalEventBuilder);
 pub struct DtStamp(IcalEventBuilder);
@@ -148,8 +150,8 @@ impl DtEnd {
 }
 
 impl Finalizer {
-    pub fn build(self) -> IcalEvent {
-        self.0.event
+    pub fn build(self) -> Result<IcalEvent, ParserError> {
+        self.0.event.verify()
     }
 
     /// Setting arbitrary property.
@@ -185,8 +187,8 @@ mod should {
             .changed("20201201T120423")
             .start("20201206T170000")
             .duration("PT2H45M0S")
-            .0
-            .event;
+            .build()
+            .unwrap();
         let e = Emitter::generate(&ev);
         //let e = start.format(ICAL_DATE_FORMAT).to_string();
         assert_eq!(
@@ -222,7 +224,8 @@ mod should {
                 "Festival International de Jazz de Montreal"
             ))
             .set(ical_property!("TRANSP", "TRANSPARENT"))
-            .build();
+            .build()
+            .unwrap();
 
         assert_eq!(expect, event.generate());
     }
@@ -253,7 +256,8 @@ mod should {
                 "CATEGORIES",
                 "ANNIVERSARY,PERSONAL,SPECIAL OCCASION"
             ))
-            .build();
+            .build()
+            .unwrap();
         assert_eq!(expect, event.generate());
     }
 }

@@ -12,25 +12,27 @@ use crate::property::{Property, PropertyParser};
 #[derive(Debug, Clone, Default, Eq, PartialEq, Hash)]
 #[cfg_attr(feature = "serde-derive", derive(serde::Serialize, serde::Deserialize))]
 /// A VCARD contact.
-pub struct VcardContact {
+pub struct VcardContact<const VERIFIED: bool = false> {
     pub properties: Vec<Property>,
 }
 
-impl VcardContact {
-    pub fn new() -> VcardContact {
-        VcardContact {
+impl VcardContact<false> {
+    pub fn new() -> Self {
+        Self {
             properties: Vec::new(),
         }
     }
 }
 
-impl Component for VcardContact {
+impl<const VERIFIED: bool> Component for VcardContact<VERIFIED> {
     fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
         self.properties.iter().find(|p| p.name == name)
     }
 }
 
-impl ComponentMut for VcardContact {
+impl ComponentMut for VcardContact<false> {
+    type Verified = VcardContact<true>;
+
     fn add_property(&mut self, property: Property) {
         self.properties.push(property);
     }
@@ -45,5 +47,11 @@ impl ComponentMut for VcardContact {
         _: &RefCell<PropertyParser<B>>,
     ) -> Result<(), ParserError> {
         Err(ParserError::InvalidComponent)
+    }
+
+    fn verify(self) -> Result<Self::Verified, ParserError> {
+        Ok(VcardContact {
+            properties: self.properties,
+        })
     }
 }

@@ -89,7 +89,7 @@ impl<B: BufRead> Iterator for IcalParser<B> {
 
         let mut calendar = component::IcalCalendar::new();
         let result = match calendar.parse(&self.line_parser) {
-            Ok(_) => Ok(calendar),
+            Ok(_) => calendar.verify(),
             Err(err) => Err(err),
         };
 
