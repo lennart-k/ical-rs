@@ -20,6 +20,7 @@ repository = "https://travis-ci.org/Peltoche/ical-rs"
 [dependencies]
 thiserror = "1.0.50"
 serde = { version = "1.0.193", features = ["derive"], optional = true }
+chrono-tz = { version = "0.10", optional = true }
 
 [features]
 default = ["vcard", "ical"]
@@ -29,6 +30,7 @@ property = ["line"]
 vcard = ["property"]
 serde-derive = ["serde"]
 generator = ["ical"]
+chrono-tz = ["dep:chrono-tz"]
 
 [lib]
 doc = true

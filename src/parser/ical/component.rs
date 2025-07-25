@@ -1,5 +1,9 @@
 // Sys mods
 use std::cell::RefCell;
+#[cfg(feature = "chrono-tz")]
+use std::convert::Infallible;
+#[cfg(feature = "chrono-tz")]
+use std::convert::TryFrom;
 use std::io::BufRead;
 
 #[cfg(feature = "serde-derive")]
@@ -367,6 +371,21 @@ impl IcalTimeZone {
         self.get_property("X-LIC-LOCATION")
             .as_ref()
             .and_then(|prop| prop.value.as_deref())
+    }
+}
+
+#[cfg(feature = "chrono-tz")]
+impl TryFrom<&IcalTimeZone> for chrono_tz::Tz {
+    type Error = chrono_tz::ParseError;
+
+    fn try_from(value: &IcalTimeZone) -> Result<Self, Self::Error> {
+        use std::str::FromStr;
+
+        if let Some(loc) = value.get_lic_location() {
+            return chrono_tz::Tz::from_str(loc);
+        }
+
+        chrono_tz::Tz::from_str(value.get_tzid())
     }
 }
 
