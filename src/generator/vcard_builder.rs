@@ -1,9 +1,10 @@
 use crate::ical_property;
 use crate::parser::vcard::component::VcardContact;
+use crate::parser::{ComponentMut, ParserError};
 use crate::property::Property;
 
 pub struct IcalVcardBuilder {
-    vcard: VcardContact,
+    vcard: VcardContact<false>,
 }
 pub struct Name(IcalVcardBuilder);
 pub struct FormattedName {
@@ -152,8 +153,8 @@ impl FormattedName {
 
 impl Finalizer {
     /// creates a valid `VcardContact`.
-    pub fn build(self) -> VcardContact {
-        self.0.vcard
+    pub fn build(self) -> Result<VcardContact, ParserError> {
+        self.0.vcard.verify()
     }
 
     /// adds optional properties to the `VcardContact`.
@@ -237,7 +238,8 @@ mod should {
             .set(ical_property!("EMAIL", "forrestgump@example.com"))
             .set(ical_property!("REV", "20080424T195243Z"))
             .set(ical_property!("x-qq", "21588891"))
-            .build();
+            .build()
+            .unwrap();
 
         assert_eq!(vcard.generate(), expect);
     }
@@ -262,7 +264,8 @@ mod should {
             )
             .generate_fn()
             .set(ical_property!("NICKNAME", "Harpo Marx"))
-            .build();
+            .build()
+            .unwrap();
         assert_eq!(vcard.generate(), expect);
     }
 }

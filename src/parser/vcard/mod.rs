@@ -88,7 +88,7 @@ impl<B: BufRead> Iterator for VcardParser<B> {
 
         let mut contact = component::VcardContact::new();
         let result = match contact.parse(&self.line_parser) {
-            Ok(_) => Ok(contact),
+            Ok(_) => contact.verify(),
             Err(err) => Err(err),
         };
 
