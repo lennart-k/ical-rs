@@ -33,8 +33,11 @@ pub enum ParserError {
 /// An immutable interface for an Ical/Vcard component.
 /// This is also implemented by verified components
 pub trait Component {
+    type Unverified: ComponentMut;
     /// Find a given property.
     fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property>;
+
+    fn mutable(self) -> Self::Unverified;
 }
 
 /// A mutable interface for an Ical/Vcard component.

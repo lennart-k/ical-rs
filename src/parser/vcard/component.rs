@@ -25,8 +25,16 @@ impl VcardContact<false> {
 }
 
 impl<const VERIFIED: bool> Component for VcardContact<VERIFIED> {
+    type Unverified = VcardContact<false>;
+
     fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
         self.properties.iter().find(|p| p.name == name)
+    }
+
+    fn mutable(self) -> Self::Unverified {
+        VcardContact {
+            properties: self.properties,
+        }
     }
 }
 

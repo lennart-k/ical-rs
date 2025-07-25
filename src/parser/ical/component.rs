@@ -39,8 +39,22 @@ impl IcalCalendar<false> {
 }
 
 impl<const VERIFIED: bool> Component for IcalCalendar<VERIFIED> {
+    type Unverified = IcalCalendar<false>;
+
     fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
         self.properties.iter().find(|p| p.name == name)
+    }
+
+    fn mutable(self) -> Self::Unverified {
+        IcalCalendar {
+            properties: self.properties,
+            events: self.events,
+            alarms: self.alarms,
+            todos: self.todos,
+            journals: self.journals,
+            free_busys: self.free_busys,
+            timezones: self.timezones,
+        }
     }
 }
 
@@ -125,8 +139,16 @@ impl IcalAlarm<false> {
 }
 
 impl<const VERIFIED: bool> Component for IcalAlarm<VERIFIED> {
+    type Unverified = IcalAlarm<false>;
+
     fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
         self.properties.iter().find(|p| p.name == name)
+    }
+
+    fn mutable(self) -> Self::Unverified {
+        IcalAlarm {
+            properties: self.properties,
+        }
     }
 }
 
@@ -173,8 +195,17 @@ impl IcalEvent<false> {
 }
 
 impl<const VERIFIED: bool> Component for IcalEvent<VERIFIED> {
+    type Unverified = IcalEvent<false>;
+
     fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
         self.properties.iter().find(|p| p.name == name)
+    }
+
+    fn mutable(self) -> Self::Unverified {
+        IcalEvent {
+            properties: self.properties,
+            alarms: self.alarms,
+        }
     }
 }
 
@@ -229,8 +260,16 @@ impl IcalJournal<false> {
 }
 
 impl<const VERIFIED: bool> Component for IcalJournal<VERIFIED> {
+    type Unverified = IcalJournal<false>;
+
     fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
         self.properties.iter().find(|p| p.name == name)
+    }
+
+    fn mutable(self) -> Self::Unverified {
+        IcalJournal {
+            properties: self.properties,
+        }
     }
 }
 
@@ -277,8 +316,17 @@ impl IcalTodo<false> {
 }
 
 impl<const VERIFIED: bool> Component for IcalTodo<VERIFIED> {
+    type Unverified = IcalTodo<false>;
+
     fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
         self.properties.iter().find(|p| p.name == name)
+    }
+
+    fn mutable(self) -> Self::Unverified {
+        IcalTodo {
+            properties: self.properties,
+            alarms: self.alarms,
+        }
     }
 }
 
@@ -345,8 +393,17 @@ impl IcalTimeZone<false> {
 }
 
 impl<const VERIFIED: bool> Component for IcalTimeZone<VERIFIED> {
+    type Unverified = IcalTimeZone<false>;
+
     fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
         self.properties.iter().find(|p| p.name == name)
+    }
+
+    fn mutable(self) -> Self::Unverified {
+        IcalTimeZone {
+            properties: self.properties,
+            transitions: self.transitions,
+        }
     }
 }
 
@@ -425,8 +482,17 @@ impl IcalTimeZoneTransition<false> {
 }
 
 impl<const VERIFIED: bool> Component for IcalTimeZoneTransition<VERIFIED> {
+    type Unverified = IcalTimeZoneTransition<false>;
+
     fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
         self.properties.iter().find(|p| p.name == name)
+    }
+
+    fn mutable(self) -> Self::Unverified {
+        IcalTimeZoneTransition {
+            transition: self.transition,
+            properties: self.properties,
+        }
     }
 }
 
@@ -472,8 +538,16 @@ impl IcalFreeBusy<false> {
 }
 
 impl<const VERIFIED: bool> Component for IcalFreeBusy<VERIFIED> {
+    type Unverified = IcalFreeBusy<false>;
+
     fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
         self.properties.iter().find(|p| p.name == name)
+    }
+
+    fn mutable(self) -> Self::Unverified {
+        IcalFreeBusy {
+            properties: self.properties,
+        }
     }
 }
 
