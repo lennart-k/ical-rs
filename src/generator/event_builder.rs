@@ -31,7 +31,6 @@ pub struct Finalizer(IcalEventBuilder);
 ///     .set(ical_property!("SUMMARY;LANGUAGE=de", "1. Weihnachtstag"))
 ///     .build();
 /// ```
-
 impl IcalEventBuilder {
     pub fn tzid<S: Into<String>>(timezone: S) -> Uid {
         Uid(Self {

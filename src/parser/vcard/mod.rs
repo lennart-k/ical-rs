@@ -34,13 +34,12 @@
 pub mod component;
 
 // Sys mods
-use crate::parser::ParserError;
+use crate::parser::{ComponentMut, ParserError};
 use std::cell::RefCell;
 use std::io::BufRead;
 
 // Internal mods
 use crate::line::LineReader;
-use crate::parser::Component;
 use crate::property::PropertyParser;
 
 /// Reader returning `VcardContact` object from a `BufRead`.

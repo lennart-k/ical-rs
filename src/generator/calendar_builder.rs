@@ -82,7 +82,7 @@ impl Finalizer {
         self
     }
 
-    pub fn add_tz(mut self, tz: IcalTimeZone) -> Self {
+    pub fn add_tz(mut self, tz: IcalTimeZone<true>) -> Self {
         self.0.cal.timezones.push(tz);
         self
     }

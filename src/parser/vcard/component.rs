@@ -6,7 +6,7 @@ use std::io::BufRead;
 extern crate serde;
 
 // Internal mods
-use crate::parser::{Component, ParserError};
+use crate::parser::{Component, ComponentMut, ParserError};
 use crate::property::{Property, PropertyParser};
 
 #[derive(Debug, Clone, Default, Eq, PartialEq, Hash)]
@@ -25,12 +25,14 @@ impl VcardContact {
 }
 
 impl Component for VcardContact {
-    fn add_property(&mut self, property: Property) {
-        self.properties.push(property);
-    }
-
     fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
         self.properties.iter().find(|p| p.name == name)
+    }
+}
+
+impl ComponentMut for VcardContact {
+    fn add_property(&mut self, property: Property) {
+        self.properties.push(property);
     }
 
     fn get_property_mut<'c>(&'c mut self, name: &str) -> Option<&'c mut Property> {

@@ -40,7 +40,7 @@ use std::io::BufRead;
 
 // Internal mods
 use crate::line::LineReader;
-use crate::parser::{Component, ParserError};
+use crate::parser::{ComponentMut, ParserError};
 use crate::property::PropertyParser;
 
 /// Reader returning `IcalCalendar` object from a `BufRead`.

@@ -7,6 +7,7 @@ extern crate serde;
 
 // Internal mods
 use crate::parser::Component;
+use crate::parser::ComponentMut;
 use crate::parser::ParserError;
 use crate::property::{Property, PropertyParser};
 
@@ -20,7 +21,7 @@ pub struct IcalCalendar {
     pub todos: Vec<IcalTodo>,
     pub journals: Vec<IcalJournal>,
     pub free_busys: Vec<IcalFreeBusy>,
-    pub timezones: Vec<IcalTimeZone>,
+    pub timezones: Vec<IcalTimeZone<true>>,
 }
 
 impl IcalCalendar {
@@ -38,12 +39,14 @@ impl IcalCalendar {
 }
 
 impl Component for IcalCalendar {
-    fn add_property(&mut self, property: Property) {
-        self.properties.push(property);
-    }
-
     fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
         self.properties.iter().find(|p| p.name == name)
+    }
+}
+
+impl ComponentMut for IcalCalendar {
+    fn add_property(&mut self, property: Property) {
+        self.properties.push(property);
     }
 
     fn get_property_mut<'c>(&'c mut self, name: &str) -> Option<&'c mut Property> {
@@ -84,7 +87,7 @@ impl Component for IcalCalendar {
             "VTIMEZONE" => {
                 let mut timezone = IcalTimeZone::new();
                 timezone.parse(line_parser)?;
-                self.timezones.push(timezone);
+                self.timezones.push(timezone.verify()?);
             }
             _ => return Err(ParserError::InvalidComponent),
         };
@@ -108,12 +111,14 @@ impl IcalAlarm {
 }
 
 impl Component for IcalAlarm {
-    fn add_property(&mut self, property: Property) {
-        self.properties.push(property);
-    }
-
     fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
         self.properties.iter().find(|p| p.name == name)
+    }
+}
+
+impl ComponentMut for IcalAlarm {
+    fn add_property(&mut self, property: Property) {
+        self.properties.push(property);
     }
 
     fn get_property_mut<'c>(&'c mut self, name: &str) -> Option<&'c mut Property> {
@@ -146,12 +151,14 @@ impl IcalEvent {
 }
 
 impl Component for IcalEvent {
-    fn add_property(&mut self, property: Property) {
-        self.properties.push(property);
-    }
-
     fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
         self.properties.iter().find(|p| p.name == name)
+    }
+}
+
+impl ComponentMut for IcalEvent {
+    fn add_property(&mut self, property: Property) {
+        self.properties.push(property);
     }
 
     fn get_property_mut<'c>(&'c mut self, name: &str) -> Option<&'c mut Property> {
@@ -191,12 +198,14 @@ impl IcalJournal {
 }
 
 impl Component for IcalJournal {
-    fn add_property(&mut self, property: Property) {
-        self.properties.push(property);
-    }
-
     fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
         self.properties.iter().find(|p| p.name == name)
+    }
+}
+
+impl ComponentMut for IcalJournal {
+    fn add_property(&mut self, property: Property) {
+        self.properties.push(property);
     }
 
     fn get_property_mut<'c>(&'c mut self, name: &str) -> Option<&'c mut Property> {
@@ -229,12 +238,14 @@ impl IcalTodo {
 }
 
 impl Component for IcalTodo {
-    fn add_property(&mut self, property: Property) {
-        self.properties.push(property);
-    }
-
     fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
         self.properties.iter().find(|p| p.name == name)
+    }
+}
+
+impl ComponentMut for IcalTodo {
+    fn add_property(&mut self, property: Property) {
+        self.properties.push(property);
     }
 
     fn get_property_mut<'c>(&'c mut self, name: &str) -> Option<&'c mut Property> {
@@ -261,27 +272,36 @@ impl Component for IcalTodo {
 
 #[derive(Debug, Clone, Default)]
 #[cfg_attr(feature = "serde-derive", derive(serde::Serialize, serde::Deserialize))]
-pub struct IcalTimeZone {
+pub struct IcalTimeZone<const VERIFIED: bool> {
     pub properties: Vec<Property>,
     pub transitions: Vec<IcalTimeZoneTransition>,
 }
 
-impl IcalTimeZone {
-    pub fn new() -> IcalTimeZone {
+impl IcalTimeZone<false> {
+    pub fn new() -> IcalTimeZone<false> {
         IcalTimeZone {
             properties: Vec::new(),
             transitions: Vec::new(),
         }
     }
+
+    pub fn verify(self) -> Result<IcalTimeZone<true>, ParserError> {
+        Ok(IcalTimeZone {
+            properties: self.properties,
+            transitions: self.transitions,
+        })
+    }
 }
 
-impl Component for IcalTimeZone {
-    fn add_property(&mut self, property: Property) {
-        self.properties.push(property);
-    }
-
+impl<const VERIFIED: bool> Component for IcalTimeZone<VERIFIED> {
     fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
         self.properties.iter().find(|p| p.name == name)
+    }
+}
+
+impl ComponentMut for IcalTimeZone<false> {
+    fn add_property(&mut self, property: Property) {
+        self.properties.push(property);
     }
 
     fn get_property_mut<'c>(&'c mut self, name: &str) -> Option<&'c mut Property> {
@@ -338,12 +358,14 @@ impl IcalTimeZoneTransition {
 }
 
 impl Component for IcalTimeZoneTransition {
-    fn add_property(&mut self, property: Property) {
-        self.properties.push(property);
-    }
-
     fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
         self.properties.iter().find(|p| p.name == name)
+    }
+}
+
+impl ComponentMut for IcalTimeZoneTransition {
+    fn add_property(&mut self, property: Property) {
+        self.properties.push(property);
     }
 
     fn get_property_mut<'c>(&'c mut self, name: &str) -> Option<&'c mut Property> {
@@ -374,12 +396,14 @@ impl IcalFreeBusy {
 }
 
 impl Component for IcalFreeBusy {
-    fn add_property(&mut self, property: Property) {
-        self.properties.push(property);
-    }
-
     fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
         self.properties.iter().find(|p| p.name == name)
+    }
+}
+
+impl ComponentMut for IcalFreeBusy {
+    fn add_property(&mut self, property: Property) {
+        self.properties.push(property);
     }
 
     fn get_property_mut<'c>(&'c mut self, name: &str) -> Option<&'c mut Property> {

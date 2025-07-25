@@ -23,7 +23,17 @@ pub(crate) fn split_line<T: Into<String>>(str: T) -> String {
     let mut chars = str.chars();
     let mut first = true;
     let sub_string = (0..)
-        .map(|_| chars.by_ref().take(if first { first = false; 75 } else { 74 }).collect::<String>())
+        .map(|_| {
+            chars
+                .by_ref()
+                .take(if first {
+                    first = false;
+                    75
+                } else {
+                    74
+                })
+                .collect::<String>()
+        })
         .take_while(|s| !s.is_empty())
         .collect::<Vec<_>>();
     sub_string.join("\r\n ")
@@ -191,7 +201,7 @@ generate_emitter!(IcalFreeBusy, "VFREEBUSY", properties);
 generate_emitter!(IcalJournal, "VJOURNAL", properties);
 generate_emitter!(IcalEvent, "VEVENT", properties, alarms);
 generate_emitter!(IcalTodo, "VTODO", properties, alarms);
-generate_emitter!(IcalTimeZone, "VTIMEZONE", properties, transitions);
+generate_emitter!(IcalTimeZone<true>, "VTIMEZONE", properties, transitions);
 generate_emitter!(
     IcalCalendar,
     "VCALENDAR",

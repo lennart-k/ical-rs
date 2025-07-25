@@ -26,13 +26,22 @@ pub enum ParserError {
     MissingHeader,
     #[error("property error: {0}")]
     PropertyError(#[from] PropertyError),
+    #[error("missing property: {0}")]
+    MissingProperty(&'static str),
 }
 
-/// An interface for an Ical/Vcard component.
+/// An immutable interface for an Ical/Vcard component.
+/// This is also implemented by verified components
+pub trait Component {
+    /// Find a given property.
+    fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property>;
+}
+
+/// A mutable interface for an Ical/Vcard component.
 ///
 /// It take a `PropertyParser` and fill the component with. It's also able to create
 /// sub-component used by event and alarms.
-pub trait Component {
+pub trait ComponentMut: Component {
     /// Add the givent sub component.
     fn add_sub_component<B: BufRead>(
         &mut self,
@@ -43,8 +52,6 @@ pub trait Component {
     /// Add the givent property.
     fn add_property(&mut self, property: Property);
 
-    /// Find a given property.
-    fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property>;
     fn get_property_mut<'c>(&'c mut self, name: &str) -> Option<&'c mut Property>;
 
     /// Parse the content from `line_parser` and fill the component with.
@@ -72,7 +79,6 @@ pub trait Component {
                 _ => self.add_property(line),
             };
         }
-
         Ok(())
     }
 }
