@@ -1,6 +1,9 @@
 use crate::{
     ical_property,
-    parser::{ComponentMut, ParserError},
+    parser::{
+        ical::component::{IcalAlarm, IcalJournal, IcalTodo},
+        ComponentMut, ParserError,
+    },
 };
 use parser::ical::component::{IcalCalendar, IcalEvent, IcalTimeZone};
 use property::Property;
@@ -85,7 +88,22 @@ impl Finalizer {
         self
     }
 
-    pub fn add_tz(mut self, tz: IcalTimeZone<true>) -> Self {
+    pub fn add_alarm(mut self, ev: IcalAlarm) -> Self {
+        self.0.cal.alarms.push(ev);
+        self
+    }
+
+    pub fn add_todo(mut self, ev: IcalTodo) -> Self {
+        self.0.cal.todos.push(ev);
+        self
+    }
+
+    pub fn add_journal(mut self, ev: IcalJournal) -> Self {
+        self.0.cal.journals.push(ev);
+        self
+    }
+
+    pub fn add_tz(mut self, tz: IcalTimeZone) -> Self {
         self.0.cal.timezones.push(tz);
         self
     }
