@@ -3,11 +3,16 @@
 [![Latest version](https://img.shields.io/crates/v/ical.svg)](https://crates.io/crates/ical)
 [![Documentation](https://docs.rs/ical/badge.svg)](https://docs.rs/ical)
 
+> ![NOTE]
+> This is a fork of [ical-rs](https://github.com/Peltoche/ical-rs) aiming to add some more validation and accessors to calendar components,
+> e.g. to verify whether a `VTIMEZONE` has exactly one `TZID` and to provide more ergonomic getters for properties.
+> I'll keep this a fork until I converge on an implementation and then see if it makes sense to open up a pull request.
+
 # ical-rs
 
 This library parses the iCalendar format defined in [RFC5545](http://tools.ietf.org/html/rfc5545), as well as similar formats like vCard.
 
-There are probably some issues to be taken care of, but the library should work for most cases. 
+There are probably some issues to be taken care of, but the library should work for most cases.
 If you like to help out and would like to discuss any API changes, please [contact me](dev@halium.fr) or create an issue.
 
 Initially, the goal was to port the JavaScript [ical.js](https://github.com/mozilla-comm/ical.js) library.
@@ -32,15 +37,15 @@ cargo add ical
 
 ## Overview
 
-There are several ways to use the `ical` crate, depending on the level of parsing you want. 
+There are several ways to use the `ical` crate, depending on the level of parsing you want.
 Some new wrappers/formatters could appear in future releases.
 
 By default all the features are included, but you can include only the features you need in your project.
 
 #### Warning
+
   The parsers (`PropertyParser` and `IcalParser`) only parse the content and uppercase the case-insensitive fields.
   No checks are made on the fields’ validity.
-
 
 ### `IcalParser` / `VcardParser`
 
@@ -52,6 +57,7 @@ Each component can contains properties (ie: `Property`) or sub-components.
 * The `VcardParser` returns `VcardContact`
 
 Cargo.toml:
+
 ```toml
 [dependencies.ical]
 version = "0.10"
@@ -60,6 +66,7 @@ features = ["ical", "vcard"]
 ```
 
 Code:
+
 ```rust
 extern crate ical;
 
@@ -79,6 +86,7 @@ fn main() {
 ```
 
 Output:
+
 ```
 IcalCalendar {
   properties: [],
@@ -104,17 +112,18 @@ IcalCalendar {
 
 Parse the result of `LineReader` into three parts:
 
-- The name of the line attribute formatted in uppercase.
-- A vector of `(key, value)` tuples for the parameters:
-    - The param key is formatted in uppercase.
-    - The param value is untouched.
-- The property value is untouched.
+* The name of the line attribute formatted in uppercase.
+* A vector of `(key, value)` tuples for the parameters:
+  * The param key is formatted in uppercase.
+  * The param value is untouched.
+* The property value is untouched.
 
 It works for both the vCard and iCal formats.
 
-#### Example:
+#### Example
 
 Cargo.toml:
+
 ```toml
 [dependencies.ical]
 version = "0.10"
@@ -123,6 +132,7 @@ features = ["property"]
 ```
 
 Code:
+
 ```rust
 extern crate ical;
 
@@ -142,6 +152,7 @@ fn main() {
 ```
 
 Input -> Output:
+
 ```
 begin:VCALENDAR                           Ok(Property { name: "BEGIN", params: None, value: Some("VCALENDAR") })
 ATTENDEE;cn=FooBar:mailto:foo3@bar    ->  Ok(Property { name: "ATTENDEE", params: Some([("CN", "FooBar")]), value: Some("mailto:foo3@bar") })
@@ -155,9 +166,10 @@ This is a very low-level parser. It cleans empty lines and unfolds them.
 
 It work for both the vCard and iCal formats.
 
-#### Example:
+#### Example
 
 Cargo.toml:
+
 ```toml
 [dependencies.ical]
 version = "0.10"
@@ -166,6 +178,7 @@ features = ["line"]
 ```
 
 Code:
+
 ```rust
 extern crate ical;
 
@@ -205,6 +218,7 @@ ics-files, even so the `IcalEventBuilder` helps to stick to the
 formalities.
 
 Cargo.toml:
+
 ```toml
 [dependencies.ical]
 version = "0.10"
@@ -213,6 +227,7 @@ features = ["ical", "vcard", "generator"]
 ```
 
 Code:
+
 ```rust
 extern crate ical;
 
