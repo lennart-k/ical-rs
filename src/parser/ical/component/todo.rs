@@ -21,6 +21,14 @@ impl IcalTodo<false> {
     }
 }
 
+impl IcalTodo<true> {
+    pub fn get_uid(&self) -> &str {
+        self.get_property("UID")
+            .and_then(|prop| prop.value.as_deref())
+            .expect("already verified that this must exist")
+    }
+}
+
 impl<const VERIFIED: bool> Component for IcalTodo<VERIFIED> {
     const NAMES: &[&str] = &["VTODO"];
     type Unverified = IcalTodo<false>;
@@ -62,6 +70,14 @@ impl ComponentMut for IcalTodo<false> {
     }
 
     fn verify(self) -> Result<IcalTodo<true>, ParserError> {
+        if self
+            .get_property("UID")
+            .and_then(|prop| prop.value.as_ref())
+            .is_none()
+        {
+            return Err(ParserError::MissingProperty("UID"));
+        }
+
         Ok(IcalTodo {
             properties: self.properties,
             alarms: self.alarms,

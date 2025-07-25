@@ -21,6 +21,14 @@ impl IcalEvent<false> {
     }
 }
 
+impl IcalEvent<true> {
+    pub fn get_uid(&self) -> &str {
+        self.get_property("UID")
+            .and_then(|prop| prop.value.as_deref())
+            .expect("already verified that this must exist")
+    }
+}
+
 impl<const VERIFIED: bool> Component for IcalEvent<VERIFIED> {
     const NAMES: &[&str] = &["VEVENT"];
     type Unverified = IcalEvent<false>;
@@ -62,6 +70,14 @@ impl ComponentMut for IcalEvent<false> {
     }
 
     fn verify(self) -> Result<IcalEvent<true>, ParserError> {
+        if self
+            .get_property("UID")
+            .and_then(|prop| prop.value.as_ref())
+            .is_none()
+        {
+            return Err(ParserError::MissingProperty("UID"));
+        }
+
         Ok(IcalEvent {
             properties: self.properties,
             alarms: self.alarms,

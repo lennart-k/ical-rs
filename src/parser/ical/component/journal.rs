@@ -19,6 +19,14 @@ impl IcalJournal<false> {
     }
 }
 
+impl IcalJournal<true> {
+    pub fn get_uid(&self) -> &str {
+        self.get_property("UID")
+            .and_then(|prop| prop.value.as_deref())
+            .expect("already verified that this must exist")
+    }
+}
+
 impl<const VERIFIED: bool> Component for IcalJournal<VERIFIED> {
     const NAMES: &[&str] = &["VJOURNAL"];
     type Unverified = IcalJournal<false>;
@@ -50,6 +58,14 @@ impl ComponentMut for IcalJournal<false> {
     }
 
     fn verify(self) -> Result<IcalJournal<true>, ParserError> {
+        if self
+            .get_property("UID")
+            .and_then(|prop| prop.value.as_ref())
+            .is_none()
+        {
+            return Err(ParserError::MissingProperty("UID"));
+        }
+
         Ok(IcalJournal {
             properties: self.properties,
         })
