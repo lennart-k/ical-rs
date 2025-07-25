@@ -358,16 +358,13 @@ pub struct IcalTimeZone<const VERIFIED: bool = true> {
 impl IcalTimeZone {
     pub fn get_tzid(&self) -> &str {
         self.get_property("TZID")
-            .expect("we already verified this exists")
-            .value
-            .as_ref()
+            .and_then(|prop| prop.value.as_ref())
             .expect("we already verified this exists")
     }
 
     /// This is a common property containing a timezone identifier from the IANA TZDB
     pub fn get_lic_location(&self) -> Option<&str> {
         self.get_property("X-LIC-LOCATION")
-            .as_ref()
             .and_then(|prop| prop.value.as_deref())
     }
 }

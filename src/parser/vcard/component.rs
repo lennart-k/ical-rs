@@ -24,6 +24,14 @@ impl VcardContact<false> {
     }
 }
 
+impl VcardContact<true> {
+    pub fn get_uid(&self) -> &str {
+        self.get_property("UID")
+            .and_then(|prop| prop.value.as_ref())
+            .expect("we already verified this exists")
+    }
+}
+
 impl<const VERIFIED: bool> Component for VcardContact<VERIFIED> {
     type Unverified = VcardContact<false>;
 
@@ -54,6 +62,14 @@ impl ComponentMut for VcardContact<false> {
     }
 
     fn verify(self) -> Result<Self::Verified, ParserError> {
+        if self
+            .get_property("UID")
+            .and_then(|prop| prop.value.as_ref())
+            .is_none()
+        {
+            return Err(ParserError::MissingProperty("UID"));
+        }
+
         Ok(VcardContact {
             properties: self.properties,
         })
