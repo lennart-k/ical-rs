@@ -13,6 +13,7 @@ pub mod vcard;
 use std::io::BufRead;
 use std::{cell::RefCell, marker::PhantomData};
 
+use crate::types::InvalidDuration;
 // Internal mods
 use crate::{
     LineReader,
@@ -33,6 +34,8 @@ pub enum ParserError {
     MissingProperty(&'static str),
     #[error("property conflict: {0}")]
     PropertyConflict(&'static str),
+    #[error(transparent)]
+    InvalidDuration(#[from] InvalidDuration),
 }
 
 /// An immutable interface for an Ical/Vcard component.

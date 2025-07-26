@@ -1,7 +1,6 @@
+use crate::property::Property;
 use chrono::Duration;
 use lazy_static::lazy_static;
-
-use crate::property::Property;
 
 lazy_static! {
     static ref RE_DURATION: regex::Regex = regex::Regex::new(

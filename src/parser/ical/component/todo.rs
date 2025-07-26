@@ -42,8 +42,10 @@ impl IcalTodo<true> {
         self.get_property("DUE")
     }
 
-    pub fn get_duration(&self) -> Option<&Property> {
+    #[cfg(feature = "chrono")]
+    pub fn get_duration(&self) -> Option<chrono::Duration> {
         self.get_property("DURATION")
+            .and_then(|prop| Option::<chrono::Duration>::try_from(prop).unwrap())
     }
 
     pub fn get_rrule(&self) -> Option<&Property> {
@@ -106,6 +108,11 @@ impl ComponentMut for IcalTodo<false> {
             .is_none()
         {
             return Err(ParserError::MissingProperty("DTSTAMP"));
+        }
+
+        #[cfg(feature = "chrono")]
+        if let Some(prop) = self.get_property("DURATION") {
+            Option::<chrono::Duration>::try_from(prop)?;
         }
 
         if self.get_property("DUE").is_some() && self.get_property("DURATION").is_some() {
