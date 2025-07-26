@@ -135,7 +135,7 @@ impl ComponentMut for IcalEvent<false> {
             alarms: self.alarms,
         };
 
-        #[cfg(test)]
+        #[cfg(feature = "test")]
         {
             // Verify that the conditions for our getters are actually met
             verified.get_uid();

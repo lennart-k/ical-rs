@@ -115,18 +115,12 @@ impl ComponentMut for IcalTodo<false> {
             Option::<chrono::Duration>::try_from(prop)?;
         }
 
-        if self.get_property("DUE").is_some() && self.get_property("DURATION").is_some() {
-            return Err(ParserError::PropertyConflict(
-                "both DUE and DURATION are defined",
-            ));
-        }
-
         let verified = IcalTodo {
             properties: self.properties,
             alarms: self.alarms,
         };
 
-        #[cfg(test)]
+        #[cfg(feature = "test")]
         {
             // Verify that the conditions for our getters are actually met
             verified.get_uid();

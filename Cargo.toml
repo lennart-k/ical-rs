@@ -37,6 +37,7 @@ serde-derive = ["serde"]
 generator = ["ical"]
 chrono-tz = ["dep:chrono-tz"]
 chrono = ["dep:chrono", "dep:regex", "dep:lazy_static"]
+test = []
 
 [lib]
 doc = true

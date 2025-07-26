@@ -88,7 +88,7 @@ impl ComponentMut for IcalJournal<false> {
             properties: self.properties,
         };
 
-        #[cfg(test)]
+        #[cfg(feature = "test")]
         {
             // Verify that the conditions for our getters are actually met
             verified.get_uid();

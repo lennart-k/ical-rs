@@ -153,6 +153,30 @@ pub mod parser {
     }
 
     #[test]
+    fn ical_example_todo() {
+        let input = include_bytes!("./resources/ical_todos.ics");
+        let reader = ical::IcalParser::new(input.as_slice());
+        let references = include_str!("./resources/ical_todos.res").lines();
+
+        for (res, reference) in reader.zip(references) {
+            let output = format!("{:?}", res.unwrap());
+            assert_eq!(output, reference);
+        }
+    }
+
+    #[test]
+    fn ical_example_journal() {
+        let input = include_bytes!("./resources/ical_journals.ics");
+        let reader = ical::IcalParser::new(input.as_slice());
+        let references = include_str!("./resources/ical_journals.res").lines();
+
+        for (res, reference) in reader.zip(references) {
+            let output = format!("{:?}", res.unwrap());
+            assert_eq!(output, reference);
+        }
+    }
+
+    #[test]
     fn vcard() {
         let input = BufReader::new(File::open("./tests/resources/vcard_input.vcf").unwrap());
 
