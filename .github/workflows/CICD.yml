@@ -62,10 +62,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: tarpaulin
-          args: -o Json --all-features
-
-      - name: Coveralls
-        uses: coverallsapp/github-action@v2
+          args: --all-features --coveralls ${{ secrets.COVERALLS_TOKEN }}
 
   lints:
     name: Lints
