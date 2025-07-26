@@ -62,8 +62,15 @@ impl ComponentMut for VcardContact<false> {
     }
 
     fn verify(self) -> Result<Self::Verified, ParserError> {
-        Ok(VcardContact {
+        let verified = VcardContact {
             properties: self.properties,
-        })
+        };
+
+        #[cfg(feature = "test")]
+        {
+            verified.get_uid();
+        }
+
+        Ok(verified)
     }
 }

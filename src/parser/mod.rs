@@ -40,7 +40,7 @@ pub enum ParserError {
 
 /// An immutable interface for an Ical/Vcard component.
 /// This is also implemented by verified components
-pub trait Component {
+pub trait Component: Clone {
     const NAMES: &[&str];
 
     type Unverified: ComponentMut;
@@ -170,6 +170,15 @@ impl<B: BufRead, T: Component> Iterator for ComponentParser<B, T> {
             Ok(_) => comp.verify(),
             Err(err) => Err(err),
         };
+
+        #[cfg(feature = "test")]
+        {
+            // Run this for more test coverage
+            if let Ok(comp) = result.as_ref() {
+                let mutable = comp.clone().mutable();
+                mutable.get_properties();
+            }
+        }
 
         Some(result)
     }

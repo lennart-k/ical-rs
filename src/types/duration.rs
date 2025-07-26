@@ -80,6 +80,7 @@ mod tests {
     fn test_parse_duration() {
         assert!(parse_duration("P1D12W").is_err());
         assert!(parse_duration("P1W12D").is_err());
+        assert_eq!(parse_duration("-P12W").unwrap(), -Duration::weeks(12));
         assert_eq!(parse_duration("P12W").unwrap(), Duration::weeks(12));
         assert_eq!(parse_duration("P12D").unwrap(), Duration::days(12));
         assert_eq!(parse_duration("PT12H").unwrap(), Duration::hours(12));
