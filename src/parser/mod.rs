@@ -31,6 +31,8 @@ pub enum ParserError {
     PropertyError(#[from] PropertyError),
     #[error("missing property: {0}")]
     MissingProperty(&'static str),
+    #[error("property conflict: {0}")]
+    PropertyConflict(&'static str),
 }
 
 /// An immutable interface for an Ical/Vcard component.

@@ -25,6 +25,17 @@ impl IcalJournal<true> {
             .and_then(|prop| prop.value.as_deref())
             .expect("already verified that this must exist")
     }
+
+    pub fn get_dtstamp(&self) -> &str {
+        self.get_property("DTSTAMP")
+            .and_then(|prop| prop.value.as_deref())
+            .expect("already verified that this must exist")
+    }
+
+    pub fn get_dtstart(&self) -> Option<&str> {
+        self.get_property("DTSTART")
+            .and_then(|prop| prop.value.as_deref())
+    }
 }
 
 impl<const VERIFIED: bool> Component for IcalJournal<VERIFIED> {
@@ -64,6 +75,14 @@ impl ComponentMut for IcalJournal<false> {
             .is_none()
         {
             return Err(ParserError::MissingProperty("UID"));
+        }
+
+        if self
+            .get_property("DTSTAMP")
+            .and_then(|prop| prop.value.as_ref())
+            .is_none()
+        {
+            return Err(ParserError::MissingProperty("DTSTAMP"));
         }
 
         Ok(IcalJournal {

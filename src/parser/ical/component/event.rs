@@ -27,6 +27,32 @@ impl IcalEvent<true> {
             .and_then(|prop| prop.value.as_deref())
             .expect("already verified that this must exist")
     }
+
+    pub fn get_dtstamp(&self) -> &str {
+        self.get_property("DTSTAMP")
+            .and_then(|prop| prop.value.as_deref())
+            .expect("already verified that this must exist")
+    }
+
+    pub fn get_dtstart(&self) -> Option<&str> {
+        self.get_property("DTSTART")
+            .and_then(|prop| prop.value.as_deref())
+    }
+
+    pub fn get_dtend(&self) -> Option<&str> {
+        self.get_property("DTEND")
+            .and_then(|prop| prop.value.as_deref())
+    }
+
+    pub fn get_duration(&self) -> Option<&str> {
+        self.get_property("DURATION")
+            .and_then(|prop| prop.value.as_deref())
+    }
+
+    pub fn get_rrule(&self) -> Option<&str> {
+        self.get_property("RRULE")
+            .and_then(|prop| prop.value.as_deref())
+    }
 }
 
 impl<const VERIFIED: bool> Component for IcalEvent<VERIFIED> {
@@ -76,6 +102,29 @@ impl ComponentMut for IcalEvent<false> {
             .is_none()
         {
             return Err(ParserError::MissingProperty("UID"));
+        }
+
+        if self
+            .get_property("DTSTAMP")
+            .and_then(|prop| prop.value.as_ref())
+            .is_none()
+        {
+            return Err(ParserError::MissingProperty("DTSTAMP"));
+        }
+
+        if self.get_property("METHOD").is_none()
+            && self
+                .get_property("DTSTART")
+                .and_then(|prop| prop.value.as_ref())
+                .is_none()
+        {
+            return Err(ParserError::MissingProperty("DTSTART"));
+        }
+
+        if self.get_property("DTEND").is_some() && self.get_property("DURATION").is_some() {
+            return Err(ParserError::PropertyConflict(
+                "both DTEND and DURATION are defined",
+            ));
         }
 
         Ok(IcalEvent {

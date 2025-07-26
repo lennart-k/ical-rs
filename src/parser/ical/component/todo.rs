@@ -27,6 +27,32 @@ impl IcalTodo<true> {
             .and_then(|prop| prop.value.as_deref())
             .expect("already verified that this must exist")
     }
+
+    pub fn get_dtstamp(&self) -> &str {
+        self.get_property("DTSTAMP")
+            .and_then(|prop| prop.value.as_deref())
+            .expect("already verified that this must exist")
+    }
+
+    pub fn get_dtstart(&self) -> Option<&str> {
+        self.get_property("DTSTART")
+            .and_then(|prop| prop.value.as_deref())
+    }
+
+    pub fn get_due(&self) -> Option<&str> {
+        self.get_property("DUE")
+            .and_then(|prop| prop.value.as_deref())
+    }
+
+    pub fn get_duration(&self) -> Option<&str> {
+        self.get_property("DURATION")
+            .and_then(|prop| prop.value.as_deref())
+    }
+
+    pub fn get_rrule(&self) -> Option<&str> {
+        self.get_property("RRULE")
+            .and_then(|prop| prop.value.as_deref())
+    }
 }
 
 impl<const VERIFIED: bool> Component for IcalTodo<VERIFIED> {
@@ -76,6 +102,20 @@ impl ComponentMut for IcalTodo<false> {
             .is_none()
         {
             return Err(ParserError::MissingProperty("UID"));
+        }
+
+        if self
+            .get_property("DTSTAMP")
+            .and_then(|prop| prop.value.as_ref())
+            .is_none()
+        {
+            return Err(ParserError::MissingProperty("DTSTAMP"));
+        }
+
+        if self.get_property("DUE").is_some() && self.get_property("DURATION").is_some() {
+            return Err(ParserError::PropertyConflict(
+                "both DUE and DURATION are defined",
+            ));
         }
 
         Ok(IcalTodo {
