@@ -130,9 +130,23 @@ impl ComponentMut for IcalEvent<false> {
             Option::<chrono::Duration>::try_from(prop)?;
         }
 
-        Ok(IcalEvent {
+        let verified = IcalEvent {
             properties: self.properties,
             alarms: self.alarms,
-        })
+        };
+
+        #[cfg(test)]
+        {
+            // Verify that the conditions for our getters are actually met
+            verified.get_uid();
+            verified.get_dtstamp();
+            verified.get_dtstart();
+            verified.get_dtend();
+            #[cfg(feature = "chrono")]
+            verified.get_duration();
+            verified.get_rrule();
+        }
+
+        Ok(verified)
     }
 }

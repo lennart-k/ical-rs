@@ -27,7 +27,7 @@
 //! use std::io::BufReader;
 //! use std::fs::File;
 //!
-//! let buf = BufReader::new(File::open("./tests/ressources/vcard_input.vcf")
+//! let buf = BufReader::new(File::open("./tests/resources/vcard_input.vcf")
 //!     .unwrap());
 //!
 //! let reader = ical::PropertyParser::from_reader(buf);

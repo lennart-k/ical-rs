@@ -121,9 +121,23 @@ impl ComponentMut for IcalTodo<false> {
             ));
         }
 
-        Ok(IcalTodo {
+        let verified = IcalTodo {
             properties: self.properties,
             alarms: self.alarms,
-        })
+        };
+
+        #[cfg(test)]
+        {
+            // Verify that the conditions for our getters are actually met
+            verified.get_uid();
+            verified.get_dtstamp();
+            verified.get_dtstart();
+            verified.get_due();
+            #[cfg(feature = "chrono")]
+            verified.get_duration();
+            verified.get_rrule();
+        }
+
+        Ok(verified)
     }
 }

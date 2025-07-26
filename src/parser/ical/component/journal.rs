@@ -84,8 +84,18 @@ impl ComponentMut for IcalJournal<false> {
             return Err(ParserError::MissingProperty("DTSTAMP"));
         }
 
-        Ok(IcalJournal {
+        let verified = IcalJournal {
             properties: self.properties,
-        })
+        };
+
+        #[cfg(test)]
+        {
+            // Verify that the conditions for our getters are actually met
+            verified.get_uid();
+            verified.get_dtstamp();
+            verified.get_dtstart();
+        }
+
+        Ok(verified)
     }
 }

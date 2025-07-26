@@ -105,10 +105,19 @@ impl ComponentMut for IcalTimeZone<false> {
             return Err(ParserError::MissingProperty("TZID"));
         }
 
-        Ok(IcalTimeZone {
+        let verified = IcalTimeZone {
             properties: self.properties,
             transitions: self.transitions,
-        })
+        };
+
+        #[cfg(test)]
+        {
+            // Verify that the conditions for our getters are actually met
+            verified.get_tzid();
+            verified.get_lic_location();
+        }
+
+        Ok(verified)
     }
 }
 
