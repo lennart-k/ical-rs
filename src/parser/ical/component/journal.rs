@@ -32,9 +32,8 @@ impl IcalJournal<true> {
             .expect("already verified that this must exist")
     }
 
-    pub fn get_dtstart(&self) -> Option<&str> {
+    pub fn get_dtstart(&self) -> Option<&Property> {
         self.get_property("DTSTART")
-            .and_then(|prop| prop.value.as_deref())
     }
 }
 

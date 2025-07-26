@@ -34,24 +34,20 @@ impl IcalEvent<true> {
             .expect("already verified that this must exist")
     }
 
-    pub fn get_dtstart(&self) -> Option<&str> {
+    pub fn get_dtstart(&self) -> Option<&Property> {
         self.get_property("DTSTART")
-            .and_then(|prop| prop.value.as_deref())
     }
 
-    pub fn get_dtend(&self) -> Option<&str> {
+    pub fn get_dtend(&self) -> Option<&Property> {
         self.get_property("DTEND")
-            .and_then(|prop| prop.value.as_deref())
     }
 
-    pub fn get_duration(&self) -> Option<&str> {
+    pub fn get_duration(&self) -> Option<&Property> {
         self.get_property("DURATION")
-            .and_then(|prop| prop.value.as_deref())
     }
 
-    pub fn get_rrule(&self) -> Option<&str> {
+    pub fn get_rrule(&self) -> Option<&Property> {
         self.get_property("RRULE")
-            .and_then(|prop| prop.value.as_deref())
     }
 }
 
