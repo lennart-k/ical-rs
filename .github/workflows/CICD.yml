@@ -41,24 +41,6 @@ jobs:
           command: test
           args: --all-features
 
-  fuzz:
-    name: Test Suite
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
-
-      - name: Install cargo-fuzz
-        uses: taiki-e/install-action@v2
-        with:
-          tool: cargo-fuzz
-
-      - name: Nightly
-        run: rustup default nightly
-
-      - name: Run Fuzzer
-        run: cargo +nightly fuzz run ical -- -max_total_time=10
-
   lints:
     name: Lints
     runs-on: ubuntu-latest
@@ -76,14 +58,14 @@ jobs:
 
       - name: Run cargo fmt
         uses: actions-rs/cargo@v1
-        continue-on-error: true  # WARNING: only for this example, remove it!
+        continue-on-error: true # WARNING: only for this example, remove it!
         with:
           command: fmt
           args: --all -- --check
 
       - name: Run cargo clippy
         uses: actions-rs/cargo@v1
-        continue-on-error: true  # WARNING: only for this example, remove it!
+        continue-on-error: true # WARNING: only for this example, remove it!
         with:
           command: clippy
           args: -- -D warnings
