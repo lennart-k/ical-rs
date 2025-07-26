@@ -95,6 +95,10 @@ impl Property {
             .and_then(|(_, value)| value.iter().map(String::as_str).next())
     }
 
+    pub fn get_tzid(&self) -> Option<&str> {
+        self.get_param("TZID")
+    }
+
     pub fn get_value_type(&self) -> Option<&str> {
         self.get_param("VALUE")
     }

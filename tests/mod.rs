@@ -153,6 +153,18 @@ pub mod parser {
     }
 
     #[test]
+    fn ical_example_event() {
+        let input = include_bytes!("./resources/ical_events.ics");
+        let reader = ical::IcalParser::new(input.as_slice());
+        let references = include_str!("./resources/ical_events.res").lines();
+
+        for (res, reference) in reader.zip(references) {
+            let output = format!("{:?}", res.unwrap());
+            assert_eq!(output, reference);
+        }
+    }
+
+    #[test]
     fn ical_example_todo() {
         let input = include_bytes!("./resources/ical_todos.ics");
         let reader = ical::IcalParser::new(input.as_slice());
