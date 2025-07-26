@@ -22,9 +22,13 @@ repository = "https://travis-ci.org/Peltoche/ical-rs"
 thiserror = "2.0"
 serde = { version = "1.0", features = ["derive"], optional = true }
 chrono-tz = { version = "0.10", optional = true }
+chrono = { version = "0.4", optional = true }
+regex = { version = "1.11", optional = true }
+lazy_static = { version = "1.5", optional = true }
+
 
 [features]
-default = ["vcard", "ical"]
+default = ["vcard", "ical", "chrono", "chrono-tz"]
 ical = ["property"]
 line = []
 property = ["line"]
@@ -32,6 +36,7 @@ vcard = ["property"]
 serde-derive = ["serde"]
 generator = ["ical"]
 chrono-tz = ["dep:chrono-tz"]
+chrono = ["dep:chrono", "dep:regex", "dep:lazy_static"]
 
 [lib]
 doc = true

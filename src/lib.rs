@@ -58,3 +58,5 @@ pub use crate::line::LineReader;
 
 #[cfg(feature = "generator")]
 pub mod generator;
+
+pub mod types;

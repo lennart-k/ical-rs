@@ -94,6 +94,10 @@ impl Property {
             .find(|(key, _)| name == key)
             .and_then(|(_, value)| value.iter().map(String::as_str).next())
     }
+
+    pub fn get_value_type(&self) -> Option<&str> {
+        self.get_param("VALUE")
+    }
 }
 
 impl fmt::Display for Property {
