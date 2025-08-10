@@ -28,11 +28,11 @@ impl IcalEvent<true> {
             .expect("already verified that this must exist")
     }
 
-    pub fn get_dtstamp(&self) -> &str {
-        self.get_property("DTSTAMP")
-            .and_then(|prop| prop.value.as_deref())
-            .expect("already verified that this must exist")
-    }
+    // pub fn get_dtstamp(&self) -> &str {
+    //     self.get_property("DTSTAMP")
+    //         .and_then(|prop| prop.value.as_deref())
+    //         .expect("already verified that this must exist")
+    // }
 
     pub fn get_dtstart(&self) -> Option<&Property> {
         self.get_property("DTSTART")
@@ -102,13 +102,13 @@ impl ComponentMut for IcalEvent<false> {
             return Err(ParserError::MissingProperty("UID"));
         }
 
-        if self
-            .get_property("DTSTAMP")
-            .and_then(|prop| prop.value.as_ref())
-            .is_none()
-        {
-            return Err(ParserError::MissingProperty("DTSTAMP"));
-        }
+        // if self
+        //     .get_property("DTSTAMP")
+        //     .and_then(|prop| prop.value.as_ref())
+        //     .is_none()
+        // {
+        //     return Err(ParserError::MissingProperty("DTSTAMP"));
+        // }
 
         if self.get_property("METHOD").is_none()
             && self
@@ -139,7 +139,7 @@ impl ComponentMut for IcalEvent<false> {
         {
             // Verify that the conditions for our getters are actually met
             verified.get_uid();
-            verified.get_dtstamp();
+            // verified.get_dtstamp();
             verified.get_dtstart();
             verified.get_dtend();
             #[cfg(feature = "chrono")]
