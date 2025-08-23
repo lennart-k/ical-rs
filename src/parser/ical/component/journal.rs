@@ -3,7 +3,7 @@ use crate::{
     parser::{Component, ComponentMut, ParserError},
     property::Property,
 };
-use std::{cell::RefCell, io::BufRead};
+use std::{cell::RefCell, collections::HashSet, io::BufRead};
 
 #[derive(Debug, Clone, Default)]
 #[cfg_attr(feature = "serde-derive", derive(serde::Serialize, serde::Deserialize))]
@@ -97,5 +97,11 @@ impl ComponentMut for IcalJournal<false> {
         }
 
         Ok(verified)
+    }
+}
+
+impl<const VERIFIED: bool> IcalJournal<VERIFIED> {
+    pub fn get_tzids(&self) -> HashSet<&str> {
+        HashSet::from_iter(self.properties.iter().filter_map(|prop| prop.get_tzid()))
     }
 }
