@@ -103,6 +103,8 @@ pub mod parser {
     use std::io::BufRead;
     use std::io::BufReader;
 
+    use ical::generator::Emitter;
+
     #[test]
     fn ical() {
         let input = include_bytes!("./resources/ical_multiple.ics");
@@ -184,6 +186,19 @@ pub mod parser {
 
         for (res, reference) in reader.zip(references) {
             let output = format!("{:?}", res.unwrap());
+            assert_eq!(output, reference);
+        }
+    }
+
+    #[test]
+    fn ical_expand() {
+        let input = include_bytes!("./resources/ical_expand.ics");
+        let reader = ical::IcalParser::new(input.as_slice());
+        let references = include_str!("./resources/ical_expand.res").lines();
+
+        for (res, reference) in reader.zip(references) {
+            let cal = res.unwrap();
+            let output = format!("{:?}", cal.expand_calendar());
             assert_eq!(output, reference);
         }
     }

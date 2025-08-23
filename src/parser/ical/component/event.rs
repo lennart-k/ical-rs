@@ -1,9 +1,11 @@
+use itertools::Itertools;
+
 use crate::{
     PropertyParser,
     parser::{Component, ComponentMut, ParserError, ical::component::IcalAlarm},
     property::Property,
 };
-use std::{cell::RefCell, collections::HashSet, io::BufRead};
+use std::{cell::RefCell, io::BufRead};
 
 #[derive(Debug, Clone, Default)]
 #[cfg_attr(feature = "serde-derive", derive(serde::Serialize, serde::Deserialize))]
@@ -152,12 +154,12 @@ impl ComponentMut for IcalEvent<false> {
 }
 
 impl<const VERIFIED: bool> IcalEvent<VERIFIED> {
-    pub fn get_tzids(&self) -> HashSet<&str> {
-        HashSet::from_iter(
-            self.properties
-                .iter()
-                .filter_map(|prop| prop.get_tzid())
-                .chain(self.alarms.iter().flat_map(|alarm| alarm.get_tzids())),
-        )
+    pub fn get_tzids(&self) -> Vec<&str> {
+        self.properties
+            .iter()
+            .filter_map(|prop| prop.get_tzid())
+            .chain(self.alarms.iter().flat_map(|alarm| alarm.get_tzids()))
+            .unique()
+            .collect()
     }
 }

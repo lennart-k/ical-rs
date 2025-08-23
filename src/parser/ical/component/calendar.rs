@@ -120,3 +120,92 @@ impl ComponentMut for IcalCalendar<false> {
         })
     }
 }
+
+impl IcalCalendar<true> {
+    pub fn expand_calendar(self) -> Vec<Self> {
+        let event_cals: Vec<_> = self
+            .events
+            .into_iter()
+            .map(|event| IcalCalendar::<true> {
+                properties: self.properties.clone(),
+                timezones: self
+                    .timezones
+                    .iter()
+                    .filter(|tz| event.get_tzids().contains(&tz.get_tzid()))
+                    .cloned()
+                    .collect(),
+                events: vec![event],
+                ..Default::default()
+            })
+            .collect();
+        let alarm_cals: Vec<_> = self
+            .alarms
+            .into_iter()
+            .map(|alarm| IcalCalendar::<true> {
+                properties: self.properties.clone(),
+                timezones: self
+                    .timezones
+                    .iter()
+                    .filter(|tz| alarm.get_tzids().contains(&tz.get_tzid()))
+                    .cloned()
+                    .collect(),
+                alarms: vec![alarm],
+                ..Default::default()
+            })
+            .collect();
+        let todo_cals: Vec<_> = self
+            .todos
+            .into_iter()
+            .map(|todo| IcalCalendar::<true> {
+                properties: self.properties.clone(),
+                timezones: self
+                    .timezones
+                    .iter()
+                    .filter(|tz| todo.get_tzids().contains(&tz.get_tzid()))
+                    .cloned()
+                    .collect(),
+                todos: vec![todo],
+                ..Default::default()
+            })
+            .collect();
+        let journal_cals: Vec<_> = self
+            .journals
+            .into_iter()
+            .map(|journal| IcalCalendar::<true> {
+                properties: self.properties.clone(),
+                timezones: self
+                    .timezones
+                    .iter()
+                    .filter(|tz| journal.get_tzids().contains(&tz.get_tzid()))
+                    .cloned()
+                    .collect(),
+                journals: vec![journal],
+                ..Default::default()
+            })
+            .collect();
+        let freebusy_cals: Vec<_> = self
+            .free_busys
+            .into_iter()
+            .map(|freebusy| IcalCalendar::<true> {
+                properties: self.properties.clone(),
+                timezones: self
+                    .timezones
+                    .iter()
+                    .filter(|tz| freebusy.get_tzids().contains(&tz.get_tzid()))
+                    .cloned()
+                    .collect(),
+                free_busys: vec![freebusy],
+                ..Default::default()
+            })
+            .collect();
+
+        [
+            event_cals,
+            alarm_cals,
+            todo_cals,
+            journal_cals,
+            freebusy_cals,
+        ]
+        .concat()
+    }
+}
