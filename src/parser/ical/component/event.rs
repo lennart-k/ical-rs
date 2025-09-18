@@ -30,6 +30,10 @@ impl IcalEvent<true> {
             .expect("already verified that this must exist")
     }
 
+    pub fn get_recurrence_id(&self) -> Option<&Property> {
+        self.get_property("RECURRENCE-ID")
+    }
+
     // pub fn get_dtstamp(&self) -> &str {
     //     self.get_property("DTSTAMP")
     //         .and_then(|prop| prop.value.as_deref())
@@ -141,6 +145,7 @@ impl ComponentMut for IcalEvent<false> {
         {
             // Verify that the conditions for our getters are actually met
             verified.get_uid();
+            verified.get_recurrence_id();
             // verified.get_dtstamp();
             verified.get_dtstart();
             verified.get_dtend();
