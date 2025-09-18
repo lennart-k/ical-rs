@@ -1,5 +1,7 @@
 use std::{cell::RefCell, io::BufRead};
 
+use itertools::Itertools;
+
 use crate::{
     PropertyParser,
     parser::{
@@ -126,15 +128,23 @@ impl IcalCalendar<true> {
         let event_cals: Vec<_> = self
             .events
             .into_iter()
-            .map(|event| IcalCalendar::<true> {
+            .into_group_map_by(|e| e.get_uid().to_owned())
+            .into_iter()
+            .sorted_by_key(|(uid, _)| uid.to_owned())
+            .map(|(_uid, events)| events)
+            .map(|events| IcalCalendar::<true> {
                 properties: self.properties.clone(),
                 timezones: self
                     .timezones
                     .iter()
-                    .filter(|tz| event.get_tzids().contains(&tz.get_tzid()))
+                    .filter(|tz| {
+                        events
+                            .iter()
+                            .any(|event| event.get_tzids().contains(&tz.get_tzid()))
+                    })
                     .cloned()
                     .collect(),
-                events: vec![event],
+                events,
                 ..Default::default()
             })
             .collect();
@@ -156,30 +166,46 @@ impl IcalCalendar<true> {
         let todo_cals: Vec<_> = self
             .todos
             .into_iter()
-            .map(|todo| IcalCalendar::<true> {
+            .into_group_map_by(|e| e.get_uid().to_owned())
+            .into_iter()
+            .sorted_by_key(|(uid, _)| uid.to_owned())
+            .map(|(_uid, todos)| todos)
+            .map(|todos| IcalCalendar::<true> {
                 properties: self.properties.clone(),
                 timezones: self
                     .timezones
                     .iter()
-                    .filter(|tz| todo.get_tzids().contains(&tz.get_tzid()))
+                    .filter(|tz| {
+                        todos
+                            .iter()
+                            .any(|todo| todo.get_tzids().contains(&tz.get_tzid()))
+                    })
                     .cloned()
                     .collect(),
-                todos: vec![todo],
+                todos,
                 ..Default::default()
             })
             .collect();
         let journal_cals: Vec<_> = self
             .journals
             .into_iter()
-            .map(|journal| IcalCalendar::<true> {
+            .into_group_map_by(|e| e.get_uid().to_owned())
+            .into_iter()
+            .sorted_by_key(|(uid, _)| uid.to_owned())
+            .map(|(_uid, journals)| journals)
+            .map(|journals| IcalCalendar::<true> {
                 properties: self.properties.clone(),
                 timezones: self
                     .timezones
                     .iter()
-                    .filter(|tz| journal.get_tzids().contains(&tz.get_tzid()))
+                    .filter(|tz| {
+                        journals
+                            .iter()
+                            .any(|journal| journal.get_tzids().contains(&tz.get_tzid()))
+                    })
                     .cloned()
                     .collect(),
-                journals: vec![journal],
+                journals,
                 ..Default::default()
             })
             .collect();
