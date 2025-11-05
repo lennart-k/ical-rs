@@ -37,7 +37,7 @@ impl TryFrom<&Property> for Option<chrono::Duration> {
     }
 }
 
-#[derive(Debug, Clone, thiserror::Error)]
+#[derive(Debug, Clone, thiserror::Error, PartialEq, Eq)]
 #[error("Invalid duration: {0}")]
 pub struct InvalidDuration(String);
 
@@ -62,10 +62,10 @@ pub fn parse_duration(string: &str) -> Result<Duration, InvalidDuration> {
     if let Some(seconds) = captures.name("S") {
         duration += Duration::seconds(seconds.as_str().parse().unwrap());
     }
-    if let Some(sign) = captures.name("sign") {
-        if sign.as_str() == "-" {
-            duration = -duration;
-        }
+    if let Some(sign) = captures.name("sign")
+        && sign.as_str() == "-"
+    {
+        duration = -duration;
     }
 
     Ok(duration)

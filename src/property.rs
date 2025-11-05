@@ -51,7 +51,7 @@ use crate::{
     line::{Line, LineReader},
 };
 
-#[derive(Debug, thiserror::Error)]
+#[derive(Debug, thiserror::Error, PartialEq, Eq)]
 pub enum PropertyError {
     #[error("Line {}: Missing property name.", line)]
     MissingName { line: usize },

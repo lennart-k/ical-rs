@@ -20,7 +20,7 @@ use crate::{
     property::{Property, PropertyError, PropertyParser},
 };
 
-#[derive(Debug, thiserror::Error)]
+#[derive(Debug, thiserror::Error, PartialEq, Eq)]
 pub enum ParserError {
     #[error("invalid component")]
     InvalidComponent,
