@@ -147,7 +147,7 @@ impl<B: BufRead, T: Component> ComponentParser<B, T> {
         if line.name.to_uppercase() != "BEGIN"
             || line.value.is_none()
             || !T::NAMES.contains(&line.value.as_ref().unwrap().to_uppercase().as_str())
-            || line.params.is_some()
+            || !line.params.is_empty()
         {
             return Err(ParserError::MissingHeader);
         }

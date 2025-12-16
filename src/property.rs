@@ -72,7 +72,7 @@ pub struct Property {
     /// Property name.
     pub name: String,
     /// Property list of parameters.
-    pub params: Option<Vec<(String, Vec<String>)>>,
+    pub params: Vec<(String, Vec<String>)>,
     /// Property value.
     pub value: Option<String>,
 }
@@ -82,14 +82,13 @@ impl Property {
     pub fn new() -> Property {
         Property {
             name: String::new(),
-            params: None,
+            params: vec![],
             value: None,
         }
     }
 
     pub fn get_param(&self, name: &str) -> Option<&str> {
         self.params
-            .as_ref()?
             .iter()
             .find(|(key, _)| name == key)
             .and_then(|(_, value)| value.iter().map(String::as_str).next())
@@ -167,8 +166,6 @@ impl<B: BufRead> PropertyParser<B> {
         // If there is a PARAM_DELIMITER and it not after the VALUE_DELIMITER
         // there is arguments.
         if param_index != usize::MAX && value_index > param_index {
-            let mut param_list = Vec::new();
-
             while to_parse.starts_with(PARAM_DELIMITER) {
                 to_parse = to_parse.trim_start_matches(PARAM_DELIMITER);
 
@@ -262,12 +259,8 @@ impl<B: BufRead> PropertyParser<B> {
                     to_parse = to_parse.trim_start_matches(PARAM_VALUE_DELIMITER);
                 }
 
-                param_list.push((key.to_uppercase(), values));
+                property.params.push((key.to_uppercase(), values));
             }
-
-            property.params = Some(param_list);
-        } else {
-            property.params = None;
         }
 
         // Parse value

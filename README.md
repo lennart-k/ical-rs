@@ -154,10 +154,10 @@ fn main() {
 Input -> Output:
 
 ```
-begin:VCALENDAR                           Ok(Property { name: "BEGIN", params: None, value: Some("VCALENDAR") })
-ATTENDEE;cn=FooBar:mailto:foo3@bar    ->  Ok(Property { name: "ATTENDEE", params: Some([("CN", "FooBar")]), value: Some("mailto:foo3@bar") })
-DESCRIPTION:                              Ok(Property { name: "DESCRIPTION": params: None, value: None })
-END:VCALENDAR                             Ok(Property { name: "END", params: None, value: Some("VCALENDAR") })
+begin:VCALENDAR                           Ok(Property { name: "BEGIN", params: [], value: Some("VCALENDAR") })
+ATTENDEE;cn=FooBar:mailto:foo3@bar    ->  Ok(Property { name: "ATTENDEE", params: [("CN", "FooBar")], value: Some("mailto:foo3@bar") })
+DESCRIPTION:                              Ok(Property { name: "DESCRIPTION": params: [], value: None })
+END:VCALENDAR                             Ok(Property { name: "END", params: [], value: Some("VCALENDAR") })
 ```
 
 ### `LineReader`

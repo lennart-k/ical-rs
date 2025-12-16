@@ -64,10 +64,10 @@ mod helper {
     ///         );
     /// let debug_output = "Property { \
     ///     name: \"NAME\", \
-    ///     params: Some([\
+    ///     params: [\
     ///         (\"param2\", [\"pvalue1\", \"pvalue2\"]), \
     ///         (\"param3\", [\"pvalue3\"])\
-    ///     ]), \
+    ///     ], \
     ///     value: Some(\"value\") \
     /// }";
     /// assert_eq!(debug_output, format!("{:?}", prop));
@@ -78,14 +78,14 @@ mod helper {
             Property {
                 name: String::from($name),
                 value: Some($value.into()),
-                params: None,
+                params: vec![],
             }
         };
         ($name:literal, $value:expr, $($params:expr),+) => {
             Property {
                 name: String::from($name),
                 value: Some(String::from($value)),
-                params: Some(vec![$($params,)+]),
+                params: vec![$($params,)+],
             }
         };
     }
