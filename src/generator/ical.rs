@@ -59,7 +59,7 @@ pub(crate) fn protect_params(param: &String) -> String {
     let str = param.as_str();
     let len = str.len() - 1;
     // starts and ends the param with quotes?
-    let in_quotes = len > 1 && &str[0..1] == "\"" && &str[len..] == "\"";
+    let in_quotes = len > 1 && str.starts_with('"') && str.ends_with('"');
 
     let to_escape: Vec<(usize, char)> = str
         .chars()
@@ -74,6 +74,7 @@ pub(crate) fn protect_params(param: &String) -> String {
     for (pos, ch) in to_escape.iter().rev() {
         let pos = *pos;
         if ch == &'\n' {
+            // Replace \n with \\n
             ret.replace_range(pos..pos + 1, "\\n");
         } else if pos > 0 && pos < len && &str[pos - 1..pos] != "\\" {
             ret.insert(pos, '\\');
@@ -129,6 +130,7 @@ mod should {
             protect_params(&String::from("First\nSecond")),
             "First\\nSecond,"
         );
+        assert_eq!(protect_params(&String::from("ÄÖÜßø")), "ÄÖÜßø,");
     }
 }
 
