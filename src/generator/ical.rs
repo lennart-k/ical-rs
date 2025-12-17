@@ -1,3 +1,5 @@
+use itertools::Itertools;
+
 use crate::parser::ical::component::{
     IcalAlarm, IcalCalendar, IcalEvent, IcalFreeBusy, IcalJournal, IcalTimeZone,
     IcalTimeZoneTransition, IcalTodo,
@@ -12,10 +14,6 @@ pub trait Emitter {
     /// creates a textual-representation of this object and all it's properties
     /// in ical-format.
     fn generate(&self) -> String;
-}
-
-fn get_value(value: &Option<String>) -> String {
-    VALUE_DELIMITER.to_string() + value.as_ref().unwrap_or(&String::new())
 }
 
 pub(crate) fn split_line<T: Into<String>>(str: T) -> String {
@@ -55,37 +53,37 @@ pub(crate) fn split_line<T: Into<String>>(str: T) -> String {
 //     character set, DQUOTE, ";", ":", "\", ","
 //
 #[allow(clippy::ptr_arg)]
-pub(crate) fn protect_params(param: &String) -> String {
-    let str = param.as_str();
-    let len = str.len() - 1;
+pub(crate) fn protect_param(param: &str) -> String {
+    // let len = param.len() - 1;
     // starts and ends the param with quotes?
-    let in_quotes = len > 1 && str.starts_with('"') && str.ends_with('"');
+    let in_quotes = param.len() > 1 && param.starts_with('"') && param.ends_with('"');
 
-    let to_escape: Vec<(usize, char)> = str
-        .chars()
-        .enumerate()
-        .filter(|(_, c)| {
-            c == &'\"'
-                || c == &'\n'
-                || !in_quotes && (c == &';' || c == &':' || c == &',' || c == &'\\')
-        })
-        .collect();
-    let mut ret = param.to_string();
-    for (pos, ch) in to_escape.iter().rev() {
-        let pos = *pos;
-        if ch == &'\n' {
-            // Replace \n with \\n
-            ret.replace_range(pos..pos + 1, "\\n");
-        } else if pos > 0 && pos < len && &str[pos - 1..pos] != "\\" {
-            ret.insert(pos, '\\');
+    let mut escaped = String::new();
+    let mut previous_char = None;
+    for (pos, char) in param.chars().enumerate() {
+        match char {
+            '\n' => {
+                escaped.push_str("\\n");
+            }
+            '"' if !in_quotes || (pos > 0 && pos < param.len() - 1) => {
+                escaped.push_str("\\\"");
+            }
+            ';' | ':' | ',' | '\\' if !in_quotes && previous_char != Some('\\') => {
+                escaped.push('\\');
+                escaped.push(char)
+            }
+            _ => {
+                escaped.push(char);
+            }
         }
+        previous_char = Some(char);
     }
-    ret + &PARAM_VALUE_DELIMITER.to_string()
+    escaped
 }
 
 #[allow(unused)]
 mod should {
-    use crate::generator::protect_params;
+    use crate::generator::protect_param;
     use crate::generator::split_line;
 
     #[test]
@@ -109,28 +107,33 @@ mod should {
     }
 
     #[test]
-    fn protect_chars_in_params() {
+    fn protect_chars_in_param() {
         assert_eq!(
-            protect_params(&String::from("\"value: in quotes;\"")),
-            "\"value: in quotes;\","
+            protect_param("\"value: in quotes;\""),
+            "\"value: in quotes;\""
         );
         assert_eq!(
-            protect_params(&String::from("\"value, in quotes\"")),
-            "\"value, in quotes\","
+            protect_param("\"value, in quotes\""),
+            "\"value, in quotes\""
         );
         assert_eq!(
-            protect_params(&String::from("value, \"with\" something")),
-            "value\\, \\\"with\\\" something,"
+            protect_param("value, \"with\" something"),
+            "value\\, \\\"with\\\" something"
         );
         assert_eq!(
-            protect_params(&String::from("\"Directory; C:\\\\Programme\"")),
-            "\"Directory; C:\\\\Programme\","
+            protect_param("\"Directory; C:\\\\Programme\""),
+            "\"Directory; C:\\\\Programme\""
         );
+        assert_eq!(protect_param("First\nSecond"), "First\\nSecond");
         assert_eq!(
-            protect_params(&String::from("First\nSecond")),
-            "First\\nSecond,"
+            protect_param(
+                "\"42 Plantation St.\\nBaytown\\, LA 30314\\nUnited States o\r\nf America\""
+            ),
+            "\"42 Plantation St.\\nBaytown\\, LA 30314\\nUnited States o\r\\nf America\""
         );
-        assert_eq!(protect_params(&String::from("ÄÖÜßø")), "ÄÖÜßø,");
+        assert_eq!(protect_param("ÄÖÜßø"), "ÄÖÜßø");
+        assert_eq!(protect_param("\""), "\\\"");
+        assert_eq!(protect_param("ÄÖsÜa,ßø"), "ÄÖsÜa\\,ßø");
     }
 }
 
@@ -138,16 +141,30 @@ fn get_params(params: &[(String, Vec<String>)]) -> String {
     params
         .iter()
         .map(|(name, values)| {
-            let mut value = values.iter().map(protect_params).collect::<String>();
-            value.pop(); // remove last comma
-            format!("{PARAM_DELIMITER}{name}={value}")
+            let value: String = values
+                .iter()
+                .map(|value| protect_param(value))
+                .join(&PARAM_VALUE_DELIMITER.to_string());
+            format!("{name}={value}")
         })
-        .collect::<String>()
+        .join(&PARAM_DELIMITER.to_string())
 }
 
 impl Emitter for Property {
     fn generate(&self) -> String {
-        split_line(self.name.clone() + &get_params(&self.params) + &get_value(&self.value)) + "\r\n"
+        let mut output = String::new();
+        output.push_str(&self.name);
+        let params = get_params(&self.params);
+        if !params.is_empty() {
+            output.push(PARAM_DELIMITER);
+            output.push_str(&params);
+        }
+        output.push(VALUE_DELIMITER);
+        if let Some(value) = self.value.as_ref() {
+            output.push_str(value);
+        }
+        output.push_str("\r\n");
+        split_line(output)
     }
 }
 
