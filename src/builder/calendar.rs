@@ -75,28 +75,48 @@ impl Finalizer {
         self
     }
 
-    pub fn add_event(mut self, ev: IcalEvent) -> Self {
-        self.0.cal.events.push(ev);
+    pub fn add_event(self, ev: IcalEvent) -> Self {
+        self.add_events(&[ev])
+    }
+
+    pub fn add_events(mut self, evs: &[IcalEvent]) -> Self {
+        self.0.cal.events.extend_from_slice(evs);
         self
     }
 
-    pub fn add_alarm(mut self, ev: IcalAlarm) -> Self {
-        self.0.cal.alarms.push(ev);
+    pub fn add_alarm(self, alarm: IcalAlarm) -> Self {
+        self.add_alarms(&[alarm])
+    }
+
+    pub fn add_alarms(mut self, alarms: &[IcalAlarm]) -> Self {
+        self.0.cal.alarms.extend_from_slice(alarms);
         self
     }
 
-    pub fn add_todo(mut self, ev: IcalTodo) -> Self {
-        self.0.cal.todos.push(ev);
+    pub fn add_todo(self, todo: IcalTodo) -> Self {
+        self.add_todos(&[todo])
+    }
+
+    pub fn add_todos(mut self, todos: &[IcalTodo]) -> Self {
+        self.0.cal.todos.extend_from_slice(todos);
         self
     }
 
-    pub fn add_journal(mut self, ev: IcalJournal) -> Self {
-        self.0.cal.journals.push(ev);
+    pub fn add_journal(self, journal: IcalJournal) -> Self {
+        self.add_journals(&[journal])
+    }
+
+    pub fn add_journals(mut self, journals: &[IcalJournal]) -> Self {
+        self.0.cal.journals.extend_from_slice(journals);
         self
     }
 
-    pub fn add_tz(mut self, tz: IcalTimeZone) -> Self {
-        self.0.cal.timezones.push(tz);
+    pub fn add_timezone(self, tz: IcalTimeZone) -> Self {
+        self.add_timezones(&[tz])
+    }
+
+    pub fn add_timezones(mut self, tzs: &[IcalTimeZone]) -> Self {
+        self.0.cal.timezones.extend_from_slice(tzs);
         self
     }
 }
@@ -104,6 +124,7 @@ impl Finalizer {
 #[cfg(test)]
 mod tests {
     use crate::{
+        IcalParser,
         builder::{calendar::IcalCalendarBuilder, event::IcalEventBuilder},
         generator::Emitter,
         property::Property,
@@ -128,6 +149,26 @@ mod tests {
                     .build()
                     .unwrap(),
             )
+            .build()
+            .unwrap();
+        insta::assert_snapshot!(cal.generate());
+
+        let ics = include_str!("../../tests/resources/ical_everything.ics");
+        let mut ref_cal = IcalParser::new(ics.as_bytes()).next().unwrap().unwrap();
+
+        let cal = IcalCalendarBuilder::version("4.0")
+            .noscale()
+            .prodid("github.com/lennart-k/ical-rs")
+            .add_events(&ref_cal.events)
+            .set(Property {
+                name: "X-HELLO".to_string(),
+                params: vec![],
+                value: Some("Ok wow!".to_string()),
+            })
+            .add_todo(ref_cal.todos.pop().unwrap())
+            .add_alarm(ref_cal.alarms.pop().unwrap())
+            .add_timezone(ref_cal.timezones.pop().unwrap())
+            .add_journal(ref_cal.journals.pop().unwrap())
             .build()
             .unwrap();
         insta::assert_snapshot!(cal.generate());
