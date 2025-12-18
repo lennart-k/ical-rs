@@ -18,7 +18,8 @@ pub struct Finalizer(IcalCalendarBuilder);
 /// Builds a new [RFC 5545 - iCalendar Object](https://tools.ietf.org/html/rfc5545#section-3.4)
 ///
 /// ```
-/// # use ical::generator::*;
+/// # use ical::builder::*;
+/// # use ical::generator::Property;
 /// # use ical::ical_property;
 /// #
 /// let calendar = IcalCalendarBuilder::version("4.0")

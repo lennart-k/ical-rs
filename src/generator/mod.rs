@@ -1,27 +1,18 @@
-//! Generates iCal- or vCard-output.
-//!
-//! A fair knowledge of the iCal/vCard-standards is necessary to create usable files,
-//! even so the [IcalEventBuilder](struct.IcalCalendarBuilder.html) and
-//! [IcalVcardBuilder](struct.IcalVcardBuilder.html) helps to stick to the
-//! formalities.
-//!
-//! * iCal: <https://tools.ietf.org/html/rfc5545>
-//! * vCard: <https://tools.ietf.org/html/rfc2426>
-//!
-//!
-
-mod calendar_builder;
-mod event_builder;
 mod ical;
-mod vcard_builder;
+mod property;
 
-pub use self::calendar_builder::*;
-pub use self::event_builder::*;
-pub use self::ical::*;
-pub use self::vcard_builder::*;
 pub use crate::parser::ical::component::{IcalCalendar, IcalEvent};
 pub use crate::parser::vcard::component::VcardContact;
 pub use crate::property::Property;
+
+///
+/// Emits the content of the Component in ical-format.
+///
+pub trait Emitter {
+    /// creates a textual-representation of this object and all it's properties
+    /// in ical-format.
+    fn generate(&self) -> String;
+}
 
 mod helper {
 

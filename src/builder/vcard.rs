@@ -16,7 +16,8 @@ pub struct Finalizer(IcalVcardBuilder);
 /// Builds a new [RFC 2426 VCard-Entry](https://tools.ietf.org/html/rfc2426#section-2.4.2).
 ///
 /// ```
-/// # use ical::generator::*;
+/// # use ical::builder::*;
+/// # use ical::generator::Property;
 /// # use ical::ical_property;
 /// #
 /// let vcard = IcalVcardBuilder::version("4.0")
@@ -166,8 +167,7 @@ impl Finalizer {
 
 #[allow(unused)]
 mod should {
-    use crate::*;
-    use generator::vcard_builder::IcalVcardBuilder;
+    use crate::{builder::IcalVcardBuilder, *};
     use property::Property;
 
     // Example from https://en.wikipedia.org/wiki/VCard

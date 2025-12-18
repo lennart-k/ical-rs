@@ -20,7 +20,8 @@ pub struct Finalizer(IcalEventBuilder);
 /// Builds a new [RFC 5545 - Event Component](https://tools.ietf.org/html/rfc5545#section-3.6.1)
 ///
 /// ```
-/// # use ical::generator::*;
+/// # use ical::builder::*;
+/// # use ical::generator::Property;
 /// # use ical::ical_property;
 /// #
 /// let event = IcalEventBuilder::tzid("Europe/Berlin")
@@ -174,8 +175,7 @@ impl Finalizer {
 
 #[allow(unused)]
 mod should {
-    use crate::*;
-    use generator::event_builder::IcalEventBuilder;
+    use crate::{builder::event::IcalEventBuilder, *};
     use property::Property;
 
     #[test]
