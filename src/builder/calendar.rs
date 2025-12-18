@@ -109,3 +109,36 @@ impl Finalizer {
         self
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::{
+        builder::{calendar::IcalCalendarBuilder, event::IcalEventBuilder},
+        generator::Emitter,
+        property::Property,
+    };
+
+    #[test]
+    fn test_calendar_builder() {
+        let cal = IcalCalendarBuilder::version("4.0")
+            .gregorian()
+            .prodid("github.com/lennart-k/ical-rs")
+            .set(Property {
+                name: "X-HELLO".to_string(),
+                params: vec![],
+                value: Some("Ok wow!".to_string()),
+            })
+            .add_event(
+                IcalEventBuilder::tzid("Europe/Berlin")
+                    .uid("asdasd")
+                    .changed_utc("20250726T144426Z")
+                    .start("20250726T144426Z")
+                    .end("20250726T144426Z")
+                    .build()
+                    .unwrap(),
+            )
+            .build()
+            .unwrap();
+        insta::assert_snapshot!(cal.generate());
+    }
+}
