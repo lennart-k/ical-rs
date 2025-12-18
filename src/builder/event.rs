@@ -20,7 +20,7 @@ pub struct Finalizer(IcalEventBuilder);
 /// Builds a new [RFC 5545 - Event Component](https://tools.ietf.org/html/rfc5545#section-3.6.1)
 ///
 /// ```
-/// # use ical::builder::*;
+/// # use ical::builder::event::*;
 /// # use ical::generator::Property;
 /// # use ical::ical_property;
 /// #

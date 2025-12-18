@@ -9,10 +9,6 @@
 //! * vCard: <https://tools.ietf.org/html/rfc2426>
 //!
 
-mod calendar;
-mod event;
-mod vcard;
-
-pub use calendar::*;
-pub use event::*;
-pub use vcard::*;
+pub mod calendar;
+pub mod event;
+pub mod vcard;

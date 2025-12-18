@@ -11,17 +11,14 @@ impl Emitter for IcalTimeZoneTransition {
             STANDARD => "STANDARD",
             DAYLIGHT => "DAYLIGHT",
         };
-        String::from("BEGIN:")
-            + key
-            + "\r\n"
-            + &self
+        format!(
+            "BEGIN:{key}\r\n{inner}END:{key}\r\n",
+            inner = &self
                 .properties
                 .iter()
                 .map(Emitter::generate)
                 .collect::<String>()
-            + "END:"
-            + key
-            + "\r\n"
+        )
     }
 }
 
@@ -29,12 +26,11 @@ macro_rules! generate_emitter {
     ($struct:ty, $key:literal, $($prop:ident),+) => {
         impl Emitter for $struct {
             fn generate(&self) -> String {
-                let mut text = String::from("BEGIN:") + $key + "\r\n";
+                let mut text = format!("BEGIN:{key}\r\n", key = $key);
                 $(text += &self.$prop
                 .iter()
                 .map(Emitter::generate)
                 .collect::<String>();)+
-
                 text + "END:" + $key + "\r\n"
             }
         }
