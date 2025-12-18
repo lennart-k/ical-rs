@@ -1,0 +1,8 @@
+begin:vcard
+version:4.0
+fn:Alice Foobar
+n:Foobar;Alice
+email;type=internet:alice@example.org
+BEGIN:VCARD
+END:VCARD
+end:vcard

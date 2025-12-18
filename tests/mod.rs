@@ -171,6 +171,15 @@ pub mod parser {
             similar_asserts::assert_eq!(card.generate().to_lowercase(), input.to_lowercase());
         }
     }
+
+    #[test]
+    fn vcard_invalid() {
+        let input = include_str!("./resources/vcard_invalid.vcf");
+        let reader = ical::VcardParser::new(input.as_bytes());
+        for res in reader {
+            assert!(res.is_err());
+        }
+    }
 }
 
 pub mod generator {
