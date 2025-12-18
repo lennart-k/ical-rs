@@ -3,11 +3,10 @@ use crate::property::Property;
 use crate::{PARAM_DELIMITER, PARAM_VALUE_DELIMITER, VALUE_DELIMITER};
 use itertools::Itertools;
 
-pub(crate) fn split_line<T: Into<String>>(str: T) -> String {
-    let str = str.into();
+pub(crate) fn split_line(str: &str) -> String {
     let mut chars = str.chars();
     let mut first = true;
-    let sub_string = (0..)
+    (0..)
         .map(|_| {
             chars
                 .by_ref()
@@ -20,8 +19,8 @@ pub(crate) fn split_line<T: Into<String>>(str: T) -> String {
                 .collect::<String>()
         })
         .take_while(|s| !s.is_empty())
-        .collect::<Vec<_>>();
-    sub_string.join("\r\n ")
+        .collect::<Vec<_>>()
+        .join("\r\n ")
 }
 
 //
@@ -78,7 +77,7 @@ mod should {
                      nts is especially useful in the context closures and iterators, which we c\r\n \
                      over in Chapter 13. Closures and iterators create types that only the comp\r\n \
                      iler knows or types that are very long to specify.";
-        assert_eq!(text, split_line(text.replace("\r\n ", "")));
+        assert_eq!(text, split_line(&text.replace("\r\n ", "")));
     }
 
     #[test]
@@ -89,7 +88,7 @@ mod should {
                      TUVWXYZ123456ä7890ABCDEFGHIJKLM\\n\\nNOPQRSTUVWXYZ1234567890ABCDEFGHIJKLMNOP\r\n \
                      QRSTUVWXöYZ1234567890ABCDEFGHIJKLMNOPQRSTUVWX\\n\\nYZ1234567890abcdefghiÜjkl\r\n \
                      m\\nnopqrstuvwx";
-        assert_eq!(text, split_line(text.replace("\r\n ", "")));
+        assert_eq!(text, split_line(&text.replace("\r\n ", "")));
     }
 
     #[test]
@@ -150,6 +149,6 @@ impl Emitter for Property {
             output.push_str(value);
         }
         output.push_str("\r\n");
-        split_line(output)
+        split_line(&output)
     }
 }
