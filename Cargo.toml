@@ -12,7 +12,8 @@ repository = "https://github.com/Peltoche/ical-rs"
 version = "0.11.0"
 edition = "2024"
 
-[badges]
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(tarpaulin_include)'] }
 
 [badges.travis-ci]
 branch = "master"
