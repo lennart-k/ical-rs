@@ -109,6 +109,16 @@ pub mod parser {
     }
 
     #[test]
+    fn ical_special_symbols() {
+        let input = include_str!("./resources/ical_special_symbols.ics");
+        let reader = ical::IcalParser::new(input.as_bytes());
+        for res in reader {
+            let cal = res.unwrap();
+            insta::assert_debug_snapshot!(cal);
+        }
+    }
+
+    #[test]
     fn ical_example_todos() {
         let input = include_str!("./resources/ical_todos.ics");
         let reader = ical::IcalParser::new(input.as_bytes());
