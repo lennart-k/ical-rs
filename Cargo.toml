@@ -29,13 +29,8 @@ itertools = "0.14"
 
 
 [features]
-default = ["vcard", "ical", "chrono", "chrono-tz"]
-ical = ["property"]
-line = []
-property = ["line"]
-vcard = ["property"]
+default = ["chrono", "chrono-tz"]
 serde-derive = ["serde"]
-generator = ["ical"]
 chrono-tz = ["dep:chrono-tz"]
 chrono = ["dep:chrono", "dep:regex", "dep:lazy_static"]
 test = []

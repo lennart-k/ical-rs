@@ -1,4 +1,3 @@
-#[cfg(feature = "property")]
 pub mod property {
     extern crate ical;
 
@@ -60,7 +59,6 @@ pub mod property {
     }
 }
 
-#[cfg(feature = "line")]
 pub mod line {
     extern crate ical;
 
@@ -95,15 +93,12 @@ pub mod line {
     }
 }
 
-#[cfg(any(feature = "ical", feature = "vcard"))]
 pub mod parser {
     extern crate ical;
 
     use std::fs::File;
     use std::io::BufRead;
     use std::io::BufReader;
-
-    use ical::generator::Emitter;
 
     #[test]
     fn ical() {
@@ -245,7 +240,6 @@ pub mod parser {
     }
 }
 
-#[cfg(all(feature = "ical", feature = "generator"))]
 pub mod generator {
     extern crate ical;
     use self::ical::generator::Emitter;
@@ -286,7 +280,7 @@ pub mod generator {
     }
 }
 
-#[cfg(all(feature = "ical", feature = "chrono-tz"))]
+#[cfg(feature = "chrono-tz")]
 pub mod chrono_tz {
     extern crate ical;
     use self::ical::parser::ical::component::IcalTimeZone;

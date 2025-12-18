@@ -205,10 +205,7 @@ macro_rules! generate_emitter {
     };
 }
 
-#[cfg(feature = "vcard")]
 use crate::parser::vcard::component::VcardContact;
-
-#[cfg(feature = "vcard")]
 generate_emitter!(VcardContact, "VCARD", properties);
 
 generate_emitter!(IcalAlarm, "VALARM", properties);

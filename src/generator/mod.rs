@@ -15,17 +15,11 @@ mod event_builder;
 mod ical;
 mod vcard_builder;
 
-#[cfg(feature = "ical")]
 pub use self::calendar_builder::*;
-#[cfg(feature = "ical")]
 pub use self::event_builder::*;
-#[cfg(any(feature = "ical", feature = "vcard"))]
 pub use self::ical::*;
-#[cfg(feature = "vcard")]
 pub use self::vcard_builder::*;
-#[cfg(feature = "ical")]
 pub use crate::parser::ical::component::{IcalCalendar, IcalEvent};
-#[cfg(feature = "vcard")]
 pub use crate::parser::vcard::component::VcardContact;
 pub use crate::property::Property;
 

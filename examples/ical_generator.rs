@@ -1,9 +1,7 @@
 extern crate ical;
 
-#[cfg(all(feature = "ical", feature = "generator"))]
 use std::{fs::File, io::BufReader};
 
-#[cfg(all(feature = "ical", feature = "generator"))]
 fn main() {
     let buf = BufReader::new(File::open("./tests/ressources/ical_input.ics").unwrap());
 
@@ -19,9 +17,4 @@ fn main() {
             }
         }
     }
-}
-
-#[cfg(not(all(feature = "ical", feature = "generator")))]
-fn main() {
-    println!("feature=\"generator\" not set");
 }
