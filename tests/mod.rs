@@ -141,6 +141,17 @@ pub mod parser {
     }
 
     #[test]
+    fn ical_example_freebusy() {
+        let input = include_str!("./resources/ical_freebusy.ics");
+        let reader = ical::IcalParser::new(input.as_bytes());
+        for res in reader {
+            let cal = res.unwrap();
+            similar_asserts::assert_eq!(cal.generate(), input);
+            insta::assert_debug_snapshot!(cal);
+        }
+    }
+
+    #[test]
     fn ical_expand() {
         let input = include_str!("./resources/ical_expand.ics");
         let reader = ical::IcalParser::new(input.as_bytes());
