@@ -1,0 +1,82 @@
+---
+source: tests/mod.rs
+expression: cal
+---
+IcalCalendar {
+    properties: [
+        Property {
+            name: "VERSION",
+            params: [],
+            value: Some(
+                "2.0",
+            ),
+        },
+        Property {
+            name: "PRODID",
+            params: [],
+            value: Some(
+                "-//RDU Software//NONSGML HandCal//EN",
+            ),
+        },
+    ],
+    events: [],
+    alarms: [],
+    todos: [],
+    journals: [],
+    free_busys: [
+        IcalFreeBusy {
+            properties: [
+                Property {
+                    name: "ORGANIZER",
+                    params: [],
+                    value: Some(
+                        "mailto:jsmith@example.com",
+                    ),
+                },
+                Property {
+                    name: "DTSTART",
+                    params: [],
+                    value: Some(
+                        "19980313T141711Z",
+                    ),
+                },
+                Property {
+                    name: "DTEND",
+                    params: [],
+                    value: Some(
+                        "19980410T141711Z",
+                    ),
+                },
+                Property {
+                    name: "FREEBUSY",
+                    params: [],
+                    value: Some(
+                        "19980314T233000Z/19980315T003000Z",
+                    ),
+                },
+                Property {
+                    name: "FREEBUSY",
+                    params: [],
+                    value: Some(
+                        "19980316T153000Z/19980316T163000Z",
+                    ),
+                },
+                Property {
+                    name: "FREEBUSY",
+                    params: [],
+                    value: Some(
+                        "19980318T030000Z/19980318T040000Z",
+                    ),
+                },
+                Property {
+                    name: "URL",
+                    params: [],
+                    value: Some(
+                        "http://www.example.com/calendar/busytime/jsmith.ifb",
+                    ),
+                },
+            ],
+        },
+    ],
+    timezones: [],
+}
