@@ -48,15 +48,6 @@ impl CalScale {
         ProdId(self.0)
     }
 
-    /// sets the calendar scale to the given `scale`.
-    pub fn scale<S: Into<String>>(mut self, scale: S) -> ProdId {
-        self.0
-            .cal
-            .properties
-            .push(ical_property!("CALSCALE", scale));
-        ProdId(self.0)
-    }
-
     /// sets no calendar scale.
     pub fn noscale(self) -> ProdId {
         ProdId(self.0)
