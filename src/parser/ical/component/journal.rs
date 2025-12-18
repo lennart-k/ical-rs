@@ -1,11 +1,10 @@
-use itertools::Itertools;
-
 use crate::{
     PropertyParser,
     parser::{Component, ComponentMut, ParserError},
     property::Property,
 };
-use std::{cell::RefCell, io::BufRead};
+use itertools::Itertools;
+use std::io::BufRead;
 
 #[derive(Debug, Clone, Default)]
 #[cfg_attr(feature = "serde-derive", derive(serde::Serialize, serde::Deserialize))]
@@ -68,7 +67,7 @@ impl ComponentMut for IcalJournal<false> {
     fn add_sub_component<B: BufRead>(
         &mut self,
         _: &str,
-        _: &RefCell<PropertyParser<B>>,
+        _: &mut PropertyParser<B>,
     ) -> Result<(), ParserError> {
         Err(ParserError::InvalidComponent)
     }

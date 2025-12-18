@@ -1,5 +1,4 @@
 // Sys mods
-use std::cell::RefCell;
 use std::io::BufRead;
 
 #[cfg(feature = "serde-derive")]
@@ -56,7 +55,7 @@ impl ComponentMut for VcardContact<false> {
     fn add_sub_component<B: BufRead>(
         &mut self,
         _: &str,
-        _: &RefCell<PropertyParser<B>>,
+        _: &mut PropertyParser<B>,
     ) -> Result<(), ParserError> {
         Err(ParserError::InvalidComponent)
     }

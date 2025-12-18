@@ -3,7 +3,7 @@ use crate::{
     parser::{Component, ComponentMut, ParserError},
     property::Property,
 };
-use std::{cell::RefCell, io::BufRead};
+use std::io::BufRead;
 
 #[derive(Debug, Clone, Default)]
 #[cfg_attr(feature = "serde-derive", derive(serde::Serialize, serde::Deserialize))]
@@ -76,7 +76,7 @@ impl ComponentMut for IcalTimeZone<false> {
     fn add_sub_component<B: BufRead>(
         &mut self,
         value: &str,
-        line_parser: &RefCell<PropertyParser<B>>,
+        line_parser: &mut PropertyParser<B>,
     ) -> Result<(), ParserError> {
         use self::IcalTimeZoneTransitionType::{DAYLIGHT, STANDARD};
 
@@ -171,7 +171,7 @@ impl ComponentMut for IcalTimeZoneTransition<false> {
     fn add_sub_component<B: BufRead>(
         &mut self,
         _: &str,
-        _: &RefCell<PropertyParser<B>>,
+        _: &mut PropertyParser<B>,
     ) -> Result<(), ParserError> {
         Err(ParserError::InvalidComponent)
     }

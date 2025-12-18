@@ -11,7 +11,7 @@ pub mod vcard;
 
 // Sys mods
 use std::io::BufRead;
-use std::{cell::RefCell, marker::PhantomData};
+use std::marker::PhantomData;
 
 use crate::types::InvalidDuration;
 // Internal mods
@@ -64,7 +64,7 @@ pub trait ComponentMut: Component + Default {
     fn add_sub_component<B: BufRead>(
         &mut self,
         value: &str,
-        line_parser: &RefCell<PropertyParser<B>>,
+        line_parser: &mut PropertyParser<B>,
     ) -> Result<(), ParserError>;
 
     fn get_properties_mut(&mut self) -> &mut Vec<Property>;
@@ -93,13 +93,13 @@ pub trait ComponentMut: Component + Default {
     /// Parse the content from `line_parser` and fill the component with.
     fn parse<B: BufRead>(
         &mut self,
-        line_parser: &RefCell<PropertyParser<B>>,
+        line_parser: &mut PropertyParser<B>,
     ) -> Result<(), ParserError> {
         loop {
             let line: Property;
 
             {
-                line = match line_parser.borrow_mut().next() {
+                line = match line_parser.next() {
                     Some(val) => val.map_err(ParserError::PropertyError)?,
                     None => return Err(ParserError::NotComplete),
                 };
@@ -121,7 +121,7 @@ pub trait ComponentMut: Component + Default {
 
 /// Reader returning `IcalCalendar` object from a `BufRead`.
 pub struct ComponentParser<B, T: Component> {
-    line_parser: RefCell<PropertyParser<B>>,
+    line_parser: PropertyParser<B>,
     _t: PhantomData<T>,
 }
 
@@ -132,14 +132,14 @@ impl<B: BufRead, T: Component> ComponentParser<B, T> {
         let line_parser = PropertyParser::new(line_reader);
 
         ComponentParser {
-            line_parser: RefCell::new(line_parser),
+            line_parser,
             _t: Default::default(),
         }
     }
 
     /// Read the next line and check if it's a valid VCALENDAR start.
     fn check_header(&mut self) -> Result<Option<()>, ParserError> {
-        let line = match self.line_parser.borrow_mut().next() {
+        let line = match self.line_parser.next() {
             Some(val) => val.map_err(ParserError::PropertyError)?,
             None => return Ok(None),
         };
@@ -166,7 +166,7 @@ impl<B: BufRead, T: Component> Iterator for ComponentParser<B, T> {
         };
 
         let mut comp = T::Unverified::default();
-        let result = match comp.parse(&self.line_parser) {
+        let result = match comp.parse(&mut self.line_parser) {
             Ok(_) => comp.verify(),
             Err(err) => Err(err),
         };

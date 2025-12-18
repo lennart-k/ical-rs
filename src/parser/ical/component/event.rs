@@ -5,7 +5,7 @@ use crate::{
     parser::{Component, ComponentMut, ParserError, ical::component::IcalAlarm},
     property::Property,
 };
-use std::{cell::RefCell, io::BufRead};
+use std::io::BufRead;
 
 #[derive(Debug, Clone, Default)]
 #[cfg_attr(feature = "serde-derive", derive(serde::Serialize, serde::Deserialize))]
@@ -85,7 +85,7 @@ impl ComponentMut for IcalEvent<false> {
     fn add_sub_component<B: BufRead>(
         &mut self,
         value: &str,
-        line_parser: &RefCell<PropertyParser<B>>,
+        line_parser: &mut PropertyParser<B>,
     ) -> Result<(), ParserError> {
         match value {
             "VALARM" => {
