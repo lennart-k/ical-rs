@@ -1,0 +1,7 @@
+---
+source: tests/mod.rs
+expression: prop
+---
+name: X-BAZ
+params: [("PARAM1", ["VAL1:FOO"]), ("PARAM2", ["VAL2"])]
+value: Some("BAZ;BAR")

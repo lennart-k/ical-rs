@@ -1,0 +1,7 @@
+---
+source: tests/mod.rs
+expression: prop
+---
+name: ATTENDEE
+params: [("CN", ["Foo; Bar"])]
+value: Some("mailto:foo4@bar")

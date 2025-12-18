@@ -1,0 +1,7 @@
+---
+source: tests/mod.rs
+expression: prop
+---
+name: TITLE
+params: []
+value: Some("Research Scientist")

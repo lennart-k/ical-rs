@@ -1,0 +1,7 @@
+---
+source: tests/mod.rs
+expression: prop
+---
+name: X-FOO
+params: [("PARAM1", ["VAL1"])]
+value: Some("FOO;BAR")

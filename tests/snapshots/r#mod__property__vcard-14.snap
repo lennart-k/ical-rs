@@ -1,0 +1,7 @@
+---
+source: tests/mod.rs
+expression: prop
+---
+name: IMPP
+params: [("PREF", ["1"])]
+value: Some("xmpp:alice@example.com")

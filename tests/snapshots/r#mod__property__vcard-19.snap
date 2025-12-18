@@ -1,0 +1,7 @@
+---
+source: tests/mod.rs
+expression: prop
+---
+name: MEMBER
+params: []
+value: Some("urn:uuid:03a0e51f-d1aa-4385-8a53-e29025acd8af")

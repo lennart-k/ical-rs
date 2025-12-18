@@ -1,60 +1,32 @@
 pub mod property {
     extern crate ical;
 
-    use std::fs::File;
-    use std::io::BufRead;
-    use std::io::BufReader;
-
     #[test]
     fn ical() {
-        let input = include_bytes!("./resources/ical_multiple.ics");
-
-        let mut valids =
-            BufReader::new(File::open("./tests/resources/ical_property.res").unwrap()).lines();
-
-        let reader = ical::PropertyParser::from_reader(input.as_slice());
-
+        let input = include_str!("./resources/ical_multiple.ics");
+        let reader = ical::PropertyParser::from_reader(input.as_bytes());
         for res in reader {
-            let output = format!("{:?}", res.unwrap());
-            assert_eq!(output, valids.next().unwrap().unwrap());
+            let prop = res.unwrap();
+            insta::assert_snapshot!(prop);
         }
     }
 
     #[test]
     fn vcard() {
-        let input = include_bytes!("./resources/vcard_input.vcf");
-
-        let mut valids =
-            BufReader::new(File::open("./tests/resources/vcard_property.res").unwrap()).lines();
-
-        let reader = ical::PropertyParser::from_reader(input.as_slice());
-
+        let input = include_str!("./resources/vcard_input.vcf");
+        let reader = ical::PropertyParser::from_reader(input.as_bytes());
         for res in reader {
-            let contact = match res {
-                Ok(res) => res,
-                Err(err) => panic!("Throw error: {err}"),
-            };
-            let output = format!("{contact:?}");
-            assert_eq!(output, valids.next().unwrap().unwrap());
+            let prop = res.unwrap();
+            insta::assert_snapshot!(prop);
         }
     }
 
     #[test]
     fn errors() {
-        let input = BufReader::new(File::open("./tests/resources/property_error.vcf").unwrap());
-
-        let mut valids =
-            BufReader::new(File::open("./tests/resources/property_error.res").unwrap()).lines();
-
-        let reader = ical::PropertyParser::from_reader(input);
-
+        let input = include_str!("./resources/property_error.vcf");
+        let reader = ical::PropertyParser::from_reader(input.as_bytes());
         for res in reader {
-            let error = match res {
-                Ok(res) => panic!("Should return an error: {res:?}"),
-                Err(err) => err,
-            };
-            let output = format!("{error}");
-            assert_eq!(output, valids.next().unwrap().unwrap());
+            assert!(res.is_err());
         }
     }
 }
@@ -62,180 +34,131 @@ pub mod property {
 pub mod line {
     extern crate ical;
 
-    use std::fs::File;
-    use std::io::BufRead;
-    use std::io::BufReader;
+    use insta::assert_snapshot;
+    use itertools::Itertools;
 
     #[test]
     fn ical() {
         let input = include_bytes!("./resources/ical_multiple.ics");
-        let mut valids =
-            BufReader::new(File::open("./tests/resources/ical_line.res").unwrap()).lines();
-
-        let reader = ical::LineReader::new(input.as_slice());
-        for line in reader {
-            let output = format!("{line:?}");
-            assert_eq!(output, valids.next().unwrap().unwrap());
-        }
+        let lines = ical::LineReader::new(input.as_slice()).join("\n");
+        assert_snapshot!(lines);
     }
 
     #[test]
     fn vcard() {
         let input = include_bytes!("./resources/vcard_input.vcf");
-        let mut valids =
-            BufReader::new(File::open("./tests/resources/vcard_line.res").unwrap()).lines();
-
-        let reader = ical::LineReader::new(input.as_slice());
-        for line in reader {
-            let output = format!("{line:?}");
-            assert_eq!(output, valids.next().unwrap().unwrap());
-        }
+        let lines = ical::LineReader::new(input.as_slice()).join("\n");
+        assert_snapshot!(lines);
     }
 }
 
 pub mod parser {
     extern crate ical;
-
-    use std::fs::File;
-    use std::io::BufRead;
-    use std::io::BufReader;
+    use ical::generator::Emitter;
 
     #[test]
     fn ical() {
-        let input = include_bytes!("./resources/ical_multiple.ics");
-        let reader = ical::IcalParser::new(input.as_slice());
-        let valids = include_str!("./resources/ical_multiple.res").lines();
-
-        for (res, valid) in reader.zip(valids) {
-            let output = format!("{:?}", res.unwrap());
-            assert_eq!(output, valid);
+        let input = include_str!("./resources/ical_multiple.ics");
+        let reader = ical::IcalParser::new(input.as_bytes());
+        for res in reader {
+            let cal = res.unwrap();
+            insta::assert_debug_snapshot!(cal);
         }
     }
 
     #[test]
     fn ical_example_1() {
-        let input = include_bytes!("./resources/ical_example_1.ics");
-        let reader = ical::IcalParser::new(input.as_slice());
-        let valids = include_str!("./resources/ical_example_1.res").replace('\n', "");
-
+        let input = include_str!("./resources/ical_example_1.ics");
+        let reader = ical::IcalParser::new(input.as_bytes());
         for res in reader {
-            let output = format!("{:?}", res.unwrap());
-            assert_eq!(output, valids);
+            let cal = res.unwrap();
+            insta::assert_debug_snapshot!(cal);
         }
     }
 
     #[test]
-    // same as ical_example_1 but with \r\n endings instead of \n.
     fn ical_example_2() {
-        let input = include_bytes!("./resources/ical_example_2.ics");
-        let reader = ical::IcalParser::new(input.as_slice());
-        let valids = include_str!("./resources/ical_example_2.res").replace('\n', "");
-
+        let input = include_str!("./resources/ical_example_2.ics");
+        let reader = ical::IcalParser::new(input.as_bytes());
         for res in reader {
-            let output = format!("{:?}", res.unwrap());
-            assert_eq!(output, valids);
+            let cal = res.unwrap();
+            insta::assert_debug_snapshot!(cal);
         }
     }
 
     #[test]
     fn ical_example_rrule() {
-        let input = include_bytes!("./resources/ical_example_rrule.ics");
-        let reader = ical::IcalParser::new(input.as_slice());
-        let reference = include_str!("./resources/ical_example_rrule.res").replace('\n', "");
-
+        let input = include_str!("./resources/ical_example_rrule.ics");
+        let reader = ical::IcalParser::new(input.as_bytes());
         for res in reader {
-            let output = format!("{:?}", res.unwrap());
-            assert_eq!(output, reference);
+            let cal = res.unwrap();
+            similar_asserts::assert_eq!(cal.generate(), input);
+            insta::assert_debug_snapshot!(cal);
         }
     }
 
     #[test]
-    fn ical_example_event() {
-        let input = include_bytes!("./resources/ical_events.ics");
-        let reader = ical::IcalParser::new(input.as_slice());
-        let references = include_str!("./resources/ical_events.res").lines();
-
-        for (res, reference) in reader.zip(references) {
-            let output = format!("{:?}", res.unwrap());
-            assert_eq!(output, reference);
+    fn ical_example_events() {
+        let input = include_str!("./resources/ical_events.ics");
+        let reader = ical::IcalParser::new(input.as_bytes());
+        for res in reader {
+            let cal = res.unwrap();
+            similar_asserts::assert_eq!(cal.generate(), input);
+            insta::assert_debug_snapshot!(cal);
         }
     }
 
     #[test]
-    fn ical_example_todo() {
-        let input = include_bytes!("./resources/ical_todos.ics");
-        let reader = ical::IcalParser::new(input.as_slice());
-        let references = include_str!("./resources/ical_todos.res").lines();
-
-        for (res, reference) in reader.zip(references) {
-            let output = format!("{:?}", res.unwrap());
-            assert_eq!(output, reference);
+    fn ical_example_todos() {
+        let input = include_str!("./resources/ical_todos.ics");
+        let reader = ical::IcalParser::new(input.as_bytes());
+        for res in reader {
+            let cal = res.unwrap();
+            similar_asserts::assert_eq!(cal.generate(), input);
+            insta::assert_debug_snapshot!(cal);
         }
     }
 
     #[test]
-    fn ical_example_journal() {
-        let input = include_bytes!("./resources/ical_journals.ics");
-        let reader = ical::IcalParser::new(input.as_slice());
-        let references = include_str!("./resources/ical_journals.res").lines();
-
-        for (res, reference) in reader.zip(references) {
-            let output = format!("{:?}", res.unwrap());
-            assert_eq!(output, reference);
+    fn ical_example_journals() {
+        let input = include_str!("./resources/ical_journals.ics");
+        let reader = ical::IcalParser::new(input.as_bytes());
+        for res in reader {
+            let cal = res.unwrap();
+            similar_asserts::assert_eq!(cal.generate(), input);
+            insta::assert_debug_snapshot!(cal);
         }
     }
 
     #[test]
     fn ical_expand() {
-        let input = include_bytes!("./resources/ical_expand.ics");
-        let reader = ical::IcalParser::new(input.as_slice());
-        let references = include_str!("./resources/ical_expand.res").lines();
-
-        for (res, reference) in reader.zip(references) {
+        let input = include_str!("./resources/ical_expand.ics");
+        let reader = ical::IcalParser::new(input.as_bytes());
+        for res in reader {
             let cal = res.unwrap();
-            let output = format!("{:?}", cal.expand_calendar());
-            assert_eq!(output, reference);
+            similar_asserts::assert_eq!(cal.generate(), input);
+            insta::assert_debug_snapshot!(cal.expand_calendar());
         }
     }
 
     #[test]
     fn vcard() {
-        let input = BufReader::new(File::open("./tests/resources/vcard_input.vcf").unwrap());
-
-        let mut valids =
-            BufReader::new(File::open("./tests/resources/vcard_parser.res").unwrap()).lines();
-
-        let reader = ical::VcardParser::new(input);
-
+        let input = include_str!("./resources/vcard_input.vcf");
+        let reader = ical::VcardParser::new(input.as_bytes());
         for res in reader {
-            let contact = match res {
-                Ok(res) => res,
-                Err(err) => panic!("Throw error: {err}"),
-            };
-
-            let output = format!("{contact:?}");
-
-            assert_eq!(output, valids.next().unwrap().unwrap());
+            let card = res.unwrap();
+            insta::assert_debug_snapshot!(card);
         }
     }
 
     #[test]
     fn vcard_lowercase() {
-        let input = BufReader::new(File::open("./tests/resources/vcard_lowercase.vcf").unwrap());
-
-        let mut valids =
-            BufReader::new(File::open("./tests/resources/vcard_lowercase.res").unwrap()).lines();
-
-        let reader = ical::VcardParser::new(input);
-
+        let input = include_str!("./resources/vcard_lowercase.vcf");
+        let reader = ical::VcardParser::new(input.as_bytes());
         for res in reader {
-            let contact = match res {
-                Ok(res) => res,
-                Err(err) => panic!("Throw error: {err:?}"),
-            };
-
-            let output = format!("{contact:?}");
-            assert_eq!(output, valids.next().unwrap().unwrap());
+            let card = res.unwrap();
+            insta::assert_debug_snapshot!(card);
+            similar_asserts::assert_eq!(card.generate().to_lowercase(), input.to_lowercase());
         }
     }
 }
@@ -243,40 +166,27 @@ pub mod parser {
 pub mod generator {
     extern crate ical;
     use self::ical::generator::Emitter;
-    use std::fs::File;
-    use std::io::BufRead;
-    use std::io::BufReader;
 
     #[test]
     fn generate_o365_test() {
-        let filename = "./tests/resources/o365_meeting.ics";
-
-        let original = BufReader::new(File::open(filename).unwrap())
-            .lines()
-            .map(|line| line.unwrap() + "\r\n")
-            .collect::<String>();
-
-        let input = BufReader::new(File::open(filename).unwrap());
-        let mut reader = ical::IcalParser::new(input);
-        let generated = reader.next().unwrap().ok().unwrap().generate();
-
-        assert_eq!(&generated, &original);
+        let input = include_str!("./resources/o365_meeting.ics");
+        let reader = ical::IcalParser::new(input.as_bytes());
+        for res in reader {
+            let cal = res.unwrap();
+            similar_asserts::assert_eq!(cal.generate(), input);
+            insta::assert_debug_snapshot!(cal);
+        }
     }
 
     #[test]
     fn generate_sabre_test() {
-        let filename = "./tests/resources/sabre_test.ics";
-
-        let original = BufReader::new(File::open(filename).unwrap())
-            .lines()
-            .map(|line| line.unwrap() + "\r\n")
-            .collect::<String>();
-
-        let input = BufReader::new(File::open(filename).unwrap());
-        let mut reader = ical::IcalParser::new(input);
-        let generated = reader.next().unwrap().ok().unwrap().generate();
-
-        assert_eq!(&generated, &original);
+        let input = include_str!("./resources/sabre_test.ics");
+        let reader = ical::IcalParser::new(input.as_bytes());
+        for res in reader {
+            let cal = res.unwrap();
+            similar_asserts::assert_eq!(cal.generate(), input);
+            insta::assert_debug_snapshot!(cal);
+        }
     }
 }
 

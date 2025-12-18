@@ -1,0 +1,139 @@
+---
+source: tests/mod.rs
+expression: res.unwrap()
+---
+IcalCalendar {
+    properties: [
+        Property {
+            name: "PRODID",
+            params: [],
+            value: Some(
+                "-//Ximian//NONSGML Evolution Calendar//EN",
+            ),
+        },
+        Property {
+            name: "VERSION",
+            params: [],
+            value: Some(
+                "2.0",
+            ),
+        },
+        Property {
+            name: "METHOD",
+            params: [],
+            value: Some(
+                "PUBLISH",
+            ),
+        },
+    ],
+    events: [],
+    alarms: [],
+    todos: [
+        IcalTodo {
+            properties: [
+                Property {
+                    name: "UID",
+                    params: [],
+                    value: Some(
+                        "89b13d12c2142cc66192932e1e560ed344dfb174",
+                    ),
+                },
+                Property {
+                    name: "DTSTAMP",
+                    params: [],
+                    value: Some(
+                        "20250726T112618Z",
+                    ),
+                },
+                Property {
+                    name: "SUMMARY",
+                    params: [],
+                    value: Some(
+                        "amazing task",
+                    ),
+                },
+                Property {
+                    name: "DTSTART",
+                    params: [
+                        (
+                            "VALUE",
+                            [
+                                "DATE",
+                            ],
+                        ),
+                    ],
+                    value: Some(
+                        "20250804",
+                    ),
+                },
+                Property {
+                    name: "DUE",
+                    params: [
+                        (
+                            "VALUE",
+                            [
+                                "DATE",
+                            ],
+                        ),
+                    ],
+                    value: Some(
+                        "20250819",
+                    ),
+                },
+                Property {
+                    name: "PERCENT-COMPLETE",
+                    params: [],
+                    value: Some(
+                        "0",
+                    ),
+                },
+                Property {
+                    name: "CLASS",
+                    params: [],
+                    value: Some(
+                        "PUBLIC",
+                    ),
+                },
+                Property {
+                    name: "ESTIMATED-DURATION",
+                    params: [],
+                    value: Some(
+                        "P1D",
+                    ),
+                },
+                Property {
+                    name: "SEQUENCE",
+                    params: [],
+                    value: Some(
+                        "1",
+                    ),
+                },
+                Property {
+                    name: "CREATED",
+                    params: [],
+                    value: Some(
+                        "20250726T130323Z",
+                    ),
+                },
+                Property {
+                    name: "LAST-MODIFIED",
+                    params: [],
+                    value: Some(
+                        "20250726T130323Z",
+                    ),
+                },
+                Property {
+                    name: "X-EVOLUTION-CALDAV-ETAG",
+                    params: [],
+                    value: Some(
+                        "302e353d3134d1104500f9d9153454e6e21c5da41ae8a5fd26f8b0d98ee34979",
+                    ),
+                },
+            ],
+            alarms: [],
+        },
+    ],
+    journals: [],
+    free_busys: [],
+    timezones: [],
+}

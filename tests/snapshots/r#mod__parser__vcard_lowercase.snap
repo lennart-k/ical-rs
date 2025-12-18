@@ -1,0 +1,43 @@
+---
+source: tests/mod.rs
+expression: res.unwrap()
+---
+VcardContact {
+    properties: [
+        Property {
+            name: "version",
+            params: [],
+            value: Some(
+                "4.0",
+            ),
+        },
+        Property {
+            name: "fn",
+            params: [],
+            value: Some(
+                "Alice Foobar",
+            ),
+        },
+        Property {
+            name: "n",
+            params: [],
+            value: Some(
+                "Foobar;Alice",
+            ),
+        },
+        Property {
+            name: "email",
+            params: [
+                (
+                    "TYPE",
+                    [
+                        "internet",
+                    ],
+                ),
+            ],
+            value: Some(
+                "alice@example.org",
+            ),
+        },
+    ],
+}

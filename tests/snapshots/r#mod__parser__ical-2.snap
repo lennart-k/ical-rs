@@ -1,0 +1,244 @@
+---
+source: tests/mod.rs
+expression: res.unwrap()
+---
+IcalCalendar {
+    properties: [
+        Property {
+            name: "ATTENDEE",
+            params: [
+                (
+                    "DELEGATED-TO",
+                    [
+                        "mailto:foo7@bar",
+                        "mailto:foo8@bar",
+                    ],
+                ),
+                (
+                    "CN",
+                    [
+                        "Foo, Bar",
+                    ],
+                ),
+            ],
+            value: Some(
+                "mailto:foo1@bar",
+            ),
+        },
+        Property {
+            name: "ATTENDEE",
+            params: [
+                (
+                    "DELEGATED-TO",
+                    [
+                        "mailto:foo7@bar",
+                        "mailto:foo8@bar",
+                    ],
+                ),
+                (
+                    "CN",
+                    [
+                        "Foo; Bar",
+                    ],
+                ),
+            ],
+            value: Some(
+                "mailto:foo2@bar",
+            ),
+        },
+        Property {
+            name: "ATTENDEE",
+            params: [
+                (
+                    "CN",
+                    [
+                        "Foo, Bar",
+                    ],
+                ),
+            ],
+            value: Some(
+                "mailto:foo3@bar",
+            ),
+        },
+        Property {
+            name: "ATTENDEE",
+            params: [
+                (
+                    "CN",
+                    [
+                        "Foo; Bar",
+                    ],
+                ),
+            ],
+            value: Some(
+                "mailto:foo4@bar",
+            ),
+        },
+        Property {
+            name: "ATTENDEE",
+            params: [
+                (
+                    "DELEGATED-TO",
+                    [
+                        "mailto:foo7@bar",
+                    ],
+                ),
+                (
+                    "CN",
+                    [
+                        "Foo, Bar",
+                    ],
+                ),
+            ],
+            value: Some(
+                "mailto:foo5@bar",
+            ),
+        },
+        Property {
+            name: "ATTENDEE",
+            params: [
+                (
+                    "DELEGATED-TO",
+                    [
+                        "mailto:foo7@bar",
+                    ],
+                ),
+                (
+                    "CN",
+                    [
+                        "Foo; Bar",
+                    ],
+                ),
+            ],
+            value: Some(
+                "mailto:foo6@bar",
+            ),
+        },
+        Property {
+            name: "ATTENDEE",
+            params: [
+                (
+                    "ROLE",
+                    [
+                        "REQ-PARTICIPANT;foo",
+                    ],
+                ),
+                (
+                    "DELEGATED-FROM",
+                    [
+                        "mailto:bar@baz.com",
+                    ],
+                ),
+                (
+                    "PARTSTAT",
+                    [
+                        "ACCEPTED",
+                    ],
+                ),
+                (
+                    "RSVP",
+                    [
+                        "TRUE",
+                    ],
+                ),
+            ],
+            value: Some(
+                "mailto:foo@bar.com",
+            ),
+        },
+        Property {
+            name: "X-FOO",
+            params: [
+                (
+                    "PARAM1",
+                    [
+                        "VAL1",
+                    ],
+                ),
+            ],
+            value: Some(
+                "FOO;BAR",
+            ),
+        },
+        Property {
+            name: "X-FOO2",
+            params: [
+                (
+                    "PARAM1",
+                    [
+                        "VAL1",
+                    ],
+                ),
+                (
+                    "PARAM2",
+                    [
+                        "VAL2",
+                    ],
+                ),
+            ],
+            value: Some(
+                "FOO;BAR",
+            ),
+        },
+        Property {
+            name: "X-BAR",
+            params: [
+                (
+                    "PARAM1",
+                    [
+                        "VAL1:FOO",
+                    ],
+                ),
+            ],
+            value: Some(
+                "BAZ;BAR",
+            ),
+        },
+        Property {
+            name: "X-BAZ",
+            params: [
+                (
+                    "PARAM1",
+                    [
+                        "VAL1:FOO",
+                    ],
+                ),
+                (
+                    "PARAM2",
+                    [
+                        "VAL2",
+                    ],
+                ),
+            ],
+            value: Some(
+                "BAZ;BAR",
+            ),
+        },
+        Property {
+            name: "X-BAZ2",
+            params: [
+                (
+                    "PARAM1",
+                    [
+                        "VAL1",
+                    ],
+                ),
+                (
+                    "PARAM2",
+                    [
+                        "VAL2:FOO",
+                    ],
+                ),
+            ],
+            value: Some(
+                "BAZ;BAR",
+            ),
+        },
+    ],
+    events: [],
+    alarms: [],
+    todos: [],
+    journals: [],
+    free_busys: [],
+    timezones: [],
+}

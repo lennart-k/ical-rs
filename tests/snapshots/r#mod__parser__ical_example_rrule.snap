@@ -1,0 +1,226 @@
+---
+source: tests/mod.rs
+expression: res.unwrap()
+---
+IcalCalendar {
+    properties: [
+        Property {
+            name: "CALSCALE",
+            params: [],
+            value: Some(
+                "GREGORIAN",
+            ),
+        },
+        Property {
+            name: "PRODID",
+            params: [],
+            value: Some(
+                "-//Ximian//NONSGML Evolution Calendar//EN",
+            ),
+        },
+        Property {
+            name: "VERSION",
+            params: [],
+            value: Some(
+                "2.0",
+            ),
+        },
+    ],
+    events: [
+        IcalEvent {
+            properties: [
+                Property {
+                    name: "UID",
+                    params: [],
+                    value: Some(
+                        "eb93535004f863c4e7a39b8b18daa6db3b353348",
+                    ),
+                },
+                Property {
+                    name: "DTSTAMP",
+                    params: [],
+                    value: Some(
+                        "20250723T191244Z",
+                    ),
+                },
+                Property {
+                    name: "DTSTART",
+                    params: [
+                        (
+                            "TZID",
+                            [
+                                "Europe/Berlin",
+                            ],
+                        ),
+                    ],
+                    value: Some(
+                        "20250723T210000",
+                    ),
+                },
+                Property {
+                    name: "DTEND",
+                    params: [
+                        (
+                            "TZID",
+                            [
+                                "Europe/Berlin",
+                            ],
+                        ),
+                    ],
+                    value: Some(
+                        "20250723T212500",
+                    ),
+                },
+                Property {
+                    name: "SEQUENCE",
+                    params: [],
+                    value: Some(
+                        "2",
+                    ),
+                },
+                Property {
+                    name: "SUMMARY",
+                    params: [],
+                    value: Some(
+                        "something with rrule",
+                    ),
+                },
+                Property {
+                    name: "TRANSP",
+                    params: [],
+                    value: Some(
+                        "OPAQUE",
+                    ),
+                },
+                Property {
+                    name: "CLASS",
+                    params: [],
+                    value: Some(
+                        "PUBLIC",
+                    ),
+                },
+                Property {
+                    name: "CREATED",
+                    params: [],
+                    value: Some(
+                        "20250723T191256Z",
+                    ),
+                },
+                Property {
+                    name: "LAST-MODIFIED",
+                    params: [],
+                    value: Some(
+                        "20250723T191256Z",
+                    ),
+                },
+            ],
+            alarms: [],
+        },
+    ],
+    alarms: [],
+    todos: [],
+    journals: [],
+    free_busys: [],
+    timezones: [
+        IcalTimeZone {
+            properties: [
+                Property {
+                    name: "TZID",
+                    params: [],
+                    value: Some(
+                        "Europe/Berlin",
+                    ),
+                },
+                Property {
+                    name: "X-LIC-LOCATION",
+                    params: [],
+                    value: Some(
+                        "Europe/Berlin",
+                    ),
+                },
+            ],
+            transitions: [
+                IcalTimeZoneTransition {
+                    transition: DAYLIGHT,
+                    properties: [
+                        Property {
+                            name: "TZNAME",
+                            params: [],
+                            value: Some(
+                                "CEST",
+                            ),
+                        },
+                        Property {
+                            name: "TZOFFSETFROM",
+                            params: [],
+                            value: Some(
+                                "+0100",
+                            ),
+                        },
+                        Property {
+                            name: "TZOFFSETTO",
+                            params: [],
+                            value: Some(
+                                "+0200",
+                            ),
+                        },
+                        Property {
+                            name: "DTSTART",
+                            params: [],
+                            value: Some(
+                                "19810329T020000",
+                            ),
+                        },
+                        Property {
+                            name: "RRULE",
+                            params: [],
+                            value: Some(
+                                "FREQ=YEARLY;UNTIL=20370329T010000Z;BYDAY=-1SU;BYMONTH=3",
+                            ),
+                        },
+                    ],
+                },
+                IcalTimeZoneTransition {
+                    transition: STANDARD,
+                    properties: [
+                        Property {
+                            name: "TZNAME",
+                            params: [],
+                            value: Some(
+                                "CET",
+                            ),
+                        },
+                        Property {
+                            name: "TZOFFSETFROM",
+                            params: [],
+                            value: Some(
+                                "+0200",
+                            ),
+                        },
+                        Property {
+                            name: "TZOFFSETTO",
+                            params: [],
+                            value: Some(
+                                "+0100",
+                            ),
+                        },
+                        Property {
+                            name: "DTSTART",
+                            params: [],
+                            value: Some(
+                                "19961027T030000",
+                            ),
+                        },
+                        Property {
+                            name: "RRULE",
+                            params: [],
+                            value: Some(
+                                "FREQ=YEARLY;UNTIL=20361026T010000Z;BYDAY=-1SU;BYMONTH=10",
+                            ),
+                        },
+                    ],
+                },
+            ],
+        },
+    ],
+}

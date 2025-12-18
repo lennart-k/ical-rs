@@ -1,0 +1,7 @@
+---
+source: tests/mod.rs
+expression: prop
+---
+name: BEGIN
+params: []
+value: Some("VCARD")

@@ -1,0 +1,7 @@
+---
+source: tests/mod.rs
+expression: prop
+---
+name: FBURL
+params: [("MEDIATYPE", ["text/calendar"])]
+value: Some("ftp://example.com/busy/project-a.ifb")

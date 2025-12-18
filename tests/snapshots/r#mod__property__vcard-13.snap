@@ -1,0 +1,7 @@
+---
+source: tests/mod.rs
+expression: prop
+---
+name: GEO
+params: []
+value: Some("geo:37.386013\\,-122.082932")

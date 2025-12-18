@@ -27,6 +27,9 @@ regex = { version = "1.11", optional = true }
 lazy_static = { version = "1.5", optional = true }
 itertools = "0.14"
 
+[dev-dependencies]
+insta = { version = "1.44", features = ["filters"] }
+similar-asserts = "1.7"
 
 [features]
 default = ["chrono", "chrono-tz"]

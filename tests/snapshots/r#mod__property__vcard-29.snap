@@ -1,0 +1,7 @@
+---
+source: tests/mod.rs
+expression: prop
+---
+name: SOURCE
+params: []
+value: Some("ldap://ldap.example.com/cn=Babs%20Jensen\\,%20o=Babsco\\,%20c=US")

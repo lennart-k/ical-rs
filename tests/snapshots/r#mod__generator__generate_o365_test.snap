@@ -1,0 +1,440 @@
+---
+source: tests/mod.rs
+expression: cal
+---
+IcalCalendar {
+    properties: [
+        Property {
+            name: "METHOD",
+            params: [],
+            value: Some(
+                "REQUEST",
+            ),
+        },
+        Property {
+            name: "PRODID",
+            params: [],
+            value: Some(
+                "Microsoft Exchange Server 2010",
+            ),
+        },
+        Property {
+            name: "VERSION",
+            params: [],
+            value: Some(
+                "2.0",
+            ),
+        },
+    ],
+    events: [
+        IcalEvent {
+            properties: [
+                Property {
+                    name: "ATTENDEE",
+                    params: [
+                        (
+                            "ROLE",
+                            [
+                                "REQ-PARTICIPANT",
+                            ],
+                        ),
+                        (
+                            "PARTSTAT",
+                            [
+                                "NEEDS-ACTION",
+                            ],
+                        ),
+                        (
+                            "RSVP",
+                            [
+                                "TRUE",
+                            ],
+                        ),
+                        (
+                            "CN",
+                            [
+                                "Annonym Usernames",
+                            ],
+                        ),
+                    ],
+                    value: Some(
+                        "mailto:Annonym.Usernames@email.com",
+                    ),
+                },
+                Property {
+                    name: "ATTENDEE",
+                    params: [
+                        (
+                            "ROLE",
+                            [
+                                "REQ-PARTICIPANT",
+                            ],
+                        ),
+                        (
+                            "PARTSTAT",
+                            [
+                                "NEEDS-ACTION",
+                            ],
+                        ),
+                        (
+                            "RSVP",
+                            [
+                                "TRUE",
+                            ],
+                        ),
+                        (
+                            "CN",
+                            [
+                                "Testmeeting channel",
+                            ],
+                        ),
+                    ],
+                    value: Some(
+                        "mailto:Testmeeting.channel@email365.onmicrosoft.com",
+                    ),
+                },
+                Property {
+                    name: "DESCRIPTION",
+                    params: [
+                        (
+                            "LANGUAGE",
+                            [
+                                "en-US",
+                            ],
+                        ),
+                    ],
+                    value: Some(
+                        "\\n\\n\\n\\n________________________________________________________________________________\\nMicrosoft Teams-Besprechung\\n\\nNehmen Sie teil auf Ihrem Computer oder auf der mobilen App\\nKlicken Sie hier\\, um an der Besprechung teilzunehmen<https://url>\\n\\nWeitere Infos<https://aka.ms/JoinTeamsMeeting> | Besprechungsoptionen<url>\\n\\n________________________________________________________________________________\\n",
+                    ),
+                },
+                Property {
+                    name: "RRULE",
+                    params: [],
+                    value: Some(
+                        "FREQ=DAILY;UNTIL=20201126T100000Z;INTERVAL=2",
+                    ),
+                },
+                Property {
+                    name: "UID",
+                    params: [],
+                    value: Some(
+                        "040000C08200E00074C5B7101A89E00800000000EEB3773267BEA60100000000000000001000000023B1CC4F9EF21B4BBA06F5F3B4E42720",
+                    ),
+                },
+                Property {
+                    name: "SUMMARY",
+                    params: [],
+                    value: Some(
+                        " Testmeeting ➡ ignore it!",
+                    ),
+                },
+                Property {
+                    name: "DTSTART",
+                    params: [
+                        (
+                            "TZID",
+                            [
+                                "W. Europe Standard Time",
+                            ],
+                        ),
+                    ],
+                    value: Some(
+                        "20201124T110000",
+                    ),
+                },
+                Property {
+                    name: "DTEND",
+                    params: [
+                        (
+                            "TZID",
+                            [
+                                "W. Europe Standard Time",
+                            ],
+                        ),
+                    ],
+                    value: Some(
+                        "20201124T113000",
+                    ),
+                },
+                Property {
+                    name: "CLASS",
+                    params: [],
+                    value: Some(
+                        "PUBLIC",
+                    ),
+                },
+                Property {
+                    name: "PRIORITY",
+                    params: [],
+                    value: Some(
+                        "5",
+                    ),
+                },
+                Property {
+                    name: "DTSTAMP",
+                    params: [],
+                    value: Some(
+                        "20201119T112915Z",
+                    ),
+                },
+                Property {
+                    name: "TRANSP",
+                    params: [],
+                    value: Some(
+                        "OPAQUE",
+                    ),
+                },
+                Property {
+                    name: "STATUS",
+                    params: [],
+                    value: Some(
+                        "CONFIRMED",
+                    ),
+                },
+                Property {
+                    name: "SEQUENCE",
+                    params: [],
+                    value: Some(
+                        "0",
+                    ),
+                },
+                Property {
+                    name: "LOCATION",
+                    params: [
+                        (
+                            "LANGUAGE",
+                            [
+                                "en-US",
+                            ],
+                        ),
+                    ],
+                    value: None,
+                },
+                Property {
+                    name: "X-MICROSOFT-CDO-APPT-SEQUENCE",
+                    params: [],
+                    value: Some(
+                        "0",
+                    ),
+                },
+                Property {
+                    name: "X-MICROSOFT-CDO-OWNERAPPTID",
+                    params: [],
+                    value: Some(
+                        "2118883566",
+                    ),
+                },
+                Property {
+                    name: "X-MICROSOFT-CDO-BUSYSTATUS",
+                    params: [],
+                    value: Some(
+                        "TENTATIVE",
+                    ),
+                },
+                Property {
+                    name: "X-MICROSOFT-CDO-INTENDEDSTATUS",
+                    params: [],
+                    value: Some(
+                        "BUSY",
+                    ),
+                },
+                Property {
+                    name: "X-MICROSOFT-CDO-ALLDAYEVENT",
+                    params: [],
+                    value: Some(
+                        "FALSE",
+                    ),
+                },
+                Property {
+                    name: "X-MICROSOFT-CDO-IMPORTANCE",
+                    params: [],
+                    value: Some(
+                        "1",
+                    ),
+                },
+                Property {
+                    name: "X-MICROSOFT-CDO-INSTTYPE",
+                    params: [],
+                    value: Some(
+                        "1",
+                    ),
+                },
+                Property {
+                    name: "X-MICROSOFT-SKYPETEAMSMEETINGURL",
+                    params: [],
+                    value: Some(
+                        "https://teams.microsoft.com/l/meetup-join/19%3afe1f00c87d7044e3a73231bb01b1d749%40thread.tacv2/1605785353833?context=%7b%12Tid%22%3a%22a905caa5-9cd7-4178-a749-bf6ca32f8ddf%24%2c%22Oid%22%3a%2241a5d0ce-9934-4103-85e3-d13eeeb0fc6f%22%7d",
+                    ),
+                },
+                Property {
+                    name: "X-MICROSOFT-SCHEDULINGSERVICEUPDATEURL",
+                    params: [],
+                    value: Some(
+                        "https://scheduler.teams.microsoft.com/teams/9e85c5a5-9cd7-4178-a749-bf6c632a8ddf/44a5d0ce-9934-4603-8583-d1ceeef0f16f/19_fe1fdec8701044e1a732311b0111d749@thread.tacv2/160578131313e",
+                    ),
+                },
+                Property {
+                    name: "X-MICROSOFT-SKYPETEAMSPROPERTIES",
+                    params: [],
+                    value: Some(
+                        "{\"cid\":\"19:fe1fdec87d7144e3173201bb01b0d749@thread.tacv2\"\\,\"rid\":1147200853833\\,\"mid\":1603785113033\\,\"uid\":\"8:orgid:04a5d0ce-9934-4603-8583-d1ceeef0fc6f\"\\,\"private\":false\\,\"type\":0}",
+                    ),
+                },
+                Property {
+                    name: "X-MICROSOFT-ONLINEMEETINGCONFLINK",
+                    params: [],
+                    value: Some(
+                        "conf:sip:Annonym.Usernames@email.com\\;gruu\\;opaque=app:conf:focus:id:teams:2:1605785351803!10:fe1fdec87d0044e3a73231bb01b1d749-thread.tacv2!414a5dce990446038580d1ce0e20fc6f!9e85c3a59cd74178a749bf6c632a8ddf",
+                    ),
+                },
+                Property {
+                    name: "X-MICROSOFT-ONLINEMEETINGINFORMATION",
+                    params: [],
+                    value: Some(
+                        "{\"OnlineMeetingChannelId\":null\\,\"OnlineMeetingProvider\":3}",
+                    ),
+                },
+                Property {
+                    name: "X-MICROSOFT-DONOTFORWARDMEETING",
+                    params: [],
+                    value: Some(
+                        "FALSE",
+                    ),
+                },
+                Property {
+                    name: "X-MICROSOFT-DISALLOW-COUNTER",
+                    params: [],
+                    value: Some(
+                        "FALSE",
+                    ),
+                },
+                Property {
+                    name: "X-MICROSOFT-LOCATIONS",
+                    params: [],
+                    value: Some(
+                        "[]",
+                    ),
+                },
+            ],
+            alarms: [
+                IcalAlarm {
+                    properties: [
+                        Property {
+                            name: "DESCRIPTION",
+                            params: [],
+                            value: Some(
+                                "REMINDER",
+                            ),
+                        },
+                        Property {
+                            name: "TRIGGER",
+                            params: [
+                                (
+                                    "RELATED",
+                                    [
+                                        "START",
+                                    ],
+                                ),
+                            ],
+                            value: Some(
+                                "-PT15M",
+                            ),
+                        },
+                        Property {
+                            name: "ACTION",
+                            params: [],
+                            value: Some(
+                                "DISPLAY",
+                            ),
+                        },
+                    ],
+                },
+            ],
+        },
+    ],
+    alarms: [],
+    todos: [],
+    journals: [],
+    free_busys: [],
+    timezones: [
+        IcalTimeZone {
+            properties: [
+                Property {
+                    name: "TZID",
+                    params: [],
+                    value: Some(
+                        "W. Europe Standard Time",
+                    ),
+                },
+            ],
+            transitions: [
+                IcalTimeZoneTransition {
+                    transition: STANDARD,
+                    properties: [
+                        Property {
+                            name: "DTSTART",
+                            params: [],
+                            value: Some(
+                                "16010101T030000",
+                            ),
+                        },
+                        Property {
+                            name: "TZOFFSETFROM",
+                            params: [],
+                            value: Some(
+                                "+0200",
+                            ),
+                        },
+                        Property {
+                            name: "TZOFFSETTO",
+                            params: [],
+                            value: Some(
+                                "+0100",
+                            ),
+                        },
+                        Property {
+                            name: "RRULE",
+                            params: [],
+                            value: Some(
+                                "FREQ=YEARLY;INTERVAL=1;BYDAY=-1SU;BYMONTH=10",
+                            ),
+                        },
+                    ],
+                },
+                IcalTimeZoneTransition {
+                    transition: DAYLIGHT,
+                    properties: [
+                        Property {
+                            name: "DTSTART",
+                            params: [],
+                            value: Some(
+                                "16010101T020000",
+                            ),
+                        },
+                        Property {
+                            name: "TZOFFSETFROM",
+                            params: [],
+                            value: Some(
+                                "+0100",
+                            ),
+                        },
+                        Property {
+                            name: "TZOFFSETTO",
+                            params: [],
+                            value: Some(
+                                "+0200",
+                            ),
+                        },
+                        Property {
+                            name: "RRULE",
+                            params: [],
+                            value: Some(
+                                "FREQ=YEARLY;INTERVAL=1;BYDAY=-1SU;BYMONTH=3",
+                            ),
+                        },
+                    ],
+                },
+            ],
+        },
+    ],
+}

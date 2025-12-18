@@ -1,0 +1,7 @@
+---
+source: tests/mod.rs
+expression: prop
+---
+name: CALADRURI
+params: []
+value: Some("http://example.com/calendar/jdoe")

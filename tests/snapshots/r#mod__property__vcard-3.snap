@@ -1,0 +1,7 @@
+---
+source: tests/mod.rs
+expression: prop
+---
+name: ADR
+params: [("TYPE", ["work"])]
+value: Some("pobox;apt;street;city;state;zipcode;country")

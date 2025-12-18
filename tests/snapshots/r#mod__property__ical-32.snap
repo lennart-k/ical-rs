@@ -1,0 +1,7 @@
+---
+source: tests/mod.rs
+expression: prop
+---
+name: VERSION
+params: []
+value: Some("2.0")

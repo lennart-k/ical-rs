@@ -1,0 +1,7 @@
+---
+source: tests/mod.rs
+expression: prop
+---
+name: TZ
+params: [("VALUE", ["utc-offset"])]
+value: Some("-0500")

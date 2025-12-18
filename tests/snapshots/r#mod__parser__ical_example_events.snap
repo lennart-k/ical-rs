@@ -1,0 +1,125 @@
+---
+source: tests/mod.rs
+expression: res.unwrap()
+---
+IcalCalendar {
+    properties: [
+        Property {
+            name: "CALSCALE",
+            params: [],
+            value: Some(
+                "GREGORIAN",
+            ),
+        },
+        Property {
+            name: "PRODID",
+            params: [],
+            value: Some(
+                "-//Ximian//NONSGML Evolution Calendar//EN",
+            ),
+        },
+        Property {
+            name: "VERSION",
+            params: [],
+            value: Some(
+                "2.0",
+            ),
+        },
+    ],
+    events: [
+        IcalEvent {
+            properties: [
+                Property {
+                    name: "UID",
+                    params: [],
+                    value: Some(
+                        "fa915b604e6e3f36772501ff869439e6a3c5cf67",
+                    ),
+                },
+                Property {
+                    name: "DTSTAMP",
+                    params: [],
+                    value: Some(
+                        "20250726T112617Z",
+                    ),
+                },
+                Property {
+                    name: "DTSTART",
+                    params: [
+                        (
+                            "VALUE",
+                            [
+                                "DATE",
+                            ],
+                        ),
+                    ],
+                    value: Some(
+                        "20250806",
+                    ),
+                },
+                Property {
+                    name: "DTEND",
+                    params: [
+                        (
+                            "VALUE",
+                            [
+                                "DATE",
+                            ],
+                        ),
+                    ],
+                    value: Some(
+                        "20250807",
+                    ),
+                },
+                Property {
+                    name: "SEQUENCE",
+                    params: [],
+                    value: Some(
+                        "2",
+                    ),
+                },
+                Property {
+                    name: "SUMMARY",
+                    params: [],
+                    value: Some(
+                        "all day event",
+                    ),
+                },
+                Property {
+                    name: "TRANSP",
+                    params: [],
+                    value: Some(
+                        "OPAQUE",
+                    ),
+                },
+                Property {
+                    name: "CLASS",
+                    params: [],
+                    value: Some(
+                        "PUBLIC",
+                    ),
+                },
+                Property {
+                    name: "CREATED",
+                    params: [],
+                    value: Some(
+                        "20250726T144426Z",
+                    ),
+                },
+                Property {
+                    name: "LAST-MODIFIED",
+                    params: [],
+                    value: Some(
+                        "20250726T144426Z",
+                    ),
+                },
+            ],
+            alarms: [],
+        },
+    ],
+    alarms: [],
+    todos: [],
+    journals: [],
+    free_busys: [],
+    timezones: [],
+}

@@ -1,0 +1,7 @@
+---
+source: tests/mod.rs
+expression: prop
+---
+name: ATTENDEE
+params: [("DELEGATED-TO", ["mailto:foo7@bar", "mailto:foo8@bar"]), ("CN", ["Foo, Bar"])]
+value: Some("mailto:foo1@bar")

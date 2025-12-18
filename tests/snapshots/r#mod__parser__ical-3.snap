@@ -1,0 +1,81 @@
+---
+source: tests/mod.rs
+expression: res.unwrap()
+---
+IcalCalendar {
+    properties: [
+        Property {
+            name: "CALSCALE",
+            params: [],
+            value: Some(
+                "GREGORIAN",
+            ),
+        },
+        Property {
+            name: "PRODID",
+            params: [],
+            value: Some(
+                "-//Example Inc.//Example Calendar//EN",
+            ),
+        },
+        Property {
+            name: "VERSION",
+            params: [],
+            value: Some(
+                "2.0",
+            ),
+        },
+    ],
+    events: [
+        IcalEvent {
+            properties: [
+                Property {
+                    name: "DTSTAMP",
+                    params: [],
+                    value: Some(
+                        "20080205T191224Z",
+                    ),
+                },
+                Property {
+                    name: "DTSTART",
+                    params: [
+                        (
+                            "VALUE",
+                            [
+                                "DATE",
+                            ],
+                        ),
+                    ],
+                    value: Some(
+                        "20081006",
+                    ),
+                },
+                Property {
+                    name: "SUMMARY",
+                    params: [],
+                    value: Some(
+                        "Missing description value, but includes header",
+                    ),
+                },
+                Property {
+                    name: "DESCRIPTION",
+                    params: [],
+                    value: None,
+                },
+                Property {
+                    name: "UID",
+                    params: [],
+                    value: Some(
+                        "4088E990AD89CB3DBB484909",
+                    ),
+                },
+            ],
+            alarms: [],
+        },
+    ],
+    alarms: [],
+    todos: [],
+    journals: [],
+    free_busys: [],
+    timezones: [],
+}

@@ -1,0 +1,7 @@
+---
+source: tests/mod.rs
+expression: prop
+---
+name: DTSTAMP
+params: []
+value: Some("20080205T191224Z")

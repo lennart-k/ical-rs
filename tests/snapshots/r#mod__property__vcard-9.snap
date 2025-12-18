@@ -1,0 +1,7 @@
+---
+source: tests/mod.rs
+expression: prop
+---
+name: EMAIL
+params: [("TYPE", ["work"])]
+value: Some("jqpublic@xyz.example.com")

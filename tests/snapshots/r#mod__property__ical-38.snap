@@ -1,0 +1,7 @@
+---
+source: tests/mod.rs
+expression: prop
+---
+name: UID
+params: []
+value: Some("4088E990AD89CB3DBB484909")

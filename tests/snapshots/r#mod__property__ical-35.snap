@@ -1,0 +1,7 @@
+---
+source: tests/mod.rs
+expression: prop
+---
+name: DTSTART
+params: [("VALUE", ["DATE"])]
+value: Some("20081006")

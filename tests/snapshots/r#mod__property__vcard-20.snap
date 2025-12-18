@@ -1,0 +1,7 @@
+---
+source: tests/mod.rs
+expression: prop
+---
+name: N
+params: []
+value: Some("Stevenson;John;Philip,Paul;Dr.;Jr.,M.D.,A.C.P.")

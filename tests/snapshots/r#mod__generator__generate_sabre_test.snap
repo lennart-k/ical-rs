@@ -1,0 +1,451 @@
+---
+source: tests/mod.rs
+expression: cal
+---
+IcalCalendar {
+    properties: [
+        Property {
+            name: "VERSION",
+            params: [],
+            value: Some(
+                "2.0",
+            ),
+        },
+        Property {
+            name: "CALSCALE",
+            params: [],
+            value: Some(
+                "GREGORIAN",
+            ),
+        },
+        Property {
+            name: "PRODID",
+            params: [],
+            value: Some(
+                "-//SabreDAV//SabreDAV//EN",
+            ),
+        },
+        Property {
+            name: "X-WR-CALNAME",
+            params: [],
+            value: Some(
+                "icalTest",
+            ),
+        },
+        Property {
+            name: "X-APPLE-CALENDAR-COLOR",
+            params: [],
+            value: Some(
+                "#D09E6D",
+            ),
+        },
+        Property {
+            name: "REFRESH-INTERVAL",
+            params: [
+                (
+                    "VALUE",
+                    [
+                        "DURATION",
+                    ],
+                ),
+            ],
+            value: Some(
+                "PT4H",
+            ),
+        },
+        Property {
+            name: "X-PUBLISHED-TTL",
+            params: [],
+            value: Some(
+                "PT4H",
+            ),
+        },
+    ],
+    events: [
+        IcalEvent {
+            properties: [
+                Property {
+                    name: "CREATED",
+                    params: [],
+                    value: Some(
+                        "20201204T082156Z",
+                    ),
+                },
+                Property {
+                    name: "DTSTAMP",
+                    params: [],
+                    value: Some(
+                        "20201204T082257Z",
+                    ),
+                },
+                Property {
+                    name: "LAST-MODIFIED",
+                    params: [],
+                    value: Some(
+                        "20201204T082257Z",
+                    ),
+                },
+                Property {
+                    name: "SEQUENCE",
+                    params: [],
+                    value: Some(
+                        "2",
+                    ),
+                },
+                Property {
+                    name: "UID",
+                    params: [],
+                    value: Some(
+                        "6fb8cdb4-d333-4a4f-99a5-2d32d0c701f9",
+                    ),
+                },
+                Property {
+                    name: "DTSTART",
+                    params: [
+                        (
+                            "TZID",
+                            [
+                                "Europe/Berlin",
+                            ],
+                        ),
+                    ],
+                    value: Some(
+                        "20201223T203000",
+                    ),
+                },
+                Property {
+                    name: "DTEND",
+                    params: [
+                        (
+                            "TZID",
+                            [
+                                "Europe/Berlin",
+                            ],
+                        ),
+                    ],
+                    value: Some(
+                        "20201223T223000",
+                    ),
+                },
+                Property {
+                    name: "SUMMARY",
+                    params: [],
+                    value: Some(
+                        "Geschenke einpacken",
+                    ),
+                },
+                Property {
+                    name: "LOCATION",
+                    params: [],
+                    value: Some(
+                        "Arbeitszimmer",
+                    ),
+                },
+                Property {
+                    name: "CATEGORIES",
+                    params: [],
+                    value: Some(
+                        "XMas",
+                    ),
+                },
+            ],
+            alarms: [
+                IcalAlarm {
+                    properties: [
+                        Property {
+                            name: "ACTION",
+                            params: [],
+                            value: Some(
+                                "DISPLAY",
+                            ),
+                        },
+                        Property {
+                            name: "TRIGGER",
+                            params: [
+                                (
+                                    "RELATED",
+                                    [
+                                        "START",
+                                    ],
+                                ),
+                            ],
+                            value: Some(
+                                "-PT5M",
+                            ),
+                        },
+                    ],
+                },
+            ],
+        },
+        IcalEvent {
+            properties: [
+                Property {
+                    name: "CREATED",
+                    params: [],
+                    value: Some(
+                        "20201204T082021Z",
+                    ),
+                },
+                Property {
+                    name: "DTSTAMP",
+                    params: [],
+                    value: Some(
+                        "20201204T082107Z",
+                    ),
+                },
+                Property {
+                    name: "LAST-MODIFIED",
+                    params: [],
+                    value: Some(
+                        "20201204T082107Z",
+                    ),
+                },
+                Property {
+                    name: "SEQUENCE",
+                    params: [],
+                    value: Some(
+                        "2",
+                    ),
+                },
+                Property {
+                    name: "UID",
+                    params: [],
+                    value: Some(
+                        "6bec1263-c5f4-4446-8a0c-10d960a6e06e",
+                    ),
+                },
+                Property {
+                    name: "DTSTART",
+                    params: [
+                        (
+                            "TZID",
+                            [
+                                "Europe/Berlin",
+                            ],
+                        ),
+                    ],
+                    value: Some(
+                        "20201225T150000",
+                    ),
+                },
+                Property {
+                    name: "DTEND",
+                    params: [
+                        (
+                            "TZID",
+                            [
+                                "Europe/Berlin",
+                            ],
+                        ),
+                    ],
+                    value: Some(
+                        "20201225T223000",
+                    ),
+                },
+                Property {
+                    name: "SUMMARY",
+                    params: [],
+                    value: Some(
+                        "Risiko spielen",
+                    ),
+                },
+            ],
+            alarms: [],
+        },
+        IcalEvent {
+            properties: [
+                Property {
+                    name: "CREATED",
+                    params: [],
+                    value: Some(
+                        "20201204T081751Z",
+                    ),
+                },
+                Property {
+                    name: "DTSTAMP",
+                    params: [],
+                    value: Some(
+                        "20201204T082358Z",
+                    ),
+                },
+                Property {
+                    name: "LAST-MODIFIED",
+                    params: [],
+                    value: Some(
+                        "20201204T082358Z",
+                    ),
+                },
+                Property {
+                    name: "SEQUENCE",
+                    params: [],
+                    value: Some(
+                        "3",
+                    ),
+                },
+                Property {
+                    name: "UID",
+                    params: [],
+                    value: Some(
+                        "e5e8ce2a-4881-402f-9e85-1a35b4fe11d1",
+                    ),
+                },
+                Property {
+                    name: "DTSTART",
+                    params: [
+                        (
+                            "TZID",
+                            [
+                                "Europe/Berlin",
+                            ],
+                        ),
+                    ],
+                    value: Some(
+                        "20201224T100000",
+                    ),
+                },
+                Property {
+                    name: "DTEND",
+                    params: [
+                        (
+                            "TZID",
+                            [
+                                "Europe/Berlin",
+                            ],
+                        ),
+                    ],
+                    value: Some(
+                        "20201224T110000",
+                    ),
+                },
+                Property {
+                    name: "SUMMARY",
+                    params: [],
+                    value: Some(
+                        "Weihnachten vorbereiten",
+                    ),
+                },
+                Property {
+                    name: "LOCATION",
+                    params: [],
+                    value: Some(
+                        "Wohnzimmer\\, Zuhause",
+                    ),
+                },
+                Property {
+                    name: "DESCRIPTION",
+                    params: [],
+                    value: Some(
+                        "Baum rein\\, Einstiehlen und Schmücken\\,",
+                    ),
+                },
+                Property {
+                    name: "CATEGORIES",
+                    params: [],
+                    value: Some(
+                        "xmas",
+                    ),
+                },
+            ],
+            alarms: [],
+        },
+    ],
+    alarms: [],
+    todos: [],
+    journals: [],
+    free_busys: [],
+    timezones: [
+        IcalTimeZone {
+            properties: [
+                Property {
+                    name: "TZID",
+                    params: [],
+                    value: Some(
+                        "Europe/Berlin",
+                    ),
+                },
+            ],
+            transitions: [
+                IcalTimeZoneTransition {
+                    transition: DAYLIGHT,
+                    properties: [
+                        Property {
+                            name: "TZOFFSETFROM",
+                            params: [],
+                            value: Some(
+                                "+0100",
+                            ),
+                        },
+                        Property {
+                            name: "TZOFFSETTO",
+                            params: [],
+                            value: Some(
+                                "+0200",
+                            ),
+                        },
+                        Property {
+                            name: "TZNAME",
+                            params: [],
+                            value: Some(
+                                "CEST",
+                            ),
+                        },
+                        Property {
+                            name: "DTSTART",
+                            params: [],
+                            value: Some(
+                                "19700329T020000",
+                            ),
+                        },
+                        Property {
+                            name: "RRULE",
+                            params: [],
+                            value: Some(
+                                "FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU",
+                            ),
+                        },
+                    ],
+                },
+                IcalTimeZoneTransition {
+                    transition: STANDARD,
+                    properties: [
+                        Property {
+                            name: "TZOFFSETFROM",
+                            params: [],
+                            value: Some(
+                                "+0200",
+                            ),
+                        },
+                        Property {
+                            name: "TZOFFSETTO",
+                            params: [],
+                            value: Some(
+                                "+0100",
+                            ),
+                        },
+                        Property {
+                            name: "TZNAME",
+                            params: [],
+                            value: Some(
+                                "CET",
+                            ),
+                        },
+                        Property {
+                            name: "DTSTART",
+                            params: [],
+                            value: Some(
+                                "19701025T030000",
+                            ),
+                        },
+                        Property {
+                            name: "RRULE",
+                            params: [],
+                            value: Some(
+                                "FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU",
+                            ),
+                        },
+                    ],
+                },
+            ],
+        },
+    ],
+}

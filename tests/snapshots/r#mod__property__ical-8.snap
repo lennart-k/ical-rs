@@ -1,0 +1,7 @@
+---
+source: tests/mod.rs
+expression: prop
+---
+name: SUMMARY
+params: []
+value: Some("Planning meeting")

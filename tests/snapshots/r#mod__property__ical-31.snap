@@ -1,0 +1,7 @@
+---
+source: tests/mod.rs
+expression: prop
+---
+name: PRODID
+params: []
+value: Some("-//Example Inc.//Example Calendar//EN")
