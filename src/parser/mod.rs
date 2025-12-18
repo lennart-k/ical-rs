@@ -10,10 +10,9 @@ pub mod ical;
 pub mod vcard;
 
 // Sys mods
+use crate::types::InvalidDuration;
 use std::io::BufRead;
 use std::marker::PhantomData;
-
-use crate::types::InvalidDuration;
 // Internal mods
 use crate::{
     LineReader,
@@ -96,14 +95,7 @@ pub trait ComponentMut: Component + Default {
         line_parser: &mut PropertyParser<B>,
     ) -> Result<(), ParserError> {
         loop {
-            let line: Property;
-
-            {
-                line = match line_parser.next() {
-                    Some(val) => val.map_err(ParserError::PropertyError)?,
-                    None => return Err(ParserError::NotComplete),
-                };
-            }
+            let line = line_parser.next().ok_or(ParserError::NotComplete)??;
 
             match line.name.to_uppercase().as_str() {
                 "END" => break,
@@ -120,7 +112,7 @@ pub trait ComponentMut: Component + Default {
 }
 
 /// Reader returning `IcalCalendar` object from a `BufRead`.
-pub struct ComponentParser<B, T: Component> {
+pub struct ComponentParser<B: BufRead, T: Component> {
     line_parser: PropertyParser<B>,
     _t: PhantomData<T>,
 }

@@ -41,8 +41,8 @@
 //! ```
 
 use std::fmt;
-use std::io::BufRead;
-use std::iter::Iterator;
+use std::io::{BufRead, Lines};
+use std::iter::{Iterator, Peekable};
 
 /// An unfolded raw line.
 ///
@@ -55,7 +55,6 @@ pub struct Line {
 }
 
 impl Line {
-    /// Return a new `Line` object.
     pub fn new(line: String, line_number: usize) -> Line {
         Line {
             inner: line,
@@ -63,12 +62,10 @@ impl Line {
         }
     }
 
-    /// Return a `&str`
     pub fn as_str(&self) -> &str {
         self.inner.as_str()
     }
 
-    /// Return the line number.
     pub fn number(&self) -> usize {
         self.number
     }
@@ -80,17 +77,9 @@ impl fmt::Display for Line {
     }
 }
 
-/// A trait generic for implementing line reading use crate::by `PropertyParser`.
-pub trait LineRead {
-    /// Return the next line unwrapped and formated.
-    fn next_line(&mut self) -> Option<Line>;
-}
-
-#[derive(Debug, Clone, Default)]
 /// Take a `BufRead` and return the unfolded `Line`.
-pub struct LineReader<B> {
-    reader: B,
-    saved: Option<String>,
+pub struct LineReader<B: BufRead> {
+    lines: Peekable<Lines<B>>,
     number: usize,
 }
 
@@ -98,61 +87,8 @@ impl<B: BufRead> LineReader<B> {
     /// Return a new `LineReader` from a `Reader`.
     pub fn new(reader: B) -> LineReader<B> {
         LineReader {
-            reader,
-            saved: None,
+            lines: reader.lines().peekable(),
             number: 0,
-        }
-    }
-}
-
-impl<B: BufRead> LineRead for LineReader<B> {
-    fn next_line(&mut self) -> Option<Line> {
-        let mut next_line = String::new();
-        let mut line_number: usize = 0;
-
-        if let Some(start) = self.saved.take() {
-            // If during the last iteration a new line have been saved, start with.
-            next_line.push_str(start.as_str());
-            self.number += 1;
-            line_number = self.number;
-        } else {
-            // This is the first iteration, next_start isn't been filled yet.
-            for line in self.reader.by_ref().lines() {
-                let line = line.ok()?;
-                self.number += 1;
-
-                if !line.is_empty() {
-                    next_line = line.trim_end().to_string();
-                    line_number = self.number;
-                    break;
-                }
-            }
-        }
-
-        for line in self.reader.by_ref().lines() {
-            let mut line = line.ok()?;
-
-            if line.is_empty() {
-                self.number += 1;
-            } else if line.starts_with(' ') || line.starts_with('\t') {
-                // This is a multi-lines attribute.
-
-                // Remove the whitespace character and join with the current line.
-                line.remove(0);
-                next_line.push_str(line.trim_end());
-                self.number += 1;
-            } else {
-                // This is a new attribute so it need to be saved it for
-                // the next iteration.
-                self.saved = Some(line.trim().to_string());
-                break;
-            }
-        }
-
-        if next_line.is_empty() {
-            None
-        } else {
-            Some(Line::new(next_line, line_number))
         }
     }
 }
@@ -161,6 +97,34 @@ impl<B: BufRead> Iterator for LineReader<B> {
     type Item = Line;
 
     fn next(&mut self) -> Option<Line> {
-        self.next_line()
+        let (mut new_line, line_number) = loop {
+            let line = self.lines.next()?.ok()?;
+            self.number += 1;
+            if !line.is_empty() {
+                break (line.trim_end().to_string(), self.number);
+            }
+        };
+
+        loop {
+            let Some(Ok(next)) = self.lines.next_if(|line| {
+                line.as_ref()
+                    .ok()
+                    .map(|line| line.starts_with(' ') || line.starts_with('\t') || line.is_empty())
+                    .unwrap_or_default()
+            }) else {
+                break;
+            };
+            self.number += 1;
+            if !next.is_empty() {
+                // String cannot be empty so this cannot panic
+                new_line.push_str(next.split_at(1).1);
+            }
+        }
+
+        if new_line.is_empty() {
+            None
+        } else {
+            Some(Line::new(new_line, line_number))
+        }
     }
 }

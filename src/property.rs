@@ -53,16 +53,18 @@ use crate::{
 
 #[derive(Debug, thiserror::Error, PartialEq, Eq)]
 pub enum PropertyError {
-    #[error("Line {}: Missing property name.", line)]
-    MissingName { line: usize },
-    #[error("Line {}: Missing a closing quote.", line)]
-    MissingClosingQuote { line: usize },
-    #[error("Line {}: Missing a \"{}\" delimiter.", line, delimiter)]
-    MissingDelimiter { line: usize, delimiter: char },
-    #[error("Line {}: Missing content after \"{}\".", line, letter)]
-    MissingContentAfter { line: usize, letter: char },
-    #[error("Line {}: Missing a parameter key.", line)]
-    MissingParamKey { line: usize },
+    #[error("Line {0}: Missing property name.")]
+    MissingName(usize),
+    #[error("Line {0}: Missing a closing quote.")]
+    MissingClosingQuote(usize),
+    #[error("Line {0}: Missing a \"{1}\" delimiter.")]
+    MissingDelimiter(usize, char),
+    #[error("Line {0}: Missing content after \"{1}\".")]
+    MissingContentAfter(usize, char),
+    #[error("Line {0}: Missing a parameter key.")]
+    MissingParamKey(usize),
+    #[error("Line {0}: Missing value.")]
+    MissingValue(usize),
 }
 
 /// A VCARD/ICAL property.
@@ -113,165 +115,102 @@ impl fmt::Display for Property {
     }
 }
 
-/// Take a `LineReader` and return a list of `Property`.
-#[derive(Debug, Clone)]
-pub struct PropertyParser<B> {
-    line_reader: LineReader<B>,
-}
+pub struct PropertyParser<B: BufRead>(LineReader<B>);
 
 impl<B: BufRead> PropertyParser<B> {
-    /// Return a new `PropertyParser` from a `LineReader`.
     pub fn new(line_reader: LineReader<B>) -> PropertyParser<B> {
-        PropertyParser { line_reader }
+        PropertyParser(line_reader)
     }
 
-    /// Return a new `PropertyParser` from a `Reader`.
     pub fn from_reader(reader: B) -> PropertyParser<B> {
-        let line_reader = LineReader::new(reader);
-
-        PropertyParser { line_reader }
+        PropertyParser(LineReader::new(reader))
     }
 
     fn parse(&self, line: Line) -> Result<Property, PropertyError> {
-        let mut property = Property::new();
+        let to_parse = line.as_str();
 
-        let mut to_parse = line.as_str();
-
-        // Parse name.
-        let end_name_index;
-
-        let mut param_index = to_parse.find(PARAM_DELIMITER).unwrap_or(usize::MAX);
-        let mut value_index = to_parse.find(VALUE_DELIMITER).unwrap_or(usize::MAX);
-
-        if param_index < value_index && param_index != 0 {
-            end_name_index = param_index;
-        } else if value_index != usize::MAX && value_index != 0 {
-            end_name_index = value_index;
-        } else {
-            return Err(PropertyError::MissingName {
-                line: line.number(),
-            });
+        // Find end of parameter name
+        let Some(end_name_index) = to_parse.find([PARAM_DELIMITER, VALUE_DELIMITER]) else {
+            return Err(PropertyError::MissingName(line.number()));
+        };
+        let (prop_name, mut to_parse) = to_parse.split_at(end_name_index);
+        if prop_name.is_empty() {
+            return Err(PropertyError::MissingName(line.number()));
         }
 
-        {
-            let split = to_parse.split_at(end_name_index);
-            property.name = split.0.to_string();
-            to_parse = split.1;
-        }
+        // remainder either starts with ; or :
+        // Fetch all parameters
+        let mut params = vec![];
+        while to_parse.starts_with(PARAM_DELIMITER) {
+            to_parse = to_parse.split_at(1).1;
 
-        // Parse parameters.
-        value_index = to_parse.find(VALUE_DELIMITER).unwrap_or(usize::MAX);
-        param_index = to_parse.find(PARAM_DELIMITER).unwrap_or(usize::MAX);
+            // Split the param key and the rest of the line
+            let Some((key, remainder)) = to_parse.split_once(PARAM_NAME_DELIMITER) else {
+                return Err(PropertyError::MissingDelimiter(
+                    line.number(),
+                    PARAM_NAME_DELIMITER,
+                ));
+            };
+            if key.is_empty() {
+                return Err(PropertyError::MissingParamKey(line.number()));
+            }
+            to_parse = remainder;
 
-        // If there is a PARAM_DELIMITER and it not after the VALUE_DELIMITER
-        // there is arguments.
-        if param_index != usize::MAX && value_index > param_index {
-            while to_parse.starts_with(PARAM_DELIMITER) {
-                to_parse = to_parse.trim_start_matches(PARAM_DELIMITER);
+            let mut values = Vec::new();
 
-                // Split the param key and the rest of the line
-                let mut param_elements = to_parse.splitn(2, PARAM_NAME_DELIMITER);
+            // Parse parameter value.
+            loop {
+                if to_parse.starts_with('"') {
+                    // This is a dquoted value. (NAME:Foo="Bar":value)
+                    let mut elements = to_parse.splitn(3, PARAM_QUOTE).skip(1);
+                    // unwrap is safe here as we have already check above if there is on '"'.
+                    values.push(
+                        elements
+                            .next()
+                            .ok_or_else(|| PropertyError::MissingClosingQuote(line.number()))?
+                            .to_string(),
+                    );
 
-                let key = param_elements
-                    .next()
-                    .and_then(|key| {
-                        if key.is_empty() {
-                            return None;
-                        }
-
-                        Some(key)
-                    })
-                    .ok_or_else(|| PropertyError::MissingParamKey {
-                        line: line.number(),
-                    })?;
-
-                to_parse =
-                    param_elements
+                    to_parse = elements
                         .next()
-                        .ok_or_else(|| PropertyError::MissingDelimiter {
-                            delimiter: PARAM_NAME_DELIMITER,
-                            line: line.number(),
-                        })?;
+                        .ok_or_else(|| PropertyError::MissingClosingQuote(line.number()))?
+                } else {
+                    // This is a 'raw' value. (NAME;Foo=Bar:value)
+                    // Try to find the next param separator.
+                    let Some(end_param_value) =
+                        to_parse.find([PARAM_DELIMITER, VALUE_DELIMITER, PARAM_VALUE_DELIMITER])
+                    else {
+                        return Err(PropertyError::MissingContentAfter(
+                            line.number(),
+                            PARAM_NAME_DELIMITER,
+                        ));
+                    };
 
-                let mut values = Vec::new();
-
-                let mut i = 10;
-
-                // Parse parameter value.
-                while i > 0 {
-                    i -= 1;
-                    if to_parse.starts_with('"') {
-                        // This is a dquoted value. (NAME:Foo="Bar":value)
-                        let mut elements = to_parse.splitn(3, PARAM_QUOTE).skip(1);
-                        // unwrap is safe here as we have already check above if there is on '"'.
-                        values.push(
-                            elements
-                                .next()
-                                .ok_or_else(|| PropertyError::MissingClosingQuote {
-                                    line: line.number(),
-                                })?
-                                .to_string(),
-                        );
-
-                        to_parse =
-                            elements
-                                .next()
-                                .ok_or_else(|| PropertyError::MissingClosingQuote {
-                                    line: line.number(),
-                                })?
-                    } else {
-                        // This is a 'raw' value. (NAME;Foo=Bar:value)
-
-                        // Try to find the next param separator.
-                        let param_delimiter = to_parse.find(PARAM_DELIMITER).unwrap_or(usize::MAX);
-                        let value_delimiter = to_parse.find(VALUE_DELIMITER).unwrap_or(usize::MAX);
-                        let param_value_delimiter =
-                            to_parse.find(PARAM_VALUE_DELIMITER).unwrap_or(usize::MAX);
-
-                        let end_param_value = {
-                            if param_value_delimiter < value_delimiter
-                                && param_value_delimiter < param_delimiter
-                            {
-                                Ok(param_value_delimiter)
-                            } else if param_delimiter < value_delimiter
-                                && param_delimiter < param_value_delimiter
-                            {
-                                Ok(param_delimiter)
-                            } else if value_delimiter != usize::MAX {
-                                Ok(value_delimiter)
-                            } else {
-                                Err(PropertyError::MissingContentAfter {
-                                    letter: PARAM_NAME_DELIMITER,
-                                    line: line.number(),
-                                })
-                            }
-                        }?;
-
-                        let elements = to_parse.split_at(end_param_value);
-                        values.push(elements.0.to_string());
-                        to_parse = elements.1;
-                    }
-
-                    if !to_parse.starts_with(PARAM_VALUE_DELIMITER) {
-                        break;
-                    }
-
-                    to_parse = to_parse.trim_start_matches(PARAM_VALUE_DELIMITER);
+                    let elements = to_parse.split_at(end_param_value);
+                    values.push(elements.0.to_string());
+                    to_parse = elements.1;
                 }
 
-                property.params.push((key.to_uppercase(), values));
+                if !to_parse.starts_with(PARAM_VALUE_DELIMITER) {
+                    break;
+                }
+
+                to_parse = to_parse.trim_start_matches(PARAM_VALUE_DELIMITER);
             }
+
+            params.push((key.to_uppercase(), values));
         }
 
         // Parse value
-        to_parse = to_parse.trim_start_matches(VALUE_DELIMITER);
-        if to_parse.is_empty() {
-            property.value = None;
-        } else {
-            property.value = Some(to_parse.to_string());
+        if !to_parse.starts_with(VALUE_DELIMITER) {
+            return Err(PropertyError::MissingValue(line.number()));
         }
-
-        Ok(property)
+        to_parse = to_parse.split_at(1).1;
+        Ok(Property {
+            name: prop_name.to_string(),
+            params,
+            value: (!to_parse.is_empty()).then_some(to_parse.to_string()),
+        })
     }
 }
 
@@ -279,6 +218,6 @@ impl<B: BufRead> Iterator for PropertyParser<B> {
     type Item = Result<Property, PropertyError>;
 
     fn next(&mut self) -> Option<Result<Property, PropertyError>> {
-        self.line_reader.next().map(|line| self.parse(line))
+        self.0.next().map(|line| self.parse(line))
     }
 }
