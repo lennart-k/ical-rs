@@ -1,16 +1,8 @@
-// Sys mods
-use std::io::BufRead;
-
-#[cfg(feature = "serde-derive")]
-extern crate serde;
-
-// Internal mods
 use crate::parser::{Component, ComponentMut, ParserError};
 use crate::property::{Property, PropertyParser};
+use std::io::BufRead;
 
 #[derive(Debug, Clone, Default, Eq, PartialEq, Hash)]
-#[cfg_attr(feature = "serde-derive", derive(serde::Serialize, serde::Deserialize))]
-/// A VCARD contact.
 pub struct VcardContact<const VERIFIED: bool = true> {
     pub properties: Vec<Property>,
 }

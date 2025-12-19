@@ -7,7 +7,6 @@ use itertools::Itertools;
 use std::io::BufRead;
 
 #[derive(Debug, Clone, Default)]
-#[cfg_attr(feature = "serde-derive", derive(serde::Serialize, serde::Deserialize))]
 pub struct IcalJournal<const VERIFIED: bool = true> {
     pub properties: Vec<Property>,
 }

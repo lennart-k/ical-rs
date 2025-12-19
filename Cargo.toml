@@ -21,7 +21,6 @@ repository = "https://travis-ci.org/Peltoche/ical-rs"
 
 [dependencies]
 thiserror = "2.0"
-serde = { version = "1.0", features = ["derive"], optional = true }
 chrono-tz = { version = "0.10", optional = true }
 chrono = { version = "0.4", optional = true }
 regex = { version = "1.11", optional = true }
@@ -39,7 +38,6 @@ harness = false
 
 [features]
 default = ["chrono", "chrono-tz"]
-serde-derive = ["serde"]
 chrono-tz = ["dep:chrono-tz"]
 chrono = ["dep:chrono", "dep:regex", "dep:lazy_static"]
 test = []

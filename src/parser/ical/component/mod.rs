@@ -1,6 +1,3 @@
-#[cfg(feature = "serde-derive")]
-extern crate serde;
-
 mod calendar;
 pub use calendar::*;
 mod alarm;

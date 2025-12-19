@@ -6,7 +6,6 @@ use crate::{
 use std::io::BufRead;
 
 #[derive(Debug, Clone, Default)]
-#[cfg_attr(feature = "serde-derive", derive(serde::Serialize, serde::Deserialize))]
 pub struct IcalTimeZone<const VERIFIED: bool = true> {
     pub properties: Vec<Property>,
     pub transitions: Vec<IcalTimeZoneTransition<true>>,
@@ -122,7 +121,6 @@ impl ComponentMut for IcalTimeZone<false> {
 }
 
 #[derive(Debug, Clone, Default)]
-#[cfg_attr(feature = "serde-derive", derive(serde::Serialize, serde::Deserialize))]
 pub enum IcalTimeZoneTransitionType {
     #[default]
     STANDARD,
@@ -130,7 +128,6 @@ pub enum IcalTimeZoneTransitionType {
 }
 
 #[derive(Debug, Clone, Default)]
-#[cfg_attr(feature = "serde-derive", derive(serde::Serialize, serde::Deserialize))]
 pub struct IcalTimeZoneTransition<const VERIFIED: bool = true> {
     pub transition: IcalTimeZoneTransitionType,
     pub properties: Vec<Property>,

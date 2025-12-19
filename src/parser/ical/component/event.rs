@@ -1,14 +1,12 @@
-use itertools::Itertools;
-
 use crate::{
     PropertyParser,
     parser::{Component, ComponentMut, ParserError, ical::component::IcalAlarm},
     property::Property,
 };
+use itertools::Itertools;
 use std::io::BufRead;
 
 #[derive(Debug, Clone, Default)]
-#[cfg_attr(feature = "serde-derive", derive(serde::Serialize, serde::Deserialize))]
 pub struct IcalEvent<const VERIFIED: bool = true> {
     pub properties: Vec<Property>,
     pub alarms: Vec<IcalAlarm>,

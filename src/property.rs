@@ -42,9 +42,6 @@ use std::fmt;
 use std::io::BufRead;
 use std::iter::Iterator;
 
-#[cfg(feature = "serde-derive")]
-extern crate serde;
-
 // Internal mods
 use crate::{
     PARAM_DELIMITER, PARAM_NAME_DELIMITER, PARAM_QUOTE, PARAM_VALUE_DELIMITER, VALUE_DELIMITER,
@@ -69,7 +66,6 @@ pub enum PropertyError {
 
 /// A VCARD/ICAL property.
 #[derive(Debug, Clone, Default, Eq, PartialEq, Hash)]
-#[cfg_attr(feature = "serde-derive", derive(serde::Serialize, serde::Deserialize))]
 pub struct Property {
     /// Property name.
     pub name: String,

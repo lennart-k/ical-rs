@@ -1,14 +1,12 @@
-use itertools::Itertools;
-
 use crate::{
     PropertyParser,
     parser::{Component, ComponentMut, ParserError},
     property::Property,
 };
+use itertools::Itertools;
 use std::io::BufRead;
 
 #[derive(Debug, Clone, Default)]
-#[cfg_attr(feature = "serde-derive", derive(serde::Serialize, serde::Deserialize))]
 pub struct IcalFreeBusy<const VERIFIED: bool = true> {
     pub properties: Vec<Property>,
 }
