@@ -31,6 +31,11 @@ itertools = "0.14"
 [dev-dependencies]
 insta = { version = "1.44", features = ["filters"] }
 similar-asserts = "1.7"
+criterion = { version = "0.8", features = ["html_reports"] }
+
+[[bench]]
+name = "parse_benchmark"
+harness = false
 
 [features]
 default = ["chrono", "chrono-tz"]
