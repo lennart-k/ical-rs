@@ -6,6 +6,10 @@ use crate::{
 use std::io::BufRead;
 
 #[derive(Debug, Clone, Default)]
+#[cfg_attr(
+    feature = "rkyv",
+    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)
+)]
 pub struct IcalTimeZone<const VERIFIED: bool = true> {
     pub properties: Vec<Property>,
     pub transitions: Vec<IcalTimeZoneTransition<true>>,
@@ -121,6 +125,10 @@ impl ComponentMut for IcalTimeZone<false> {
 }
 
 #[derive(Debug, Clone, Default)]
+#[cfg_attr(
+    feature = "rkyv",
+    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)
+)]
 pub enum IcalTimeZoneTransitionType {
     #[default]
     STANDARD,
@@ -128,6 +136,10 @@ pub enum IcalTimeZoneTransitionType {
 }
 
 #[derive(Debug, Clone, Default)]
+#[cfg_attr(
+    feature = "rkyv",
+    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)
+)]
 pub struct IcalTimeZoneTransition<const VERIFIED: bool = true> {
     pub transition: IcalTimeZoneTransitionType,
     pub properties: Vec<Property>,

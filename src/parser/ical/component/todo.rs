@@ -7,6 +7,10 @@ use itertools::Itertools;
 use std::io::BufRead;
 
 #[derive(Debug, Clone, Default)]
+#[cfg_attr(
+    feature = "rkyv",
+    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)
+)]
 pub struct IcalTodo<const VERIFIED: bool = true> {
     pub properties: Vec<Property>,
     pub alarms: Vec<IcalAlarm>,

@@ -13,6 +13,10 @@ use std::io::BufRead;
 
 #[derive(Debug, Clone, Default)]
 /// An ICAL calendar.
+#[cfg_attr(
+    feature = "rkyv",
+    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)
+)]
 pub struct IcalCalendar<const VERIFIED: bool = true> {
     pub properties: Vec<Property>,
     pub events: Vec<IcalEvent>,

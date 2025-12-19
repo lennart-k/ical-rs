@@ -66,6 +66,10 @@ pub enum PropertyError {
 
 /// A VCARD/ICAL property.
 #[derive(Debug, Clone, Default, Eq, PartialEq, Hash)]
+#[cfg_attr(
+    feature = "rkyv",
+    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)
+)]
 pub struct Property {
     /// Property name.
     pub name: String,
