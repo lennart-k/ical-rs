@@ -241,7 +241,7 @@ mod should {
             .build()
             .unwrap();
 
-        assert_eq!(vcard.generate(), expect);
+        similar_asserts::assert_eq!(vcard.generate(), expect);
     }
 
     #[test]
