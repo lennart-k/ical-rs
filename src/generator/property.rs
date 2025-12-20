@@ -3,24 +3,51 @@ use crate::property::Property;
 use crate::{PARAM_DELIMITER, PARAM_VALUE_DELIMITER, VALUE_DELIMITER};
 use itertools::Itertools;
 
-pub(crate) fn split_line(str: &str) -> String {
-    let mut chars = str.chars();
-    let mut first = true;
-    (0..)
-        .map(|_| {
-            chars
-                .by_ref()
-                .take(if first {
-                    first = false;
-                    75
+pub(crate) fn split_line(line: String) -> String {
+    let break_estimate = line.len().div_ceil(74);
+    let mut output = String::with_capacity(line.len() + 3 * break_estimate + 2);
+
+    let mut chars = line.char_indices().map(|(offset, _)| offset).skip(1);
+    let mut first_char_idx = 0;
+    // Iterate over lines
+    loop {
+        // Find last character index and check if this will be the last line
+        let (last_char_idx, is_last) = {
+            let mut line_len = 0;
+            let mut char_idx = None;
+            loop {
+                if line_len >= 74 {
+                    break (char_idx, false);
+                }
+                if let Some(c) = chars.next() {
+                    char_idx = Some(c);
                 } else {
-                    74
-                })
-                .collect::<String>()
-        })
-        .take_while(|s| !s.is_empty())
-        .collect::<Vec<_>>()
-        .join("\r\n ")
+                    break (char_idx, true);
+                }
+                line_len += 1;
+            }
+        };
+
+        let Some(last_char_idx) = last_char_idx else {
+            // There were no new characters
+            break;
+        };
+
+        // This will not panic
+        let left = line.split_at(last_char_idx + 1).0;
+        #[cfg(test)]
+        assert!(first_char_idx < last_char_idx + 1);
+        output.push_str(left.split_at(first_char_idx).1);
+        if is_last {
+            break;
+        } else {
+            output.push_str("\r\n ");
+        }
+        first_char_idx = last_char_idx + 1;
+    }
+
+    output.push_str("\r\n");
+    output
 }
 
 //
@@ -38,13 +65,12 @@ pub(crate) fn split_line(str: &str) -> String {
 //     Any character except CONTROLs not needed by the current
 //     character set, DQUOTE, ";", ":", "\", ","
 //
-#[allow(clippy::ptr_arg)]
 pub(crate) fn protect_param(param: &str) -> String {
     // let len = param.len() - 1;
     // starts and ends the param with quotes?
     let in_quotes = param.len() > 1 && param.starts_with('"') && param.ends_with('"');
 
-    let mut escaped = String::new();
+    let mut escaped = String::with_capacity(param.len());
     let mut previous_char = None;
     for (pos, char) in param.chars().enumerate() {
         match char {
@@ -76,8 +102,11 @@ mod should {
         let text = "The ability to return a type that is only specified by the trait it impleme\r\n \
                      nts is especially useful in the context closures and iterators, which we c\r\n \
                      over in Chapter 13. Closures and iterators create types that only the comp\r\n \
-                     iler knows or types that are very long to specify.";
-        assert_eq!(text, split_line(&text.replace("\r\n ", "")));
+                     iler knows or types that are very long to specify.\r\n";
+        assert_eq!(
+            text,
+            split_line(text.replace("\r\n ", "").replace("\r\n", ""))
+        );
     }
 
     #[test]
@@ -87,8 +116,11 @@ mod should {
         let text = "DESCRIPTION:ABCDEFGHIJ\\n\\nKLMNOPQRSTUVWXYZ123456789üABCDEFGHIJKLMNOPQRS\\n\\n\r\n \
                      TUVWXYZ123456ä7890ABCDEFGHIJKLM\\n\\nNOPQRSTUVWXYZ1234567890ABCDEFGHIJKLMNOP\r\n \
                      QRSTUVWXöYZ1234567890ABCDEFGHIJKLMNOPQRSTUVWX\\n\\nYZ1234567890abcdefghiÜjkl\r\n \
-                     m\\nnopqrstuvwx";
-        assert_eq!(text, split_line(&text.replace("\r\n ", "")));
+                     m\\nnopqrstuvwx\r\n";
+        assert_eq!(
+            text,
+            split_line(text.replace("\r\n ", "").replace("\r\n", ""))
+        );
     }
 
     #[test]
@@ -137,18 +169,15 @@ fn get_params(params: &[(String, Vec<String>)]) -> String {
 
 impl Emitter for Property {
     fn generate(&self) -> String {
-        let mut output = String::new();
-        output.push_str(&self.name);
-        let params = get_params(&self.params);
-        if !params.is_empty() {
+        let mut output = self.name.to_owned();
+        if !self.params.is_empty() {
             output.push(PARAM_DELIMITER);
-            output.push_str(&params);
+            output.push_str(&get_params(&self.params));
         }
         output.push(VALUE_DELIMITER);
         if let Some(value) = self.value.as_ref() {
             output.push_str(value);
         }
-        output.push_str("\r\n");
-        split_line(&output)
+        split_line(output)
     }
 }
