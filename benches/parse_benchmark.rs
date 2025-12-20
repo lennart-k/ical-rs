@@ -8,6 +8,14 @@ fn parse_ical() -> IcalCalendar {
 }
 
 fn benchmark(c: &mut Criterion) {
+    c.bench_function("line parse ical_everything.ics", |b| {
+        b.iter(|| {
+            let input = include_str!("../tests/resources/ical_everything.ics");
+            let reader = ical::LineReader::new(input.as_bytes());
+            // Consume reader
+            for _ in reader {}
+        })
+    });
     c.bench_function("ics parse ical_everything.ics", |b| b.iter(parse_ical));
     let cal = parse_ical();
     c.bench_function("ics serialise ical_everything.ics", |b| {
