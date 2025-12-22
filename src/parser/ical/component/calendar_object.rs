@@ -20,6 +20,16 @@ enum CalendarInnerData {
     Journal(IcalJournal, Vec<IcalJournal>),
 }
 
+impl CalendarInnerData {
+    pub fn get_uid(&self) -> &str {
+        match self {
+            Self::Event(main, _) => main.get_uid(),
+            Self::Todo(main, _) => main.get_uid(),
+            Self::Journal(main, _) => main.get_uid(),
+        }
+    }
+}
+
 #[derive(Debug, Clone)]
 /// An ICAL calendar object.
 #[cfg_attr(
@@ -30,6 +40,12 @@ pub struct IcalCalendarObject {
     properties: Vec<Property>,
     inner: CalendarInnerData,
     timezones: Vec<IcalTimeZone>,
+}
+
+impl IcalCalendarObject {
+    pub fn get_uid(&self) -> &str {
+        self.inner.get_uid()
+    }
 }
 
 #[derive(Debug, Clone, Default)]
