@@ -27,6 +27,8 @@ regex = { version = "1.11", optional = true }
 lazy_static = { version = "1.5", optional = true }
 itertools = "0.14"
 rkyv = { version = "0.8", optional = true }
+derive_more = { version = "2.1", features = ["display", "from"] }
+rrule = { version = "0.14", optional = true }
 
 [dev-dependencies]
 insta = { version = "1.44", features = ["filters"] }
@@ -41,7 +43,7 @@ harness = false
 [features]
 default = ["chrono", "chrono-tz"]
 chrono-tz = ["dep:chrono-tz"]
-chrono = ["dep:chrono", "dep:regex", "dep:lazy_static"]
+chrono = ["dep:chrono", "dep:regex", "dep:lazy_static", "dep:rrule"]
 test = []
 rkyv = ["dep:rkyv"]
 
