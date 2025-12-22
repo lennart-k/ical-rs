@@ -14,7 +14,7 @@ use std::io::BufRead;
     feature = "rkyv",
     derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)
 )]
-enum CalendarInnerData {
+pub enum CalendarInnerData {
     Event(IcalEvent, Vec<IcalEvent>),
     Todo(IcalTodo, Vec<IcalTodo>),
     Journal(IcalJournal, Vec<IcalJournal>),
@@ -45,6 +45,10 @@ pub struct IcalCalendarObject {
 impl IcalCalendarObject {
     pub fn get_uid(&self) -> &str {
         self.inner.get_uid()
+    }
+
+    pub fn get_inner(&self) -> &CalendarInnerData {
+        &self.inner
     }
 }
 
