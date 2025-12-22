@@ -52,12 +52,44 @@ pub mod line {
     }
 }
 
+pub mod calendar_object {
+    extern crate ical;
+    use ical::{generator::Emitter, parser::ParserError};
+
+    #[rstest::rstest]
+    #[case(include_str!("./resources/ical_example_1.ics"))]
+    #[case(include_str!("./resources/ical_example_2.ics"))]
+    #[case(include_str!("./resources/ical_example_rrule.ics"))]
+    #[case(include_str!("./resources/ical_events.ics"))]
+    #[case(include_str!("./resources/ical_special_symbols.ics"))]
+    #[case(include_str!("./resources/ical_todos.ics"))]
+    #[case(include_str!("./resources/ical_journals.ics"))]
+    fn valid_objects(#[case] input: &str) {
+        let generic_reader = ical::IcalParser::new(input.as_bytes());
+        let reader = ical::IcalObjectParser::new(input.as_bytes());
+        for (g_res, res) in generic_reader.zip(reader) {
+            let g_cal = g_res.unwrap();
+            let cal = res.unwrap();
+            similar_asserts::assert_eq!(g_cal.generate(), cal.generate());
+        }
+    }
+
+    #[rstest::rstest]
+    #[case(include_str!("./resources/ical_freebusy.ics"))]
+    fn invalid_objects(#[case] input: &str) {
+        let reader = ical::IcalObjectParser::new(input.as_bytes());
+        for res in reader {
+            assert!(res.is_err());
+        }
+    }
+}
+
 pub mod parser {
     extern crate ical;
     use ical::generator::Emitter;
 
     #[test]
-    fn ical() {
+    fn ical_multiple() {
         let input = include_str!("./resources/ical_multiple.ics");
         let reader = ical::IcalParser::new(input.as_bytes());
         for res in reader {

@@ -1,6 +1,6 @@
 ---
 source: tests/mod.rs
-expression: res.unwrap()
+expression: cal
 ---
 IcalCalendar {
     properties: [
@@ -54,8 +54,13 @@ IcalCalendar {
                     name: "SUMMARY",
                     params: [],
                     value: Some(
-                        "Planning meeting",
+                        "Missing description value, but includes header",
                     ),
+                },
+                Property {
+                    name: "DESCRIPTION",
+                    params: [],
+                    value: None,
                 },
                 Property {
                     name: "UID",
@@ -65,19 +70,7 @@ IcalCalendar {
                     ),
                 },
             ],
-            alarms: [
-                IcalAlarm {
-                    properties: [
-                        Property {
-                            name: "SUMMARY",
-                            params: [],
-                            value: Some(
-                                "escaped\\, comma and\\; semicolon\\nnewline",
-                            ),
-                        },
-                    ],
-                },
-            ],
+            alarms: [],
         },
     ],
     alarms: [],

@@ -1,5 +1,7 @@
 mod calendar;
 pub use calendar::*;
+mod calendar_object;
+pub use calendar_object::*;
 mod alarm;
 pub use alarm::*;
 mod event;

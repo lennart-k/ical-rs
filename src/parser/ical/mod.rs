@@ -35,7 +35,8 @@
 pub mod component;
 use component::IcalCalendar;
 
-use crate::parser::ComponentParser;
+use crate::parser::{ComponentParser, ical::component::IcalCalendarObject};
 
 /// Reader returning `IcalCalendar` object from a `BufRead`.
 pub type IcalParser<B> = ComponentParser<B, IcalCalendar>;
+pub type IcalObjectParser<B> = ComponentParser<B, IcalCalendarObject>;

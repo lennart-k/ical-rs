@@ -1,6 +1,6 @@
 ---
 source: tests/mod.rs
-expression: res.unwrap()
+expression: cal
 ---
 IcalCalendar {
     properties: [

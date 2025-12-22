@@ -32,6 +32,7 @@ rkyv = { version = "0.8", optional = true }
 insta = { version = "1.44", features = ["filters"] }
 similar-asserts = "1.7"
 criterion = { version = "0.8", features = ["html_reports"] }
+rstest = "0.26"
 
 [[bench]]
 name = "parse_benchmark"

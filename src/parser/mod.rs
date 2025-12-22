@@ -57,7 +57,7 @@ pub trait Component: Clone {
 /// It take a `PropertyParser` and fill the component with. It's also able to create
 /// sub-component used by event and alarms.
 pub trait ComponentMut: Component + Default {
-    type Verified: Component;
+    type Verified: Component<Unverified = Self>;
 
     /// Add the givent sub component.
     fn add_sub_component<B: BufRead>(
@@ -108,6 +108,12 @@ pub trait ComponentMut: Component + Default {
             };
         }
         Ok(())
+    }
+
+    fn from_parser<B: BufRead>(line_parser: &mut PropertyParser<B>) -> Result<Self, ParserError> {
+        let mut out = Self::default();
+        out.parse(line_parser)?;
+        Ok(out)
     }
 }
 

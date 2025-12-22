@@ -38,7 +38,7 @@ const PARAM_NAME_DELIMITER: char = '=';
 const PARAM_QUOTE: char = '"';
 
 pub mod parser;
-pub use crate::parser::ical::IcalParser;
+pub use crate::parser::ical::*;
 pub use crate::parser::vcard::VcardParser;
 pub mod property;
 pub use crate::property::PropertyParser;
