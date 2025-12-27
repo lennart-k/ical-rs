@@ -27,7 +27,7 @@ regex = { version = "1.11", optional = true }
 lazy_static = { version = "1.5", optional = true }
 itertools = "0.14"
 rkyv = { version = "0.8", optional = true }
-derive_more = { version = "2.1", features = ["display", "from"] }
+derive_more = { version = "2.1", features = ["display", "from", "deref"] }
 rrule = { version = "0.14", optional = true }
 
 [dev-dependencies]
