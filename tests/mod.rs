@@ -54,7 +54,7 @@ pub mod line {
 
 pub mod calendar_object {
     extern crate ical;
-    use ical::{generator::Emitter, parser::ParserError};
+    use ical::generator::Emitter;
 
     #[rstest::rstest]
     #[case(include_str!("./resources/ical_example_1.ics"))]

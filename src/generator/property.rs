@@ -7,43 +7,55 @@ pub(crate) fn split_line(line: String) -> String {
     let break_estimate = line.len().div_ceil(74);
     let mut output = String::with_capacity(line.len() + 3 * break_estimate + 2);
 
-    let mut chars = line.char_indices().map(|(offset, _)| offset).skip(1);
+    let mut chars = line
+        .char_indices()
+        .map(|(offset, _)| offset)
+        .skip(1)
+        .peekable();
     let mut first_char_idx = 0;
     // Iterate over lines
     loop {
-        // Find last character index and check if this will be the last line
-        let (last_char_idx, is_last) = {
+        // Find start of next line and find out if it was the last one
+        let (line_boundary, last_line) = {
             let mut line_len = 0;
-            let mut char_idx = None;
             loop {
-                if line_len >= 74 {
-                    break (char_idx, false);
-                }
-                if let Some(c) = chars.next() {
-                    char_idx = Some(c);
-                } else {
-                    break (char_idx, true);
-                }
+                let Some(_) = chars.next() else {
+                    // We are at the end, the boundary is given bv the line length (since we don't
+                    // know how wide the last character is)
+                    break (line.len(), true);
+                };
                 line_len += 1;
+
+                if line_len == 74 {
+                    // We've reached our desired length.
+                    // We peek for the line boundary
+                    let boundary = if let Some(&c) = chars.peek() {
+                        c
+                    } else {
+                        line.len()
+                    };
+                    // char_idx currently is the start of the last character
+                    break (boundary, false);
+                }
             }
         };
 
-        let Some(last_char_idx) = last_char_idx else {
+        if first_char_idx == line_boundary {
             // There were no new characters
             break;
-        };
+        }
 
         // This will not panic
-        let left = line.split_at(last_char_idx + 1).0;
+        let left = line.split_at(line_boundary).0;
         #[cfg(test)]
-        assert!(first_char_idx < last_char_idx + 1);
+        assert!(first_char_idx < line_boundary);
         output.push_str(left.split_at(first_char_idx).1);
-        if is_last {
+        if last_line {
             break;
         } else {
             output.push_str("\r\n ");
         }
-        first_char_idx = last_char_idx + 1;
+        first_char_idx = line_boundary;
     }
 
     output.push_str("\r\n");
@@ -98,7 +110,21 @@ mod should {
     use super::{protect_param, split_line};
 
     #[test]
+    fn split_line_multibyte() {
+        let text = "a";
+        assert_eq!(text, split_line(text.to_owned()).replace("\r\n", ""));
+        let text = "sönderzaichän :))❗okay woow❗";
+        assert_eq!(text, split_line(text.to_owned()).replace("\r\n", ""));
+    }
+
+    #[test]
     fn split_long_line() {
+        let text = "The ability to return a type that is only specified by the trait it impleme\r\n \
+                     n\r\n";
+        assert_eq!(
+            text,
+            split_line(text.replace("\r\n ", "").replace("\r\n", ""))
+        );
         let text = "The ability to return a type that is only specified by the trait it impleme\r\n \
                      nts is especially useful in the context closures and iterators, which we c\r\n \
                      over in Chapter 13. Closures and iterators create types that only the comp\r\n \
