@@ -1,23 +1,15 @@
-#[cfg(feature = "chrono")]
 mod duration;
-#[cfg(feature = "chrono")]
 pub use duration::*;
-#[cfg(feature = "chrono")]
 mod timezone;
-#[cfg(feature = "chrono")]
 pub use timezone::*;
-#[cfg(feature = "chrono")]
 mod date;
-#[cfg(feature = "chrono")]
+mod period;
 pub use date::*;
-#[cfg(feature = "chrono")]
 mod datetime;
-#[cfg(feature = "chrono")]
 pub use datetime::*;
-#[cfg(feature = "chrono")]
 mod dateordatetime;
-#[cfg(feature = "chrono")]
 pub use dateordatetime::*;
+pub use period::*;
 
 #[derive(Debug, thiserror::Error, PartialEq, Eq)]
 pub enum CalDateTimeError {
