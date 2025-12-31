@@ -50,6 +50,13 @@ pub trait Component: Clone {
     fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
         self.get_properties().iter().find(|p| p.name == name)
     }
+
+    fn get_named_properties<'c>(&'c self, name: &str) -> Vec<&'c Property> {
+        self.get_properties()
+            .iter()
+            .filter(|p| p.name == name)
+            .collect()
+    }
 }
 
 /// A mutable interface for an Ical/Vcard component.
