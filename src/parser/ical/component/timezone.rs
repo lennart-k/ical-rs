@@ -94,7 +94,7 @@ impl ComponentMut for IcalTimeZone<false> {
                 transition.parse(line_parser)?;
                 self.transitions.push(transition.verify()?);
             }
-            _ => return Err(ParserError::InvalidComponent),
+            _ => return Err(ParserError::InvalidComponent(value.to_owned())),
         };
 
         Ok(())
@@ -180,10 +180,10 @@ impl ComponentMut for IcalTimeZoneTransition<false> {
     #[cfg(not(tarpaulin_include))]
     fn add_sub_component<B: BufRead>(
         &mut self,
-        _: &str,
+        value: &str,
         _: &mut PropertyParser<B>,
     ) -> Result<(), ParserError> {
-        Err(ParserError::InvalidComponent)
+        Err(ParserError::InvalidComponent(value.to_owned()))
     }
 
     fn verify(self) -> Result<IcalTimeZoneTransition<true>, ParserError> {

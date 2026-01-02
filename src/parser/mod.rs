@@ -5,24 +5,22 @@
 //!   the case-insensitive fields.  No checks are made on the fields validity.
 //!
 //!
-
 pub mod ical;
 pub mod vcard;
-
-// Sys mods
-use crate::types::InvalidDuration;
-use std::io::BufRead;
-use std::marker::PhantomData;
-// Internal mods
+use crate::types::{CalDateTimeError, InvalidDuration};
 use crate::{
     LineReader,
     property::{Property, PropertyError, PropertyParser},
 };
+use std::io::BufRead;
+use std::marker::PhantomData;
+
+mod standard_property;
 
 #[derive(Debug, thiserror::Error, PartialEq, Eq)]
 pub enum ParserError {
-    #[error("invalid component")]
-    InvalidComponent,
+    #[error("invalid component: {0}")]
+    InvalidComponent(String),
     #[error("incomplete object")]
     NotComplete,
     #[error("missing header")]
@@ -31,10 +29,16 @@ pub enum ParserError {
     PropertyError(#[from] PropertyError),
     #[error("missing property: {0}")]
     MissingProperty(&'static str),
+    #[error("missing property: UID")]
+    MissingUID,
     #[error("property conflict: {0}")]
     PropertyConflict(&'static str),
     #[error(transparent)]
     InvalidDuration(#[from] InvalidDuration),
+    #[error(transparent)]
+    RRule(#[from] rrule::RRuleError),
+    #[error(transparent)]
+    DateTime(#[from] CalDateTimeError),
 }
 
 /// An immutable interface for an Ical/Vcard component.
@@ -50,11 +54,18 @@ pub trait Component: Clone {
     fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
         self.get_properties().iter().find(|p| p.name == name)
     }
+
+    fn get_named_properties<'c>(&'c self, name: &str) -> Vec<&'c Property> {
+        self.get_properties()
+            .iter()
+            .filter(|p| p.name == name)
+            .collect()
+    }
 }
 
 /// A mutable interface for an Ical/Vcard component.
 ///
-/// It take a `PropertyParser` and fill the component with. It's also able to create
+/// It takes a `PropertyParser` and fills the component with. It's also able to create
 /// sub-component used by event and alarms.
 pub trait ComponentMut: Component + Default {
     type Verified: Component<Unverified = Self>;

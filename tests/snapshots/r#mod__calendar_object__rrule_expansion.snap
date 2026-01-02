@@ -1,0 +1,392 @@
+---
+source: tests/mod.rs
+expression: recurrence.get_inner()
+---
+Event(
+    IcalEvent {
+        properties: [
+            Property {
+                name: "UID",
+                params: [],
+                value: Some(
+                    "459aa1c8ba359d55e03584cbc3ad1e05b2113b79",
+                ),
+            },
+            Property {
+                name: "DTSTAMP",
+                params: [],
+                value: Some(
+                    "20251228T111327Z",
+                ),
+            },
+            Property {
+                name: "SEQUENCE",
+                params: [],
+                value: Some(
+                    "3",
+                ),
+            },
+            Property {
+                name: "SUMMARY",
+                params: [],
+                value: Some(
+                    "Recurring at 10am\\, last a 11am",
+                ),
+            },
+            Property {
+                name: "TRANSP",
+                params: [],
+                value: Some(
+                    "OPAQUE",
+                ),
+            },
+            Property {
+                name: "CLASS",
+                params: [],
+                value: Some(
+                    "PUBLIC",
+                ),
+            },
+            Property {
+                name: "CREATED",
+                params: [],
+                value: Some(
+                    "20251228T114744Z",
+                ),
+            },
+            Property {
+                name: "LAST-MODIFIED",
+                params: [],
+                value: Some(
+                    "20251228T114806Z",
+                ),
+            },
+            Property {
+                name: "RECURRENCE-ID",
+                params: [],
+                value: Some(
+                    "20251230T100000",
+                ),
+            },
+            Property {
+                name: "DTSTART",
+                params: [
+                    (
+                        "TZID",
+                        [
+                            "Europe/Berlin",
+                        ],
+                    ),
+                ],
+                value: Some(
+                    "20251230T100000",
+                ),
+            },
+            Property {
+                name: "DTEND",
+                params: [
+                    (
+                        "TZID",
+                        [
+                            "Europe/Berlin",
+                        ],
+                    ),
+                ],
+                value: Some(
+                    "20251230T132500",
+                ),
+            },
+        ],
+        alarms: [],
+    },
+    [
+        IcalEvent {
+            properties: [
+                Property {
+                    name: "UID",
+                    params: [],
+                    value: Some(
+                        "459aa1c8ba359d55e03584cbc3ad1e05b2113b79",
+                    ),
+                },
+                Property {
+                    name: "DTSTAMP",
+                    params: [],
+                    value: Some(
+                        "20251228T111327Z",
+                    ),
+                },
+                Property {
+                    name: "SEQUENCE",
+                    params: [],
+                    value: Some(
+                        "3",
+                    ),
+                },
+                Property {
+                    name: "SUMMARY",
+                    params: [],
+                    value: Some(
+                        "Recurring at 10am\\, last a 11am",
+                    ),
+                },
+                Property {
+                    name: "TRANSP",
+                    params: [],
+                    value: Some(
+                        "OPAQUE",
+                    ),
+                },
+                Property {
+                    name: "CLASS",
+                    params: [],
+                    value: Some(
+                        "PUBLIC",
+                    ),
+                },
+                Property {
+                    name: "CREATED",
+                    params: [],
+                    value: Some(
+                        "20251228T114744Z",
+                    ),
+                },
+                Property {
+                    name: "LAST-MODIFIED",
+                    params: [],
+                    value: Some(
+                        "20251228T114806Z",
+                    ),
+                },
+                Property {
+                    name: "RECURRENCE-ID",
+                    params: [],
+                    value: Some(
+                        "20251231T100000",
+                    ),
+                },
+                Property {
+                    name: "DTSTART",
+                    params: [
+                        (
+                            "TZID",
+                            [
+                                "Europe/Berlin",
+                            ],
+                        ),
+                    ],
+                    value: Some(
+                        "20251231T100000",
+                    ),
+                },
+                Property {
+                    name: "DTEND",
+                    params: [
+                        (
+                            "TZID",
+                            [
+                                "Europe/Berlin",
+                            ],
+                        ),
+                    ],
+                    value: Some(
+                        "20251231T132500",
+                    ),
+                },
+            ],
+            alarms: [],
+        },
+        IcalEvent {
+            properties: [
+                Property {
+                    name: "UID",
+                    params: [],
+                    value: Some(
+                        "459aa1c8ba359d55e03584cbc3ad1e05b2113b79",
+                    ),
+                },
+                Property {
+                    name: "DTSTAMP",
+                    params: [],
+                    value: Some(
+                        "20251228T111327Z",
+                    ),
+                },
+                Property {
+                    name: "SEQUENCE",
+                    params: [],
+                    value: Some(
+                        "3",
+                    ),
+                },
+                Property {
+                    name: "SUMMARY",
+                    params: [],
+                    value: Some(
+                        "Recurring at 10am\\, last a 11am",
+                    ),
+                },
+                Property {
+                    name: "TRANSP",
+                    params: [],
+                    value: Some(
+                        "OPAQUE",
+                    ),
+                },
+                Property {
+                    name: "CLASS",
+                    params: [],
+                    value: Some(
+                        "PUBLIC",
+                    ),
+                },
+                Property {
+                    name: "CREATED",
+                    params: [],
+                    value: Some(
+                        "20251228T114744Z",
+                    ),
+                },
+                Property {
+                    name: "LAST-MODIFIED",
+                    params: [],
+                    value: Some(
+                        "20251228T114806Z",
+                    ),
+                },
+                Property {
+                    name: "RECURRENCE-ID",
+                    params: [],
+                    value: Some(
+                        "20260101T100000",
+                    ),
+                },
+                Property {
+                    name: "DTSTART",
+                    params: [
+                        (
+                            "TZID",
+                            [
+                                "Europe/Berlin",
+                            ],
+                        ),
+                    ],
+                    value: Some(
+                        "20260101T100000",
+                    ),
+                },
+                Property {
+                    name: "DTEND",
+                    params: [
+                        (
+                            "TZID",
+                            [
+                                "Europe/Berlin",
+                            ],
+                        ),
+                    ],
+                    value: Some(
+                        "20260101T132500",
+                    ),
+                },
+            ],
+            alarms: [],
+        },
+        IcalEvent {
+            properties: [
+                Property {
+                    name: "UID",
+                    params: [],
+                    value: Some(
+                        "459aa1c8ba359d55e03584cbc3ad1e05b2113b79",
+                    ),
+                },
+                Property {
+                    name: "DTSTAMP",
+                    params: [],
+                    value: Some(
+                        "20251228T111327Z",
+                    ),
+                },
+                Property {
+                    name: "SEQUENCE",
+                    params: [],
+                    value: Some(
+                        "3",
+                    ),
+                },
+                Property {
+                    name: "SUMMARY",
+                    params: [],
+                    value: Some(
+                        "Recurring at 10am\\, last a 11am",
+                    ),
+                },
+                Property {
+                    name: "TRANSP",
+                    params: [],
+                    value: Some(
+                        "OPAQUE",
+                    ),
+                },
+                Property {
+                    name: "CLASS",
+                    params: [],
+                    value: Some(
+                        "PUBLIC",
+                    ),
+                },
+                Property {
+                    name: "CREATED",
+                    params: [],
+                    value: Some(
+                        "20251228T114744Z",
+                    ),
+                },
+                Property {
+                    name: "LAST-MODIFIED",
+                    params: [],
+                    value: Some(
+                        "20251228T114806Z",
+                    ),
+                },
+                Property {
+                    name: "RECURRENCE-ID",
+                    params: [],
+                    value: Some(
+                        "20260102T100000",
+                    ),
+                },
+                Property {
+                    name: "DTSTART",
+                    params: [
+                        (
+                            "TZID",
+                            [
+                                "Europe/Berlin",
+                            ],
+                        ),
+                    ],
+                    value: Some(
+                        "20260102T100000",
+                    ),
+                },
+                Property {
+                    name: "DTEND",
+                    params: [
+                        (
+                            "TZID",
+                            [
+                                "Europe/Berlin",
+                            ],
+                        ),
+                    ],
+                    value: Some(
+                        "20260102T132500",
+                    ),
+                },
+            ],
+            alarms: [],
+        },
+    ],
+)

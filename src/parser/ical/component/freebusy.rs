@@ -48,10 +48,10 @@ impl ComponentMut for IcalFreeBusy<false> {
     #[cfg(not(tarpaulin_include))]
     fn add_sub_component<B: BufRead>(
         &mut self,
-        _: &str,
+        value: &str,
         _: &mut PropertyParser<B>,
     ) -> Result<(), ParserError> {
-        Err(ParserError::InvalidComponent)
+        Err(ParserError::InvalidComponent(value.to_owned()))
     }
 
     fn verify(self) -> Result<IcalFreeBusy<true>, ParserError> {

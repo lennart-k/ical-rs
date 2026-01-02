@@ -2,9 +2,10 @@ use crate::{
     PropertyParser,
     parser::{Component, ComponentMut, ParserError, ical::component::IcalAlarm},
     property::Property,
+    types::{CalDateOrDateTime, CalDateTimeError},
 };
 use itertools::Itertools;
-use std::io::BufRead;
+use std::{collections::HashMap, io::BufRead};
 
 #[derive(Debug, Clone, Default)]
 #[cfg_attr(
@@ -42,15 +43,25 @@ impl IcalTodo<true> {
             .expect("already verified that this must exist")
     }
 
-    pub fn get_dtstart(&self) -> Option<&Property> {
+    pub fn get_dtstart_prop(&self) -> Option<&Property> {
         self.get_property("DTSTART")
+    }
+
+    pub fn get_dtstart(
+        &self,
+        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+    ) -> Result<Option<CalDateOrDateTime>, CalDateTimeError> {
+        if let Some(dtstart) = self.get_dtstart_prop() {
+            Ok(Some(CalDateOrDateTime::parse_prop(dtstart, timezones)?))
+        } else {
+            Ok(None)
+        }
     }
 
     pub fn get_due(&self) -> Option<&Property> {
         self.get_property("DUE")
     }
 
-    #[cfg(feature = "chrono")]
     pub fn get_duration(&self) -> Option<chrono::Duration> {
         self.get_property("DURATION")
             .and_then(|prop| Option::<chrono::Duration>::try_from(prop).unwrap())
@@ -95,7 +106,7 @@ impl ComponentMut for IcalTodo<false> {
                 alarm.parse(line_parser)?;
                 self.alarms.push(alarm.verify()?);
             }
-            _ => return Err(ParserError::InvalidComponent),
+            _ => return Err(ParserError::InvalidComponent(value.to_owned())),
         };
 
         Ok(())
@@ -118,7 +129,6 @@ impl ComponentMut for IcalTodo<false> {
             return Err(ParserError::MissingProperty("DTSTAMP"));
         }
 
-        #[cfg(feature = "chrono")]
         if let Some(prop) = self.get_property("DURATION") {
             Option::<chrono::Duration>::try_from(prop)?;
         }
@@ -134,9 +144,8 @@ impl ComponentMut for IcalTodo<false> {
             verified.get_uid();
             verified.get_recurrence_id();
             verified.get_dtstamp();
-            verified.get_dtstart();
+            // verified.get_dtstart(&HashMap::new()).unwrap();
             verified.get_due();
-            #[cfg(feature = "chrono")]
             verified.get_duration();
             verified.get_rrule();
         }

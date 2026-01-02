@@ -75,47 +75,47 @@ impl Finalizer {
         self
     }
 
-    pub fn add_event(self, ev: IcalEvent) -> Self {
+    pub fn add_event(self, ev: IcalEvent<false>) -> Self {
         self.add_events([ev])
     }
 
-    pub fn add_events(mut self, evs: impl IntoIterator<Item = IcalEvent>) -> Self {
+    pub fn add_events(mut self, evs: impl IntoIterator<Item = IcalEvent<false>>) -> Self {
         self.0.cal.events.extend(evs);
         self
     }
 
-    pub fn add_alarm(self, alarm: IcalAlarm) -> Self {
+    pub fn add_alarm(self, alarm: IcalAlarm<false>) -> Self {
         self.add_alarms([alarm])
     }
 
-    pub fn add_alarms(mut self, alarms: impl IntoIterator<Item = IcalAlarm>) -> Self {
+    pub fn add_alarms(mut self, alarms: impl IntoIterator<Item = IcalAlarm<false>>) -> Self {
         self.0.cal.alarms.extend(alarms);
         self
     }
 
-    pub fn add_todo(self, todo: IcalTodo) -> Self {
+    pub fn add_todo(self, todo: IcalTodo<false>) -> Self {
         self.add_todos([todo])
     }
 
-    pub fn add_todos(mut self, todos: impl IntoIterator<Item = IcalTodo>) -> Self {
+    pub fn add_todos(mut self, todos: impl IntoIterator<Item = IcalTodo<false>>) -> Self {
         self.0.cal.todos.extend(todos);
         self
     }
 
-    pub fn add_journal(self, journal: IcalJournal) -> Self {
+    pub fn add_journal(self, journal: IcalJournal<false>) -> Self {
         self.add_journals([journal])
     }
 
-    pub fn add_journals(mut self, journals: impl IntoIterator<Item = IcalJournal>) -> Self {
+    pub fn add_journals(mut self, journals: impl IntoIterator<Item = IcalJournal<false>>) -> Self {
         self.0.cal.journals.extend(journals);
         self
     }
 
-    pub fn add_timezone(self, tz: IcalTimeZone) -> Self {
+    pub fn add_timezone(self, tz: IcalTimeZone<false>) -> Self {
         self.add_timezones([tz])
     }
 
-    pub fn add_timezones(mut self, tzs: impl IntoIterator<Item = IcalTimeZone>) -> Self {
+    pub fn add_timezones(mut self, tzs: impl IntoIterator<Item = IcalTimeZone<false>>) -> Self {
         self.0.cal.timezones.extend(tzs);
         self
     }
@@ -127,6 +127,7 @@ mod tests {
         IcalParser,
         builder::{calendar::IcalCalendarBuilder, event::IcalEventBuilder},
         generator::Emitter,
+        parser::Component,
         property::Property,
     };
 
@@ -147,7 +148,8 @@ mod tests {
                     .start("20250726T144426Z")
                     .end("20250726T144426Z")
                     .build()
-                    .unwrap(),
+                    .unwrap()
+                    .mutable(),
             )
             .build()
             .unwrap();
@@ -159,16 +161,16 @@ mod tests {
         let cal = IcalCalendarBuilder::version("4.0")
             .noscale()
             .prodid("github.com/lennart-k/ical-rs")
-            .add_events(ref_cal.events)
+            .add_events(ref_cal.events.into_iter().map(Component::mutable))
             .set(Property {
                 name: "X-HELLO".to_string(),
                 params: vec![],
                 value: Some("Ok wow!".to_string()),
             })
-            .add_todo(ref_cal.todos.pop().unwrap())
-            .add_alarm(ref_cal.alarms.pop().unwrap())
-            .add_timezone(ref_cal.timezones.pop().unwrap())
-            .add_journal(ref_cal.journals.pop().unwrap())
+            .add_todo(ref_cal.todos.pop().unwrap().mutable())
+            .add_alarm(ref_cal.alarms.pop().unwrap().mutable())
+            .add_timezone(ref_cal.timezones.pop().unwrap().mutable())
+            .add_journal(ref_cal.journals.pop().unwrap().mutable())
             .build()
             .unwrap();
         insta::assert_snapshot!(cal.generate());

@@ -19,12 +19,12 @@ use std::io::BufRead;
 )]
 pub struct IcalCalendar<const VERIFIED: bool = true> {
     pub properties: Vec<Property>,
-    pub events: Vec<IcalEvent>,
-    pub alarms: Vec<IcalAlarm>,
-    pub todos: Vec<IcalTodo>,
-    pub journals: Vec<IcalJournal>,
-    pub free_busys: Vec<IcalFreeBusy>,
-    pub timezones: Vec<IcalTimeZone>,
+    pub events: Vec<IcalEvent<VERIFIED>>,
+    pub alarms: Vec<IcalAlarm<VERIFIED>>,
+    pub todos: Vec<IcalTodo<VERIFIED>>,
+    pub journals: Vec<IcalJournal<VERIFIED>>,
+    pub free_busys: Vec<IcalFreeBusy<VERIFIED>>,
+    pub timezones: Vec<IcalTimeZone<VERIFIED>>,
 }
 
 impl IcalCalendar<false> {
@@ -52,12 +52,16 @@ impl<const VERIFIED: bool> Component for IcalCalendar<VERIFIED> {
     fn mutable(self) -> Self::Unverified {
         IcalCalendar {
             properties: self.properties,
-            events: self.events,
-            alarms: self.alarms,
-            todos: self.todos,
-            journals: self.journals,
-            free_busys: self.free_busys,
-            timezones: self.timezones,
+            events: self.events.into_iter().map(Component::mutable).collect(),
+            alarms: self.alarms.into_iter().map(Component::mutable).collect(),
+            todos: self.todos.into_iter().map(Component::mutable).collect(),
+            journals: self.journals.into_iter().map(Component::mutable).collect(),
+            free_busys: self
+                .free_busys
+                .into_iter()
+                .map(Component::mutable)
+                .collect(),
+            timezones: self.timezones.into_iter().map(Component::mutable).collect(),
         }
     }
 }
@@ -78,53 +82,80 @@ impl ComponentMut for IcalCalendar<false> {
             "VALARM" => {
                 let mut alarm = IcalAlarm::new();
                 alarm.parse(line_parser)?;
-                self.alarms.push(alarm.verify()?);
+                self.alarms.push(alarm);
             }
             "VEVENT" => {
                 let mut event = IcalEvent::new();
                 event.parse(line_parser)?;
-                self.events.push(event.verify()?);
+                self.events.push(event);
             }
             "VTODO" => {
                 let mut todo = IcalTodo::new();
                 todo.parse(line_parser)?;
-                self.todos.push(todo.verify()?);
+                self.todos.push(todo);
             }
             "VJOURNAL" => {
                 let mut journal = IcalJournal::new();
                 journal.parse(line_parser)?;
-                self.journals.push(journal.verify()?);
+                self.journals.push(journal);
             }
             "VFREEBUSY" => {
                 let mut free_busy = IcalFreeBusy::new();
                 free_busy.parse(line_parser)?;
-                self.free_busys.push(free_busy.verify()?);
+                self.free_busys.push(free_busy);
             }
             "VTIMEZONE" => {
                 let mut timezone = IcalTimeZone::new();
                 timezone.parse(line_parser)?;
-                self.timezones.push(timezone.verify()?);
+                self.timezones.push(timezone);
             }
-            _ => return Err(ParserError::InvalidComponent),
+            _ => return Err(ParserError::InvalidComponent(value.to_owned())),
         };
 
         Ok(())
     }
 
     fn verify(self) -> Result<Self::Verified, ParserError> {
+        let timezones = self
+            .timezones
+            .into_iter()
+            .map(IcalTimeZone::verify)
+            .collect::<Result<_, _>>()?;
+
         Ok(IcalCalendar {
             properties: self.properties,
-            events: self.events,
-            alarms: self.alarms,
-            todos: self.todos,
-            journals: self.journals,
-            free_busys: self.free_busys,
-            timezones: self.timezones,
+            events: self
+                .events
+                .into_iter()
+                .map(IcalEvent::verify)
+                .collect::<Result<_, _>>()?,
+            alarms: self
+                .alarms
+                .into_iter()
+                .map(IcalAlarm::verify)
+                .collect::<Result<_, _>>()?,
+            todos: self
+                .todos
+                .into_iter()
+                .map(IcalTodo::verify)
+                .collect::<Result<_, _>>()?,
+            journals: self
+                .journals
+                .into_iter()
+                .map(IcalJournal::verify)
+                .collect::<Result<_, _>>()?,
+            free_busys: self
+                .free_busys
+                .into_iter()
+                .map(IcalFreeBusy::verify)
+                .collect::<Result<_, _>>()?,
+            timezones,
         })
     }
 }
 
 impl IcalCalendar<true> {
+    // TODO: Ambiguous name, this has nothing to do with recurrence expansion
     pub fn expand_calendar(self) -> Vec<Self> {
         let event_cals: Vec<_> = self
             .events

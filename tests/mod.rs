@@ -82,6 +82,17 @@ pub mod calendar_object {
             assert!(res.is_err());
         }
     }
+
+    #[rstest::rstest]
+    #[case(include_str!("./resources/Recurring at 9am, third at 10am.ics"))]
+    fn rrule_expansion(#[case] input: &str) {
+        let reader = ical::IcalObjectParser::new(input.as_bytes());
+        for res in reader {
+            let cal = res.unwrap();
+            let recurrence = cal.expand_recurrence(None, None).unwrap();
+            insta::assert_debug_snapshot!(recurrence.get_inner());
+        }
+    }
 }
 
 pub mod parser {

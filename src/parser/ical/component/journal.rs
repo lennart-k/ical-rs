@@ -2,9 +2,10 @@ use crate::{
     PropertyParser,
     parser::{Component, ComponentMut, ParserError},
     property::Property,
+    types::{CalDateOrDateTime, CalDateTimeError},
 };
 use itertools::Itertools;
-use std::io::BufRead;
+use std::{collections::HashMap, io::BufRead};
 
 #[derive(Debug, Clone, Default)]
 #[cfg_attr(
@@ -40,8 +41,19 @@ impl IcalJournal<true> {
             .expect("already verified that this must exist")
     }
 
-    pub fn get_dtstart(&self) -> Option<&Property> {
+    pub fn get_dtstart_prop(&self) -> Option<&Property> {
         self.get_property("DTSTART")
+    }
+
+    pub fn get_dtstart(
+        &self,
+        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+    ) -> Result<Option<CalDateOrDateTime>, CalDateTimeError> {
+        if let Some(dtstart) = self.get_dtstart_prop() {
+            Ok(Some(CalDateOrDateTime::parse_prop(dtstart, timezones)?))
+        } else {
+            Ok(None)
+        }
     }
 }
 
@@ -69,10 +81,10 @@ impl ComponentMut for IcalJournal<false> {
 
     fn add_sub_component<B: BufRead>(
         &mut self,
-        _: &str,
+        value: &str,
         _: &mut PropertyParser<B>,
     ) -> Result<(), ParserError> {
-        Err(ParserError::InvalidComponent)
+        Err(ParserError::InvalidComponent(value.to_owned()))
     }
 
     fn verify(self) -> Result<IcalJournal<true>, ParserError> {
@@ -102,7 +114,7 @@ impl ComponentMut for IcalJournal<false> {
             verified.get_uid();
             verified.get_recurrence_id();
             verified.get_dtstamp();
-            verified.get_dtstart();
+            // verified.get_dtstart(&HashMap::new()).unwrap();
         }
 
         Ok(verified)

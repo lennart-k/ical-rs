@@ -46,10 +46,10 @@ impl ComponentMut for VcardContact<false> {
 
     fn add_sub_component<B: BufRead>(
         &mut self,
-        _: &str,
+        name: &str,
         _: &mut PropertyParser<B>,
     ) -> Result<(), ParserError> {
-        Err(ParserError::InvalidComponent)
+        Err(ParserError::InvalidComponent(name.to_owned()))
     }
 
     fn verify(self) -> Result<Self::Verified, ParserError> {
