@@ -36,6 +36,7 @@ IcalCalendar {
     events: [
         IcalEvent {
             uid: "040000008200E000*************00800000000*****************00000000000000010000000********************************",
+            recurid: None,
             properties: [
                 ContentLine {
                     name: "CLASS",

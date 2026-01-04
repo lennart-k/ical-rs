@@ -29,6 +29,7 @@ IcalCalendar {
     events: [
         IcalEvent {
             uid: "4088E990AD89CB3DBB484909",
+            recurid: None,
             properties: [
                 ContentLine {
                     name: "DTSTAMP",

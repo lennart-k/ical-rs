@@ -29,6 +29,7 @@ IcalCalendar {
     events: [
         IcalEvent {
             uid: "fa915b604e6e3f36772501ff869439e6a3c5cf67",
+            recurid: None,
             properties: [
                 ContentLine {
                     name: "UID",

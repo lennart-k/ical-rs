@@ -64,6 +64,7 @@ IcalCalendar {
     events: [
         IcalEvent {
             uid: "6fb8cdb4-d333-4a4f-99a5-2d32d0c701f9",
+            recurid: None,
             properties: [
                 ContentLine {
                     name: "CREATED",
@@ -180,6 +181,7 @@ IcalCalendar {
         },
         IcalEvent {
             uid: "6bec1263-c5f4-4446-8a0c-10d960a6e06e",
+            recurid: None,
             properties: [
                 ContentLine {
                     name: "CREATED",
@@ -256,6 +258,7 @@ IcalCalendar {
         },
         IcalEvent {
             uid: "e5e8ce2a-4881-402f-9e85-1a35b4fe11d1",
+            recurid: None,
             properties: [
                 ContentLine {
                     name: "CREATED",
