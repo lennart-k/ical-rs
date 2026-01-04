@@ -1,5 +1,5 @@
 use crate::types::{CalDateTimeError, Timezone};
-use crate::{property::Property, types::CalDateTime};
+use crate::{property::ContentLine, types::CalDateTime};
 use chrono::{DateTime, Datelike, Duration, NaiveDate, NaiveTime};
 use chrono_tz::Tz;
 use std::{collections::HashMap, ops::Add, sync::LazyLock};
@@ -40,7 +40,7 @@ impl Add<Duration> for CalDate {
 
 impl CalDate {
     pub fn parse_prop(
-        prop: &Property,
+        prop: &ContentLine,
         timezones: &HashMap<String, Option<chrono_tz::Tz>>,
     ) -> Result<Self, CalDateTimeError> {
         let prop_value = prop

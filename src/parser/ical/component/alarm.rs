@@ -3,9 +3,9 @@ use itertools::Itertools;
 use crate::{
     PropertyParser,
     parser::{Component, ComponentMut, ParserError},
-    property::Property,
+    property::ContentLine,
 };
-use std::io::BufRead;
+use std::{collections::HashMap, io::BufRead};
 
 #[derive(Debug, Clone, Default)]
 #[cfg_attr(
@@ -13,7 +13,7 @@ use std::io::BufRead;
     derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)
 )]
 pub struct IcalAlarm<const VERIFIED: bool = true> {
-    pub properties: Vec<Property>,
+    pub properties: Vec<ContentLine>,
 }
 
 impl IcalAlarm<false> {
@@ -28,7 +28,7 @@ impl<const VERIFIED: bool> Component for IcalAlarm<VERIFIED> {
     const NAMES: &[&str] = &["VALARM"];
     type Unverified = IcalAlarm<false>;
 
-    fn get_properties(&self) -> &Vec<Property> {
+    fn get_properties(&self) -> &Vec<ContentLine> {
         &self.properties
     }
 
@@ -42,7 +42,7 @@ impl<const VERIFIED: bool> Component for IcalAlarm<VERIFIED> {
 impl ComponentMut for IcalAlarm<false> {
     type Verified = IcalAlarm<true>;
 
-    fn get_properties_mut(&mut self) -> &mut Vec<Property> {
+    fn get_properties_mut(&mut self) -> &mut Vec<ContentLine> {
         &mut self.properties
     }
 
@@ -55,7 +55,10 @@ impl ComponentMut for IcalAlarm<false> {
         Err(ParserError::InvalidComponent(value.to_owned()))
     }
 
-    fn verify(self) -> Result<IcalAlarm<true>, ParserError> {
+    fn build(
+        self,
+        _timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+    ) -> Result<IcalAlarm<true>, ParserError> {
         Ok(IcalAlarm {
             properties: self.properties,
         })

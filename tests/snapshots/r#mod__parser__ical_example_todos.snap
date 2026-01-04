@@ -4,21 +4,21 @@ expression: cal
 ---
 IcalCalendar {
     properties: [
-        Property {
+        ContentLine {
             name: "PRODID",
             params: [],
             value: Some(
                 "-//Ximian//NONSGML Evolution Calendar//EN",
             ),
         },
-        Property {
+        ContentLine {
             name: "VERSION",
             params: [],
             value: Some(
                 "2.0",
             ),
         },
-        Property {
+        ContentLine {
             name: "METHOD",
             params: [],
             value: Some(
@@ -30,29 +30,30 @@ IcalCalendar {
     alarms: [],
     todos: [
         IcalTodo {
+            uid: "89b13d12c2142cc66192932e1e560ed344dfb174",
             properties: [
-                Property {
+                ContentLine {
                     name: "UID",
                     params: [],
                     value: Some(
                         "89b13d12c2142cc66192932e1e560ed344dfb174",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "DTSTAMP",
                     params: [],
                     value: Some(
                         "20250726T112618Z",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "SUMMARY",
                     params: [],
                     value: Some(
                         "amazing task",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "DTSTART",
                     params: [
                         (
@@ -66,7 +67,7 @@ IcalCalendar {
                         "20250804",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "DUE",
                     params: [
                         (
@@ -80,49 +81,49 @@ IcalCalendar {
                         "20250819",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "PERCENT-COMPLETE",
                     params: [],
                     value: Some(
                         "0",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "CLASS",
                     params: [],
                     value: Some(
                         "PUBLIC",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "ESTIMATED-DURATION",
                     params: [],
                     value: Some(
                         "P1D",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "SEQUENCE",
                     params: [],
                     value: Some(
                         "1",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "CREATED",
                     params: [],
                     value: Some(
                         "20250726T130323Z",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "LAST-MODIFIED",
                     params: [],
                     value: Some(
                         "20250726T130323Z",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "X-EVOLUTION-CALDAV-ETAG",
                     params: [],
                     value: Some(
@@ -135,5 +136,5 @@ IcalCalendar {
     ],
     journals: [],
     free_busys: [],
-    timezones: [],
+    vtimezones: [],
 }

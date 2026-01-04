@@ -1,97 +1,71 @@
 use crate::{
     PropertyParser,
-    parser::{Component, ComponentMut, ParserError, ical::component::IcalAlarm},
-    property::Property,
-    types::{CalDateOrDateTime, CalDateTimeError},
+    parser::{
+        Component, ComponentMut, GetProperty, IcalDURATIONProperty, IcalUIDProperty, ParserError,
+        ical::component::IcalAlarm,
+    },
+    property::ContentLine,
 };
+use chrono::Duration;
 use itertools::Itertools;
 use std::{collections::HashMap, io::BufRead};
 
-#[derive(Debug, Clone, Default)]
-#[cfg_attr(
-    feature = "rkyv",
-    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)
-)]
-pub struct IcalTodo<const VERIFIED: bool = true> {
-    pub properties: Vec<Property>,
+#[derive(Debug, Clone)]
+pub struct IcalTodo {
+    uid: String,
+    pub properties: Vec<ContentLine>,
     pub alarms: Vec<IcalAlarm>,
 }
 
-impl IcalTodo<false> {
-    pub fn new() -> Self {
-        Self {
-            properties: Vec::new(),
-            alarms: Vec::new(),
-        }
-    }
+#[derive(Debug, Clone, Default)]
+pub struct IcalTodoBuilder {
+    pub properties: Vec<ContentLine>,
+    pub alarms: Vec<IcalAlarm<false>>,
 }
 
-impl IcalTodo<true> {
+impl IcalTodo {
     pub fn get_uid(&self) -> &str {
-        self.get_property("UID")
-            .and_then(|prop| prop.value.as_deref())
-            .expect("already verified that this must exist")
-    }
-
-    pub fn get_recurrence_id(&self) -> Option<&Property> {
-        self.get_property("RECURRENCE-ID")
-    }
-
-    pub fn get_dtstamp(&self) -> &str {
-        self.get_property("DTSTAMP")
-            .and_then(|prop| prop.value.as_deref())
-            .expect("already verified that this must exist")
-    }
-
-    pub fn get_dtstart_prop(&self) -> Option<&Property> {
-        self.get_property("DTSTART")
-    }
-
-    pub fn get_dtstart(
-        &self,
-        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
-    ) -> Result<Option<CalDateOrDateTime>, CalDateTimeError> {
-        if let Some(dtstart) = self.get_dtstart_prop() {
-            Ok(Some(CalDateOrDateTime::parse_prop(dtstart, timezones)?))
-        } else {
-            Ok(None)
-        }
-    }
-
-    pub fn get_due(&self) -> Option<&Property> {
-        self.get_property("DUE")
-    }
-
-    pub fn get_duration(&self) -> Option<chrono::Duration> {
-        self.get_property("DURATION")
-            .and_then(|prop| Option::<chrono::Duration>::try_from(prop).unwrap())
-    }
-
-    pub fn get_rrule(&self) -> Option<&Property> {
-        self.get_property("RRULE")
+        &self.uid
     }
 }
 
-impl<const VERIFIED: bool> Component for IcalTodo<VERIFIED> {
+impl Component for IcalTodo {
     const NAMES: &[&str] = &["VTODO"];
-    type Unverified = IcalTodo<false>;
+    type Unverified = IcalTodoBuilder;
 
-    fn get_properties(&self) -> &Vec<Property> {
+    fn get_properties(&self) -> &Vec<ContentLine> {
         &self.properties
     }
 
     fn mutable(self) -> Self::Unverified {
-        IcalTodo {
+        IcalTodoBuilder {
             properties: self.properties,
-            alarms: self.alarms,
+            alarms: self
+                .alarms
+                .into_iter()
+                .map(|alarm| alarm.mutable())
+                .collect(),
         }
     }
 }
 
-impl ComponentMut for IcalTodo<false> {
-    type Verified = IcalTodo<true>;
+impl Component for IcalTodoBuilder {
+    const NAMES: &[&str] = &["VTODO"];
+    type Unverified = IcalTodoBuilder;
 
-    fn get_properties_mut(&mut self) -> &mut Vec<Property> {
+    fn get_properties(&self) -> &Vec<ContentLine> {
+        &self.properties
+    }
+
+    fn mutable(self) -> Self::Unverified {
+        self
+    }
+}
+
+impl ComponentMut for IcalTodoBuilder {
+    type Verified = IcalTodo;
+
+    fn get_properties_mut(&mut self) -> &mut Vec<ContentLine> {
         &mut self.properties
     }
 
@@ -104,7 +78,7 @@ impl ComponentMut for IcalTodo<false> {
             "VALARM" => {
                 let mut alarm = IcalAlarm::new();
                 alarm.parse(line_parser)?;
-                self.alarms.push(alarm.verify()?);
+                self.alarms.push(alarm);
             }
             _ => return Err(ParserError::InvalidComponent(value.to_owned())),
         };
@@ -112,49 +86,30 @@ impl ComponentMut for IcalTodo<false> {
         Ok(())
     }
 
-    fn verify(self) -> Result<IcalTodo<true>, ParserError> {
-        if self
-            .get_property("UID")
-            .and_then(|prop| prop.value.as_ref())
-            .is_none()
-        {
-            return Err(ParserError::MissingProperty("UID"));
-        }
-
-        if self
-            .get_property("DTSTAMP")
-            .and_then(|prop| prop.value.as_ref())
-            .is_none()
-        {
-            return Err(ParserError::MissingProperty("DTSTAMP"));
-        }
-
-        if let Some(prop) = self.get_property("DURATION") {
-            Option::<chrono::Duration>::try_from(prop)?;
-        }
+    fn build(
+        self,
+        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+    ) -> Result<IcalTodo, ParserError> {
+        let IcalUIDProperty(uid) = self.safe_get_required(timezones)?;
+        let _duration: Option<Duration> = self
+            .safe_get_optional::<IcalDURATIONProperty>(timezones)?
+            .map(Into::into);
 
         let verified = IcalTodo {
+            uid,
             properties: self.properties,
-            alarms: self.alarms,
+            alarms: self
+                .alarms
+                .into_iter()
+                .map(|alarm| alarm.build(timezones))
+                .collect::<Result<Vec<_>, _>>()?,
         };
-
-        #[cfg(feature = "test")]
-        {
-            // Verify that the conditions for our getters are actually met
-            verified.get_uid();
-            verified.get_recurrence_id();
-            verified.get_dtstamp();
-            // verified.get_dtstart(&HashMap::new()).unwrap();
-            verified.get_due();
-            verified.get_duration();
-            verified.get_rrule();
-        }
 
         Ok(verified)
     }
 }
 
-impl<const VERIFIED: bool> IcalTodo<VERIFIED> {
+impl IcalTodo {
     pub fn get_tzids(&self) -> Vec<&str> {
         self.properties
             .iter()

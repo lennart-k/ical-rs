@@ -50,7 +50,7 @@ generate_emitter!(
     IcalCalendar,
     "VCALENDAR",
     properties,
-    timezones,
+    vtimezones,
     events,
     alarms,
     todos,

@@ -1,4 +1,4 @@
-use crate::property::Property;
+use crate::property::ContentLine;
 use chrono::Duration;
 use lazy_static::lazy_static;
 
@@ -25,10 +25,10 @@ lazy_static! {
     .unwrap();
 }
 
-impl TryFrom<&Property> for Option<chrono::Duration> {
+impl TryFrom<&ContentLine> for Option<chrono::Duration> {
     type Error = InvalidDuration;
 
-    fn try_from(value: &Property) -> Result<Self, Self::Error> {
+    fn try_from(value: &ContentLine) -> Result<Self, Self::Error> {
         if let Some(value) = &value.value {
             Ok(Some(parse_duration(value)?))
         } else {

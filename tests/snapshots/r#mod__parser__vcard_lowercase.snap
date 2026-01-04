@@ -4,28 +4,28 @@ expression: card
 ---
 VcardContact {
     properties: [
-        Property {
+        ContentLine {
             name: "version",
             params: [],
             value: Some(
                 "4.0",
             ),
         },
-        Property {
+        ContentLine {
             name: "fn",
             params: [],
             value: Some(
                 "Alice Foobar",
             ),
         },
-        Property {
+        ContentLine {
             name: "n",
             params: [],
             value: Some(
                 "Foobar;Alice",
             ),
         },
-        Property {
+        ContentLine {
             name: "email",
             params: [
                 (

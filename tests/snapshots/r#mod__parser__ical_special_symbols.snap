@@ -4,21 +4,21 @@ expression: cal
 ---
 IcalCalendar {
     properties: [
-        Property {
+        ContentLine {
             name: "CALSCALE",
             params: [],
             value: Some(
                 "GREGORIAN",
             ),
         },
-        Property {
+        ContentLine {
             name: "PRODID",
             params: [],
             value: Some(
                 "-//Ximian//NONSGML Evolution Calendar//EN",
             ),
         },
-        Property {
+        ContentLine {
             name: "VERSION",
             params: [],
             value: Some(
@@ -28,22 +28,23 @@ IcalCalendar {
     ],
     events: [
         IcalEvent {
+            uid: "fa915b604e6e3f36772501ff869439e6a3c5cf67",
             properties: [
-                Property {
+                ContentLine {
                     name: "UID",
                     params: [],
                     value: Some(
                         "fa915b604e6e3f36772501ff869439e6a3c5cf67",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "DTSTAMP",
                     params: [],
                     value: Some(
                         "20250726T112617Z",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "DTSTART",
                     params: [
                         (
@@ -57,7 +58,7 @@ IcalCalendar {
                         "20250806",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "DTEND",
                     params: [
                         (
@@ -71,14 +72,14 @@ IcalCalendar {
                         "20250807",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "SEQUENCE",
                     params: [],
                     value: Some(
                         "2",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "SUMMARY",
                     params: [
                         (
@@ -92,7 +93,7 @@ IcalCalendar {
                         "sönderzaichän :))",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "X-YEET",
                     params: [
                         (
@@ -106,28 +107,28 @@ IcalCalendar {
                         "sönderzaichän :))",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "TRANSP",
                     params: [],
                     value: Some(
                         "OPAQUE",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "CLASS",
                     params: [],
                     value: Some(
                         "PUBLIC",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "CREATED",
                     params: [],
                     value: Some(
                         "20250726T144426Z",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "LAST-MODIFIED",
                     params: [],
                     value: Some(
@@ -142,5 +143,5 @@ IcalCalendar {
     todos: [],
     journals: [],
     free_busys: [],
-    timezones: [],
+    vtimezones: [],
 }

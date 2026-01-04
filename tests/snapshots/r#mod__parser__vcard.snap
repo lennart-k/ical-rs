@@ -4,14 +4,14 @@ expression: card
 ---
 VcardContact {
     properties: [
-        Property {
+        ContentLine {
             name: "VERSION",
             params: [],
             value: Some(
                 "4.0",
             ),
         },
-        Property {
+        ContentLine {
             name: "ADR",
             params: [
                 (
@@ -25,28 +25,28 @@ VcardContact {
                 "pobox;apt;street;city;state;zipcode;country",
             ),
         },
-        Property {
+        ContentLine {
             name: "ANNIVERSARY",
             params: [],
             value: Some(
                 "19960415",
             ),
         },
-        Property {
+        ContentLine {
             name: "BDAY",
             params: [],
             value: Some(
                 "--0203",
             ),
         },
-        Property {
+        ContentLine {
             name: "CALADRURI",
             params: [],
             value: Some(
                 "http://example.com/calendar/jdoe",
             ),
         },
-        Property {
+        ContentLine {
             name: "CALURI",
             params: [
                 (
@@ -60,14 +60,14 @@ VcardContact {
                 "ftp://ftp.example.com/calA.ics",
             ),
         },
-        Property {
+        ContentLine {
             name: "CLIENTPIDMAP",
             params: [],
             value: Some(
                 "1;urn:uuid:3df403f4-5924-4bb7-b077-3c711d9eb34b",
             ),
         },
-        Property {
+        ContentLine {
             name: "EMAIL",
             params: [
                 (
@@ -81,7 +81,7 @@ VcardContact {
                 "jqpublic@xyz.example.com",
             ),
         },
-        Property {
+        ContentLine {
             name: "FBURL",
             params: [
                 (
@@ -95,28 +95,28 @@ VcardContact {
                 "ftp://example.com/busy/project-a.ifb",
             ),
         },
-        Property {
+        ContentLine {
             name: "FN",
             params: [],
             value: Some(
                 "J. Doe",
             ),
         },
-        Property {
+        ContentLine {
             name: "GENDER",
             params: [],
             value: Some(
                 "M;Fellow",
             ),
         },
-        Property {
+        ContentLine {
             name: "GEO",
             params: [],
             value: Some(
                 "geo:37.386013\\,-122.082932",
             ),
         },
-        Property {
+        ContentLine {
             name: "IMPP",
             params: [
                 (
@@ -130,21 +130,21 @@ VcardContact {
                 "xmpp:alice@example.com",
             ),
         },
-        Property {
+        ContentLine {
             name: "KEY",
             params: [],
             value: Some(
                 "http://www.example.com/keys/jdoe.cer",
             ),
         },
-        Property {
+        ContentLine {
             name: "KIND",
             params: [],
             value: Some(
                 "individual",
             ),
         },
-        Property {
+        ContentLine {
             name: "LANG",
             params: [
                 (
@@ -158,28 +158,28 @@ VcardContact {
                 "fr",
             ),
         },
-        Property {
+        ContentLine {
             name: "LOGO",
             params: [],
             value: Some(
                 "http://www.example.com/pub/logos/abccorp.jpg",
             ),
         },
-        Property {
+        ContentLine {
             name: "MEMBER",
             params: [],
             value: Some(
                 "urn:uuid:03a0e51f-d1aa-4385-8a53-e29025acd8af",
             ),
         },
-        Property {
+        ContentLine {
             name: "N",
             params: [],
             value: Some(
                 "Stevenson;John;Philip,Paul;Dr.;Jr.,M.D.,A.C.P.",
             ),
         },
-        Property {
+        ContentLine {
             name: "NICKNAME",
             params: [
                 (
@@ -193,28 +193,28 @@ VcardContact {
                 "Boss",
             ),
         },
-        Property {
+        ContentLine {
             name: "NOTE",
             params: [],
             value: Some(
                 "This fax number is operational 0800 to 1715 EST\\, Mon-Fri",
             ),
         },
-        Property {
+        ContentLine {
             name: "ORG",
             params: [],
             value: Some(
                 "ABC\\, Inc.;North American Division;Marketing",
             ),
         },
-        Property {
+        ContentLine {
             name: "PHOTO",
             params: [],
             value: Some(
                 "http://www.example.com/pub/photos/jqpublic.gif",
             ),
         },
-        Property {
+        ContentLine {
             name: "RELATED",
             params: [
                 (
@@ -228,35 +228,35 @@ VcardContact {
                 "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6",
             ),
         },
-        Property {
+        ContentLine {
             name: "REV",
             params: [],
             value: Some(
                 "19951031T222710Z",
             ),
         },
-        Property {
+        ContentLine {
             name: "ROLE",
             params: [],
             value: Some(
                 "Project Leader",
             ),
         },
-        Property {
+        ContentLine {
             name: "SOUND",
             params: [],
             value: Some(
                 "CID:JOHNQPUBLIC.part8.19960229T080000.xyzMail@example.com",
             ),
         },
-        Property {
+        ContentLine {
             name: "SOURCE",
             params: [],
             value: Some(
                 "ldap://ldap.example.com/cn=Babs%20Jensen\\,%20o=Babsco\\,%20c=US",
             ),
         },
-        Property {
+        ContentLine {
             name: "TEL",
             params: [
                 (
@@ -276,14 +276,14 @@ VcardContact {
                 "tel:+33-01-23-45-67",
             ),
         },
-        Property {
+        ContentLine {
             name: "TITLE",
             params: [],
             value: Some(
                 "Research Scientist",
             ),
         },
-        Property {
+        ContentLine {
             name: "TZ",
             params: [
                 (
@@ -297,7 +297,7 @@ VcardContact {
                 "-0500",
             ),
         },
-        Property {
+        ContentLine {
             name: "XML",
             params: [],
             value: Some(

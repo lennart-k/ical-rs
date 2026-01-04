@@ -1,22 +1,23 @@
 use crate::{
     PropertyParser,
-    parser::{Component, ComponentMut, ParserError},
-    property::Property,
-    types::{CalDateOrDateTime, CalDateTimeError},
+    parser::{Component, ComponentMut, GetProperty, IcalUIDProperty, ParserError},
+    property::ContentLine,
 };
 use itertools::Itertools;
 use std::{collections::HashMap, io::BufRead};
 
 #[derive(Debug, Clone, Default)]
-#[cfg_attr(
-    feature = "rkyv",
-    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)
-)]
-pub struct IcalJournal<const VERIFIED: bool = true> {
-    pub properties: Vec<Property>,
+pub struct IcalJournalBuilder {
+    pub properties: Vec<ContentLine>,
 }
 
-impl IcalJournal<false> {
+#[derive(Debug, Clone)]
+pub struct IcalJournal {
+    uid: String,
+    pub properties: Vec<ContentLine>,
+}
+
+impl IcalJournalBuilder {
     pub fn new() -> Self {
         Self {
             properties: Vec::new(),
@@ -24,58 +25,44 @@ impl IcalJournal<false> {
     }
 }
 
-impl IcalJournal<true> {
+impl IcalJournal {
     pub fn get_uid(&self) -> &str {
-        self.get_property("UID")
-            .and_then(|prop| prop.value.as_deref())
-            .expect("already verified that this must exist")
-    }
-
-    pub fn get_recurrence_id(&self) -> Option<&Property> {
-        self.get_property("RECURRENCE-ID")
-    }
-
-    pub fn get_dtstamp(&self) -> &str {
-        self.get_property("DTSTAMP")
-            .and_then(|prop| prop.value.as_deref())
-            .expect("already verified that this must exist")
-    }
-
-    pub fn get_dtstart_prop(&self) -> Option<&Property> {
-        self.get_property("DTSTART")
-    }
-
-    pub fn get_dtstart(
-        &self,
-        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
-    ) -> Result<Option<CalDateOrDateTime>, CalDateTimeError> {
-        if let Some(dtstart) = self.get_dtstart_prop() {
-            Ok(Some(CalDateOrDateTime::parse_prop(dtstart, timezones)?))
-        } else {
-            Ok(None)
-        }
+        &self.uid
     }
 }
 
-impl<const VERIFIED: bool> Component for IcalJournal<VERIFIED> {
+impl Component for IcalJournalBuilder {
     const NAMES: &[&str] = &["VJOURNAL"];
-    type Unverified = IcalJournal<false>;
+    type Unverified = IcalJournalBuilder;
 
-    fn get_properties(&self) -> &Vec<Property> {
+    fn get_properties(&self) -> &Vec<ContentLine> {
         &self.properties
     }
 
     fn mutable(self) -> Self::Unverified {
-        IcalJournal {
+        self
+    }
+}
+
+impl Component for IcalJournal {
+    const NAMES: &[&str] = &["VJOURNAL"];
+    type Unverified = IcalJournalBuilder;
+
+    fn get_properties(&self) -> &Vec<ContentLine> {
+        &self.properties
+    }
+
+    fn mutable(self) -> Self::Unverified {
+        IcalJournalBuilder {
             properties: self.properties,
         }
     }
 }
 
-impl ComponentMut for IcalJournal<false> {
-    type Verified = IcalJournal<true>;
+impl ComponentMut for IcalJournalBuilder {
+    type Verified = IcalJournal;
 
-    fn get_properties_mut(&mut self) -> &mut Vec<Property> {
+    fn get_properties_mut(&mut self) -> &mut Vec<ContentLine> {
         &mut self.properties
     }
 
@@ -87,41 +74,22 @@ impl ComponentMut for IcalJournal<false> {
         Err(ParserError::InvalidComponent(value.to_owned()))
     }
 
-    fn verify(self) -> Result<IcalJournal<true>, ParserError> {
-        if self
-            .get_property("UID")
-            .and_then(|prop| prop.value.as_ref())
-            .is_none()
-        {
-            return Err(ParserError::MissingProperty("UID"));
-        }
-
-        if self
-            .get_property("DTSTAMP")
-            .and_then(|prop| prop.value.as_ref())
-            .is_none()
-        {
-            return Err(ParserError::MissingProperty("DTSTAMP"));
-        }
+    fn build(
+        self,
+        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+    ) -> Result<IcalJournal, ParserError> {
+        let IcalUIDProperty(uid) = self.safe_get_required(timezones)?;
+        // let IcalDTSTAMPProperty(dtstamp) = self.safe_get_required(timezones)?;
 
         let verified = IcalJournal {
+            uid,
             properties: self.properties,
         };
-
-        #[cfg(feature = "test")]
-        {
-            // Verify that the conditions for our getters are actually met
-            verified.get_uid();
-            verified.get_recurrence_id();
-            verified.get_dtstamp();
-            // verified.get_dtstart(&HashMap::new()).unwrap();
-        }
-
         Ok(verified)
     }
 }
 
-impl<const VERIFIED: bool> IcalJournal<VERIFIED> {
+impl IcalJournal {
     pub fn get_tzids(&self) -> Vec<&str> {
         self.properties
             .iter()

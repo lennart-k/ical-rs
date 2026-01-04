@@ -4,21 +4,21 @@ expression: cal
 ---
 IcalCalendar {
     properties: [
-        Property {
+        ContentLine {
             name: "CALSCALE",
             params: [],
             value: Some(
                 "GREGORIAN",
             ),
         },
-        Property {
+        ContentLine {
             name: "PRODID",
             params: [],
             value: Some(
                 "-//Example Inc.//Example Calendar//EN",
             ),
         },
-        Property {
+        ContentLine {
             name: "VERSION",
             params: [],
             value: Some(
@@ -28,15 +28,16 @@ IcalCalendar {
     ],
     events: [
         IcalEvent {
+            uid: "4088E990AD89CB3DBB484909",
             properties: [
-                Property {
+                ContentLine {
                     name: "DTSTAMP",
                     params: [],
                     value: Some(
                         "20080205T191224Z",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "DTSTART",
                     params: [
                         (
@@ -50,19 +51,19 @@ IcalCalendar {
                         "20081006",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "SUMMARY",
                     params: [],
                     value: Some(
                         "Missing description value, but includes header",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "DESCRIPTION",
                     params: [],
                     value: None,
                 },
-                Property {
+                ContentLine {
                     name: "UID",
                     params: [],
                     value: Some(
@@ -77,5 +78,5 @@ IcalCalendar {
     todos: [],
     journals: [],
     free_busys: [],
-    timezones: [],
+    vtimezones: [],
 }

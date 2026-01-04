@@ -10,12 +10,14 @@ pub mod vcard;
 use crate::types::{CalDateTimeError, InvalidDuration};
 use crate::{
     LineReader,
-    property::{Property, PropertyError, PropertyParser},
+    property::{ContentLine, PropertyError, PropertyParser},
 };
+use std::collections::HashMap;
 use std::io::BufRead;
 use std::marker::PhantomData;
 
-mod standard_property;
+mod property_accessor;
+pub use property_accessor::*;
 
 #[derive(Debug, thiserror::Error, PartialEq, Eq)]
 pub enum ParserError {
@@ -48,14 +50,14 @@ pub trait Component: Clone {
 
     type Unverified: ComponentMut;
 
-    fn get_properties(&self) -> &Vec<Property>;
+    fn get_properties(&self) -> &Vec<ContentLine>;
     fn mutable(self) -> Self::Unverified;
 
-    fn get_property<'c>(&'c self, name: &str) -> Option<&'c Property> {
+    fn get_property<'c>(&'c self, name: &str) -> Option<&'c ContentLine> {
         self.get_properties().iter().find(|p| p.name == name)
     }
 
-    fn get_named_properties<'c>(&'c self, name: &str) -> Vec<&'c Property> {
+    fn get_named_properties<'c>(&'c self, name: &str) -> Vec<&'c ContentLine> {
         self.get_properties()
             .iter()
             .filter(|p| p.name == name)
@@ -77,14 +79,14 @@ pub trait ComponentMut: Component + Default {
         line_parser: &mut PropertyParser<B>,
     ) -> Result<(), ParserError>;
 
-    fn get_properties_mut(&mut self) -> &mut Vec<Property>;
+    fn get_properties_mut(&mut self) -> &mut Vec<ContentLine>;
 
     /// Add the givent property.
-    fn add_property(&mut self, property: Property) {
+    fn add_property(&mut self, property: ContentLine) {
         self.get_properties_mut().push(property);
     }
 
-    fn get_property_mut<'c>(&'c mut self, name: &str) -> Option<&'c mut Property> {
+    fn get_property_mut<'c>(&'c mut self, name: &str) -> Option<&'c mut ContentLine> {
         self.get_properties_mut()
             .iter_mut()
             .find(|p| p.name == name)
@@ -93,12 +95,15 @@ pub trait ComponentMut: Component + Default {
     fn remove_property(&mut self, name: &str) {
         self.get_properties_mut().retain(|prop| prop.name != name);
     }
-    fn set_property(&mut self, prop: Property) {
+    fn set_property(&mut self, prop: ContentLine) {
         self.remove_property(&prop.name);
         self.add_property(prop);
     }
 
-    fn verify(self) -> Result<Self::Verified, ParserError>;
+    fn build(
+        self,
+        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+    ) -> Result<Self::Verified, ParserError>;
 
     /// Parse the content from `line_parser` and fill the component with.
     fn parse<B: BufRead>(
@@ -176,7 +181,7 @@ impl<B: BufRead, T: Component> Iterator for ComponentParser<B, T> {
 
         let mut comp = T::Unverified::default();
         let result = match comp.parse(&mut self.line_parser) {
-            Ok(_) => comp.verify(),
+            Ok(_) => comp.build(&HashMap::default()),
             Err(err) => Err(err),
         };
 

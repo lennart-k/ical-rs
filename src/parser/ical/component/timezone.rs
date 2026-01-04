@@ -1,9 +1,9 @@
 use crate::{
     PropertyParser,
     parser::{Component, ComponentMut, ParserError},
-    property::Property,
+    property::ContentLine,
 };
-use std::io::BufRead;
+use std::{collections::HashMap, io::BufRead};
 
 #[derive(Debug, Clone, Default)]
 #[cfg_attr(
@@ -11,7 +11,7 @@ use std::io::BufRead;
     derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)
 )]
 pub struct IcalTimeZone<const VERIFIED: bool = true> {
-    pub properties: Vec<Property>,
+    pub properties: Vec<ContentLine>,
     pub transitions: Vec<IcalTimeZoneTransition<true>>,
 }
 
@@ -57,7 +57,7 @@ impl<const VERIFIED: bool> Component for IcalTimeZone<VERIFIED> {
     const NAMES: &[&str] = &["VTIMEZONE"];
     type Unverified = IcalTimeZone<false>;
 
-    fn get_properties(&self) -> &Vec<Property> {
+    fn get_properties(&self) -> &Vec<ContentLine> {
         &self.properties
     }
 
@@ -72,7 +72,7 @@ impl<const VERIFIED: bool> Component for IcalTimeZone<VERIFIED> {
 impl ComponentMut for IcalTimeZone<false> {
     type Verified = IcalTimeZone<true>;
 
-    fn get_properties_mut(&mut self) -> &mut Vec<Property> {
+    fn get_properties_mut(&mut self) -> &mut Vec<ContentLine> {
         &mut self.properties
     }
 
@@ -87,12 +87,14 @@ impl ComponentMut for IcalTimeZone<false> {
             "STANDARD" => {
                 let mut transition = IcalTimeZoneTransition::new(STANDARD);
                 transition.parse(line_parser)?;
-                self.transitions.push(transition.verify()?);
+                self.transitions
+                    .push(transition.build(&HashMap::default())?);
             }
             "DAYLIGHT" => {
                 let mut transition = IcalTimeZoneTransition::new(DAYLIGHT);
                 transition.parse(line_parser)?;
-                self.transitions.push(transition.verify()?);
+                self.transitions
+                    .push(transition.build(&HashMap::default())?);
             }
             _ => return Err(ParserError::InvalidComponent(value.to_owned())),
         };
@@ -100,10 +102,13 @@ impl ComponentMut for IcalTimeZone<false> {
         Ok(())
     }
 
-    fn verify(self) -> Result<IcalTimeZone<true>, ParserError> {
+    fn build(
+        self,
+        _timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+    ) -> Result<IcalTimeZone<true>, ParserError> {
         if !matches!(
             self.get_property("TZID"),
-            Some(&Property { value: Some(_), .. }),
+            Some(&ContentLine { value: Some(_), .. }),
         ) {
             return Err(ParserError::MissingProperty("TZID"));
         }
@@ -142,7 +147,7 @@ pub enum IcalTimeZoneTransitionType {
 )]
 pub struct IcalTimeZoneTransition<const VERIFIED: bool = true> {
     pub transition: IcalTimeZoneTransitionType,
-    pub properties: Vec<Property>,
+    pub properties: Vec<ContentLine>,
 }
 
 impl IcalTimeZoneTransition<false> {
@@ -158,7 +163,7 @@ impl<const VERIFIED: bool> Component for IcalTimeZoneTransition<VERIFIED> {
     const NAMES: &[&str] = &["STANDARD", "DAYLIGHT"];
     type Unverified = IcalTimeZoneTransition<false>;
 
-    fn get_properties(&self) -> &Vec<Property> {
+    fn get_properties(&self) -> &Vec<ContentLine> {
         &self.properties
     }
 
@@ -173,7 +178,7 @@ impl<const VERIFIED: bool> Component for IcalTimeZoneTransition<VERIFIED> {
 impl ComponentMut for IcalTimeZoneTransition<false> {
     type Verified = IcalTimeZoneTransition<true>;
 
-    fn get_properties_mut(&mut self) -> &mut Vec<Property> {
+    fn get_properties_mut(&mut self) -> &mut Vec<ContentLine> {
         &mut self.properties
     }
 
@@ -186,7 +191,10 @@ impl ComponentMut for IcalTimeZoneTransition<false> {
         Err(ParserError::InvalidComponent(value.to_owned()))
     }
 
-    fn verify(self) -> Result<IcalTimeZoneTransition<true>, ParserError> {
+    fn build(
+        self,
+        _timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+    ) -> Result<IcalTimeZoneTransition<true>, ParserError> {
         Ok(IcalTimeZoneTransition {
             transition: self.transition,
             properties: self.properties,

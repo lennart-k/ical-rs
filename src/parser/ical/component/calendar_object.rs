@@ -1,29 +1,27 @@
 use crate::{
     PropertyParser,
+    component::{IcalEventBuilder, IcalJournalBuilder, IcalTodoBuilder},
     generator::Emitter,
     parser::{
-        Component, ComponentMut, ParserError,
+        Component, ComponentMut, GetProperty, IcalUIDProperty, ParserError,
         ical::component::{IcalEvent, IcalJournal, IcalTimeZone, IcalTodo},
     },
-    property::Property,
-    types::{CalDateOrDateTime, CalDateTimeError},
+    property::ContentLine,
 };
-use chrono::{DateTime, Utc};
-use std::{collections::HashMap, io::BufRead, sync::OnceLock};
+use std::{collections::HashMap, io::BufRead};
 
 #[derive(Debug, Clone)]
-#[cfg_attr(
-    feature = "rkyv",
-    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)
-)]
-pub enum CalendarInnerData<const VERIFIED: bool = true> {
-    Event(IcalEvent<VERIFIED>, Vec<IcalEvent<VERIFIED>>),
-    Todo(IcalTodo<VERIFIED>, Vec<IcalTodo<VERIFIED>>),
-    Journal(IcalJournal<VERIFIED>, Vec<IcalJournal<VERIFIED>>),
+pub enum CalendarInnerData<E = IcalEvent, T = IcalTodo, J = IcalJournal> {
+    Event(E, Vec<E>),
+    Todo(T, Vec<T>),
+    Journal(J, Vec<J>),
 }
 
-impl CalendarInnerData<true> {
-    pub fn mutable(self) -> CalendarInnerData<false> {
+type CalendarInnerDataBuilder =
+    CalendarInnerData<IcalEventBuilder, IcalTodoBuilder, IcalJournalBuilder>;
+
+impl CalendarInnerData<IcalEvent, IcalTodo, IcalJournal> {
+    pub fn mutable(self) -> CalendarInnerDataBuilder {
         match self {
             Self::Event(event, overrides) => CalendarInnerData::Event(
                 event.mutable(),
@@ -41,106 +39,47 @@ impl CalendarInnerData<true> {
     }
 }
 
-impl CalendarInnerData<false> {
-    pub fn verify(self) -> Result<CalendarInnerData<true>, ParserError> {
+impl CalendarInnerDataBuilder {
+    pub fn build(
+        self,
+        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+    ) -> Result<CalendarInnerData, ParserError> {
         Ok(match self {
             Self::Event(event, overrides) => CalendarInnerData::Event(
-                event.verify()?,
+                event.build(timezones)?,
                 overrides
                     .into_iter()
-                    .map(ComponentMut::verify)
+                    .map(|builder| builder.build(timezones))
                     .collect::<Result<_, _>>()?,
             ),
             Self::Todo(todo, overrides) => CalendarInnerData::Todo(
-                todo.verify()?,
+                todo.build(timezones)?,
                 overrides
                     .into_iter()
-                    .map(ComponentMut::verify)
+                    .map(|builder| builder.build(timezones))
                     .collect::<Result<_, _>>()?,
             ),
             Self::Journal(journal, overrides) => CalendarInnerData::Journal(
-                journal.verify()?,
+                journal.build(timezones)?,
                 overrides
                     .into_iter()
-                    .map(ComponentMut::verify)
+                    .map(|builder| builder.build(timezones))
                     .collect::<Result<_, _>>()?,
             ),
         })
     }
 }
 
-impl CalendarInnerData {
-    pub fn get_uid(&self) -> &str {
-        match self {
-            Self::Event(main, _) => main.get_uid(),
-            Self::Todo(main, _) => main.get_uid(),
-            Self::Journal(main, _) => main.get_uid(),
-        }
-    }
-
-    pub fn get_first_occurence(
-        &self,
-        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
-    ) -> Result<Option<CalDateOrDateTime>, CalDateTimeError> {
-        // TODO: We actually have to check whether dtstart is overriden for the first occurence
-        match self {
-            Self::Event(main, overrides) => Ok(std::iter::once(main)
-                .chain(overrides.iter())
-                .map(|event| event.get_dtstart(timezones))
-                .min()
-                .unwrap()),
-            Self::Todo(main, _overrides) => main.get_dtstart(timezones),
-            Self::Journal(main, _overrides) => main.get_dtstart(timezones),
-        }
-    }
-
-    /// Tries to give an estimate for the last occurence
-    /// Only for optimisation of database queries by doing some prefiltering
-    pub fn get_last_occurence(
-        &self,
-        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
-    ) -> Result<Option<CalDateOrDateTime>, CalDateTimeError> {
-        // TODO: We should verify before that these are not actually set
-        match self {
-            Self::Event(main, _) => main.get_last_occurence(timezones),
-            _ => Ok(None),
-        }
-    }
-
-    pub fn get_dtend(
-        &self,
-        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
-    ) -> Option<CalDateOrDateTime> {
-        // TODO: We should verify before that these are not actually set
-        match self {
-            Self::Event(main, _) => main.get_dtend(timezones),
-            _ => None,
-        }
-    }
-}
-
 #[derive(Debug, Clone)]
 /// An ICAL calendar object.
-#[cfg_attr(
-    feature = "rkyv",
-    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)
-)]
 pub struct IcalCalendarObject {
-    properties: Vec<Property>,
+    properties: Vec<ContentLine>,
     inner: CalendarInnerData,
     vtimezones: HashMap<String, IcalTimeZone>,
-    #[cfg_attr(
-        feature = "rkyv",
-    rkyv(with = rkyv::with::Skip)
-    )]
-    timezones: OnceLock<HashMap<String, Option<chrono_tz::Tz>>>,
+    timezones: HashMap<String, Option<chrono_tz::Tz>>,
 }
 
 impl IcalCalendarObject {
-    pub fn get_uid(&self) -> &str {
-        self.inner.get_uid()
-    }
-
     pub const fn get_inner(&self) -> &CalendarInnerData {
         &self.inner
     }
@@ -150,56 +89,15 @@ impl IcalCalendarObject {
     }
 
     pub fn get_timezones(&self) -> &HashMap<String, Option<chrono_tz::Tz>> {
-        self.timezones.get_or_init(|| {
-            HashMap::from_iter(
-                self.get_vtimezones()
-                    .iter()
-                    .map(|(name, value)| (name.clone(), value.try_into().ok())),
-            )
-        })
-    }
-
-    pub fn get_first_occurence(&self) -> Result<Option<CalDateOrDateTime>, CalDateTimeError> {
-        self.inner.get_first_occurence(self.get_timezones())
-    }
-
-    pub fn get_last_occurence(&self) -> Result<Option<CalDateOrDateTime>, CalDateTimeError> {
-        // TODO: implement
-        self.inner.get_last_occurence(self.get_timezones())
-    }
-
-    pub fn expand_recurrence(
-        &self,
-        start: Option<DateTime<Utc>>,
-        end: Option<DateTime<Utc>>,
-    ) -> Result<Self, ParserError> {
-        // Only events can be expanded
-        match &self.inner {
-            CalendarInnerData::Event(main, overrides) => {
-                // TODO: Fix error
-                let mut events: Vec<IcalEvent> =
-                    main.expand_recurrence(start, end, self.get_timezones(), overrides)?;
-                Ok(Self {
-                    properties: self.properties.clone(),
-                    inner: CalendarInnerData::Event(events.remove(0), events),
-                    vtimezones: self.vtimezones.clone(),
-                    timezones: OnceLock::from(self.get_timezones().clone()),
-                })
-            }
-            _ => Ok(self.clone()),
-        }
+        &self.timezones
     }
 }
 
 #[derive(Debug, Clone, Default)]
 /// An ICAL calendar object.
-#[cfg_attr(
-    feature = "rkyv",
-    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)
-)]
 pub struct IcalCalendarObjectBuilder {
-    properties: Vec<Property>,
-    inner: Option<CalendarInnerData<false>>,
+    properties: Vec<ContentLine>,
+    inner: Option<CalendarInnerDataBuilder>,
     vtimezones: HashMap<String, IcalTimeZone<false>>,
 }
 
@@ -217,7 +115,7 @@ impl Component for IcalCalendarObject {
     const NAMES: &[&str] = &["VCALENDAR"];
     type Unverified = IcalCalendarObjectBuilder;
 
-    fn get_properties(&self) -> &Vec<Property> {
+    fn get_properties(&self) -> &Vec<ContentLine> {
         &self.properties
     }
 
@@ -238,7 +136,7 @@ impl Component for IcalCalendarObjectBuilder {
     const NAMES: &[&str] = &["VCALENDAR"];
     type Unverified = Self;
 
-    fn get_properties(&self) -> &Vec<Property> {
+    fn get_properties(&self) -> &Vec<ContentLine> {
         &self.properties
     }
 
@@ -250,7 +148,7 @@ impl Component for IcalCalendarObjectBuilder {
 impl ComponentMut for IcalCalendarObjectBuilder {
     type Verified = IcalCalendarObject;
 
-    fn get_properties_mut(&mut self) -> &mut Vec<Property> {
+    fn get_properties_mut(&mut self) -> &mut Vec<ContentLine> {
         &mut self.properties
     }
 
@@ -261,11 +159,13 @@ impl ComponentMut for IcalCalendarObjectBuilder {
     ) -> Result<(), ParserError> {
         match value {
             "VEVENT" => {
-                let event = IcalEvent::from_parser(line_parser)?;
+                let event = IcalEventBuilder::from_parser(line_parser)?;
                 match &mut self.inner {
                     // TODO: The main event is not necessarily the first component
                     Some(CalendarInnerData::Event(main, overrides)) => {
-                        if event.safe_get_uid()? != main.safe_get_uid()? {
+                        if event.safe_get_required::<IcalUIDProperty>(&HashMap::default())?
+                            != main.safe_get_required::<IcalUIDProperty>(&HashMap::default())?
+                        {
                             return Err(ParserError::InvalidComponent(value.to_owned()));
                         }
                         overrides.push(event);
@@ -277,12 +177,14 @@ impl ComponentMut for IcalCalendarObjectBuilder {
                 };
             }
             "VTODO" => {
-                let todo = IcalTodo::from_parser(line_parser)?;
+                let todo = IcalTodoBuilder::from_parser(line_parser)?;
                 match &mut self.inner {
                     Some(CalendarInnerData::Todo(main, overrides)) => {
-                        // if todo.get_uid() != main.get_uid() {
-                        //     return Err(ParserError::InvalidComponent(value.to_owned()));
-                        // }
+                        if todo.safe_get_required::<IcalUIDProperty>(&HashMap::default())?
+                            != main.safe_get_required::<IcalUIDProperty>(&HashMap::default())?
+                        {
+                            return Err(ParserError::InvalidComponent(value.to_owned()));
+                        }
                         overrides.push(todo);
                     }
                     None => {
@@ -292,12 +194,14 @@ impl ComponentMut for IcalCalendarObjectBuilder {
                 };
             }
             "VJOURNAL" => {
-                let journal = IcalJournal::from_parser(line_parser)?;
+                let journal = IcalJournalBuilder::from_parser(line_parser)?;
                 match &mut self.inner {
                     Some(CalendarInnerData::Journal(main, overrides)) => {
-                        // if journal.get_uid() != main.get_uid() {
-                        //     return Err(ParserError::InvalidComponent(value.to_owned()));
-                        // }
+                        if journal.safe_get_required::<IcalUIDProperty>(&HashMap::default())?
+                            != main.safe_get_required::<IcalUIDProperty>(&HashMap::default())?
+                        {
+                            return Err(ParserError::InvalidComponent(value.to_owned()));
+                        }
                         overrides.push(journal);
                     }
                     None => {
@@ -308,8 +212,14 @@ impl ComponentMut for IcalCalendarObjectBuilder {
             }
             "VTIMEZONE" => {
                 let timezone = IcalTimeZone::from_parser(line_parser)?;
-                self.vtimezones
-                    .insert(timezone.clone().verify()?.get_tzid().to_owned(), timezone);
+                self.vtimezones.insert(
+                    timezone
+                        .clone()
+                        .build(&HashMap::default())?
+                        .get_tzid()
+                        .to_owned(),
+                    timezone,
+                );
             }
             _ => return Err(ParserError::InvalidComponent(value.to_owned())),
         };
@@ -317,16 +227,30 @@ impl ComponentMut for IcalCalendarObjectBuilder {
         Ok(())
     }
 
-    fn verify(self) -> Result<Self::Verified, ParserError> {
+    fn build(
+        self,
+        _timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+    ) -> Result<Self::Verified, ParserError> {
+        let vtimezones: HashMap<String, IcalTimeZone> = self
+            .vtimezones
+            .into_iter()
+            .map(|(tzid, tz)| tz.build(&HashMap::default()).map(|tz| (tzid, tz)))
+            .collect::<Result<_, _>>()?;
+
+        let timezones = HashMap::from_iter(
+            vtimezones
+                .iter()
+                .map(|(name, value)| (name.clone(), value.try_into().ok())),
+        );
+
         Ok(IcalCalendarObject {
             properties: self.properties,
-            vtimezones: self
-                .vtimezones
-                .into_iter()
-                .map(|(tzid, tz)| tz.verify().map(|tz| (tzid, tz)))
-                .collect::<Result<_, _>>()?,
-            inner: self.inner.ok_or(ParserError::NotComplete)?.verify()?,
-            timezones: OnceLock::new(),
+            vtimezones,
+            inner: self
+                .inner
+                .ok_or(ParserError::NotComplete)?
+                .build(&timezones)?,
+            timezones,
         })
     }
 }

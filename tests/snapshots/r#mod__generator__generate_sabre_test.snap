@@ -4,42 +4,42 @@ expression: cal
 ---
 IcalCalendar {
     properties: [
-        Property {
+        ContentLine {
             name: "VERSION",
             params: [],
             value: Some(
                 "2.0",
             ),
         },
-        Property {
+        ContentLine {
             name: "CALSCALE",
             params: [],
             value: Some(
                 "GREGORIAN",
             ),
         },
-        Property {
+        ContentLine {
             name: "PRODID",
             params: [],
             value: Some(
                 "-//SabreDAV//SabreDAV//EN",
             ),
         },
-        Property {
+        ContentLine {
             name: "X-WR-CALNAME",
             params: [],
             value: Some(
                 "icalTest",
             ),
         },
-        Property {
+        ContentLine {
             name: "X-APPLE-CALENDAR-COLOR",
             params: [],
             value: Some(
                 "#D09E6D",
             ),
         },
-        Property {
+        ContentLine {
             name: "REFRESH-INTERVAL",
             params: [
                 (
@@ -53,7 +53,7 @@ IcalCalendar {
                 "PT4H",
             ),
         },
-        Property {
+        ContentLine {
             name: "X-PUBLISHED-TTL",
             params: [],
             value: Some(
@@ -63,43 +63,44 @@ IcalCalendar {
     ],
     events: [
         IcalEvent {
+            uid: "6fb8cdb4-d333-4a4f-99a5-2d32d0c701f9",
             properties: [
-                Property {
+                ContentLine {
                     name: "CREATED",
                     params: [],
                     value: Some(
                         "20201204T082156Z",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "DTSTAMP",
                     params: [],
                     value: Some(
                         "20201204T082257Z",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "LAST-MODIFIED",
                     params: [],
                     value: Some(
                         "20201204T082257Z",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "SEQUENCE",
                     params: [],
                     value: Some(
                         "2",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "UID",
                     params: [],
                     value: Some(
                         "6fb8cdb4-d333-4a4f-99a5-2d32d0c701f9",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "DTSTART",
                     params: [
                         (
@@ -113,7 +114,7 @@ IcalCalendar {
                         "20201223T203000",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "DTEND",
                     params: [
                         (
@@ -127,21 +128,21 @@ IcalCalendar {
                         "20201223T223000",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "SUMMARY",
                     params: [],
                     value: Some(
                         "Geschenke einpacken",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "LOCATION",
                     params: [],
                     value: Some(
                         "Arbeitszimmer",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "CATEGORIES",
                     params: [],
                     value: Some(
@@ -152,14 +153,14 @@ IcalCalendar {
             alarms: [
                 IcalAlarm {
                     properties: [
-                        Property {
+                        ContentLine {
                             name: "ACTION",
                             params: [],
                             value: Some(
                                 "DISPLAY",
                             ),
                         },
-                        Property {
+                        ContentLine {
                             name: "TRIGGER",
                             params: [
                                 (
@@ -178,43 +179,44 @@ IcalCalendar {
             ],
         },
         IcalEvent {
+            uid: "6bec1263-c5f4-4446-8a0c-10d960a6e06e",
             properties: [
-                Property {
+                ContentLine {
                     name: "CREATED",
                     params: [],
                     value: Some(
                         "20201204T082021Z",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "DTSTAMP",
                     params: [],
                     value: Some(
                         "20201204T082107Z",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "LAST-MODIFIED",
                     params: [],
                     value: Some(
                         "20201204T082107Z",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "SEQUENCE",
                     params: [],
                     value: Some(
                         "2",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "UID",
                     params: [],
                     value: Some(
                         "6bec1263-c5f4-4446-8a0c-10d960a6e06e",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "DTSTART",
                     params: [
                         (
@@ -228,7 +230,7 @@ IcalCalendar {
                         "20201225T150000",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "DTEND",
                     params: [
                         (
@@ -242,7 +244,7 @@ IcalCalendar {
                         "20201225T223000",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "SUMMARY",
                     params: [],
                     value: Some(
@@ -253,43 +255,44 @@ IcalCalendar {
             alarms: [],
         },
         IcalEvent {
+            uid: "e5e8ce2a-4881-402f-9e85-1a35b4fe11d1",
             properties: [
-                Property {
+                ContentLine {
                     name: "CREATED",
                     params: [],
                     value: Some(
                         "20201204T081751Z",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "DTSTAMP",
                     params: [],
                     value: Some(
                         "20201204T082358Z",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "LAST-MODIFIED",
                     params: [],
                     value: Some(
                         "20201204T082358Z",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "SEQUENCE",
                     params: [],
                     value: Some(
                         "3",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "UID",
                     params: [],
                     value: Some(
                         "e5e8ce2a-4881-402f-9e85-1a35b4fe11d1",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "DTSTART",
                     params: [
                         (
@@ -303,7 +306,7 @@ IcalCalendar {
                         "20201224T100000",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "DTEND",
                     params: [
                         (
@@ -317,28 +320,28 @@ IcalCalendar {
                         "20201224T110000",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "SUMMARY",
                     params: [],
                     value: Some(
                         "Weihnachten vorbereiten",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "LOCATION",
                     params: [],
                     value: Some(
                         "Wohnzimmer\\, Zuhause",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "DESCRIPTION",
                     params: [],
                     value: Some(
                         "Baum rein\\, Einstiehlen und Schmücken\\,",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "CATEGORIES",
                     params: [],
                     value: Some(
@@ -353,10 +356,10 @@ IcalCalendar {
     todos: [],
     journals: [],
     free_busys: [],
-    timezones: [
+    vtimezones: [
         IcalTimeZone {
             properties: [
-                Property {
+                ContentLine {
                     name: "TZID",
                     params: [],
                     value: Some(
@@ -368,35 +371,35 @@ IcalCalendar {
                 IcalTimeZoneTransition {
                     transition: DAYLIGHT,
                     properties: [
-                        Property {
+                        ContentLine {
                             name: "TZOFFSETFROM",
                             params: [],
                             value: Some(
                                 "+0100",
                             ),
                         },
-                        Property {
+                        ContentLine {
                             name: "TZOFFSETTO",
                             params: [],
                             value: Some(
                                 "+0200",
                             ),
                         },
-                        Property {
+                        ContentLine {
                             name: "TZNAME",
                             params: [],
                             value: Some(
                                 "CEST",
                             ),
                         },
-                        Property {
+                        ContentLine {
                             name: "DTSTART",
                             params: [],
                             value: Some(
                                 "19700329T020000",
                             ),
                         },
-                        Property {
+                        ContentLine {
                             name: "RRULE",
                             params: [],
                             value: Some(
@@ -408,35 +411,35 @@ IcalCalendar {
                 IcalTimeZoneTransition {
                     transition: STANDARD,
                     properties: [
-                        Property {
+                        ContentLine {
                             name: "TZOFFSETFROM",
                             params: [],
                             value: Some(
                                 "+0200",
                             ),
                         },
-                        Property {
+                        ContentLine {
                             name: "TZOFFSETTO",
                             params: [],
                             value: Some(
                                 "+0100",
                             ),
                         },
-                        Property {
+                        ContentLine {
                             name: "TZNAME",
                             params: [],
                             value: Some(
                                 "CET",
                             ),
                         },
-                        Property {
+                        ContentLine {
                             name: "DTSTART",
                             params: [],
                             value: Some(
                                 "19701025T030000",
                             ),
                         },
-                        Property {
+                        ContentLine {
                             name: "RRULE",
                             params: [],
                             value: Some(

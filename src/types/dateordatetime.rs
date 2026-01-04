@@ -6,7 +6,7 @@ use std::{
 use chrono::{DateTime, Duration, NaiveDate, NaiveTime, Utc};
 
 use crate::{
-    property::Property,
+    property::ContentLine,
     types::{CalDate, CalDateTime, CalDateTimeError, Timezone},
 };
 
@@ -18,12 +18,13 @@ pub enum CalDateOrDateTime {
 
 impl CalDateOrDateTime {
     pub fn parse_prop(
-        prop: &Property,
+        prop: &ContentLine,
         timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        default_type: &str,
     ) -> Result<Self, CalDateTimeError> {
-        Ok(match prop.get_value_type() {
-            Some("DATE") => Self::Date(CalDate::parse_prop(prop, timezones)?),
-            Some("DATE-TIME") | None => Self::DateTime(CalDateTime::parse_prop(prop, timezones)?),
+        Ok(match prop.get_value_type().unwrap_or(default_type) {
+            "DATE" => Self::Date(CalDate::parse_prop(prop, timezones)?),
+            "DATE-TIME" => Self::DateTime(CalDateTime::parse_prop(prop, timezones)?),
             _ => {
                 panic!()
             }

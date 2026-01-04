@@ -1,5 +1,5 @@
 use crate::generator::Emitter;
-use crate::property::Property;
+use crate::property::ContentLine;
 use crate::{PARAM_DELIMITER, PARAM_VALUE_DELIMITER, VALUE_DELIMITER};
 use itertools::Itertools;
 
@@ -193,7 +193,7 @@ fn get_params(params: &[(String, Vec<String>)]) -> String {
         .join(&PARAM_DELIMITER.to_string())
 }
 
-impl Emitter for Property {
+impl Emitter for ContentLine {
     fn generate(&self) -> String {
         let mut output = self.name.to_owned();
         if !self.params.is_empty() {

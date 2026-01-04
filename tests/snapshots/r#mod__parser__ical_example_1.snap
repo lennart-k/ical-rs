@@ -4,28 +4,28 @@ expression: cal
 ---
 IcalCalendar {
     properties: [
-        Property {
+        ContentLine {
             name: "PRODID",
             params: [],
             value: Some(
                 "-//Microsoft Corporation//Outlook 16.0 MIMEDIR//EN",
             ),
         },
-        Property {
+        ContentLine {
             name: "VERSION",
             params: [],
             value: Some(
                 "2.0",
             ),
         },
-        Property {
+        ContentLine {
             name: "METHOD",
             params: [],
             value: Some(
                 "PUBLISH",
             ),
         },
-        Property {
+        ContentLine {
             name: "X-MS-OLK-FORCEINSPECTOROPEN",
             params: [],
             value: Some(
@@ -35,29 +35,30 @@ IcalCalendar {
     ],
     events: [
         IcalEvent {
+            uid: "040000008200E000*************00800000000*****************00000000000000010000000********************************",
             properties: [
-                Property {
+                ContentLine {
                     name: "CLASS",
                     params: [],
                     value: Some(
                         "PUBLIC",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "CREATED",
                     params: [],
                     value: Some(
                         "20210511T063845Z",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "DESCRIPTION",
                     params: [],
                     value: Some(
                         "Einwahldaten folgen in der Veranstaltungswoche \\nSeminartitel:Software-QS-Cast - Application Performance Monitoring\\nDatum: 27.Mai 2021\\nUhrzeit: 10:30 - ca.12:00 Uhr  \\n \\n",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "DTEND",
                     params: [
                         (
@@ -71,14 +72,14 @@ IcalCalendar {
                         "20210527T120000",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "DTSTAMP",
                     params: [],
                     value: Some(
                         "20210511T063845Z",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "DTSTART",
                     params: [
                         (
@@ -92,28 +93,28 @@ IcalCalendar {
                         "20210527T103000",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "LAST-MODIFIED",
                     params: [],
                     value: Some(
                         "20210511T063845Z",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "PRIORITY",
                     params: [],
                     value: Some(
                         "5",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "SEQUENCE",
                     params: [],
                     value: Some(
                         "0",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "SUMMARY",
                     params: [
                         (
@@ -127,42 +128,42 @@ IcalCalendar {
                         "Software-QS-Cast Application Performance Monitoring",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "TRANSP",
                     params: [],
                     value: Some(
                         "OPAQUE",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "UID",
                     params: [],
                     value: Some(
                         "040000008200E000*************00800000000*****************00000000000000010000000********************************",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "X-MICROSOFT-CDO-BUSYSTATUS",
                     params: [],
                     value: Some(
                         "BUSY",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "X-MICROSOFT-CDO-IMPORTANCE",
                     params: [],
                     value: Some(
                         "1",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "X-MICROSOFT-DISALLOW-COUNTER",
                     params: [],
                     value: Some(
                         "FALSE",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "X-MS-OLK-CONFTYPE",
                     params: [],
                     value: Some(
@@ -173,21 +174,21 @@ IcalCalendar {
             alarms: [
                 IcalAlarm {
                     properties: [
-                        Property {
+                        ContentLine {
                             name: "TRIGGER",
                             params: [],
                             value: Some(
                                 "-PT15M",
                             ),
                         },
-                        Property {
+                        ContentLine {
                             name: "ACTION",
                             params: [],
                             value: Some(
                                 "DISPLAY",
                             ),
                         },
-                        Property {
+                        ContentLine {
                             name: "DESCRIPTION",
                             params: [],
                             value: Some(
@@ -203,10 +204,10 @@ IcalCalendar {
     todos: [],
     journals: [],
     free_busys: [],
-    timezones: [
+    vtimezones: [
         IcalTimeZone {
             properties: [
-                Property {
+                ContentLine {
                     name: "TZID",
                     params: [],
                     value: Some(
@@ -218,28 +219,28 @@ IcalCalendar {
                 IcalTimeZoneTransition {
                     transition: STANDARD,
                     properties: [
-                        Property {
+                        ContentLine {
                             name: "DTSTART",
                             params: [],
                             value: Some(
                                 "16011028T030000",
                             ),
                         },
-                        Property {
+                        ContentLine {
                             name: "RRULE",
                             params: [],
                             value: Some(
                                 "FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10",
                             ),
                         },
-                        Property {
+                        ContentLine {
                             name: "TZOFFSETFROM",
                             params: [],
                             value: Some(
                                 "+0200",
                             ),
                         },
-                        Property {
+                        ContentLine {
                             name: "TZOFFSETTO",
                             params: [],
                             value: Some(
@@ -251,28 +252,28 @@ IcalCalendar {
                 IcalTimeZoneTransition {
                     transition: DAYLIGHT,
                     properties: [
-                        Property {
+                        ContentLine {
                             name: "DTSTART",
                             params: [],
                             value: Some(
                                 "16010325T020000",
                             ),
                         },
-                        Property {
+                        ContentLine {
                             name: "RRULE",
                             params: [],
                             value: Some(
                                 "FREQ=YEARLY;BYDAY=-1SU;BYMONTH=3",
                             ),
                         },
-                        Property {
+                        ContentLine {
                             name: "TZOFFSETFROM",
                             params: [],
                             value: Some(
                                 "+0100",
                             ),
                         },
-                        Property {
+                        ContentLine {
                             name: "TZOFFSETTO",
                             params: [],
                             value: Some(

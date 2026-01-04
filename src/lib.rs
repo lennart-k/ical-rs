@@ -44,7 +44,6 @@ pub mod property;
 pub use crate::property::PropertyParser;
 pub mod line;
 pub use crate::line::LineReader;
-pub mod builder;
 pub mod generator;
 
 pub mod types;

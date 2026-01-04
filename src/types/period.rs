@@ -4,7 +4,7 @@ use chrono::{DateTime, Duration};
 use chrono_tz::Tz;
 
 use crate::{
-    property::Property,
+    property::ContentLine,
     types::{CalDateOrDateTime, CalDateTime, CalDateTimeError, parse_duration},
 };
 
@@ -26,7 +26,7 @@ pub struct Period(CalDateTime, DateTimeOrDuration);
 
 impl Period {
     pub fn parse_prop(
-        prop: &Property,
+        prop: &ContentLine,
         timezones: &HashMap<String, Option<chrono_tz::Tz>>,
     ) -> Result<Self, CalDateTimeError> {
         let prop_value = prop
@@ -67,13 +67,14 @@ pub enum DateOrDateTimeOrPeriod {
 
 impl DateOrDateTimeOrPeriod {
     pub fn parse_prop(
-        prop: &Property,
+        prop: &ContentLine,
         timezones: &HashMap<String, Option<chrono_tz::Tz>>,
         default_type: &str,
     ) -> Result<Self, CalDateTimeError> {
-        match prop.get_param("VALUE").unwrap_or(default_type) {
+        let value_type = prop.get_param("VALUE").unwrap_or(default_type);
+        match value_type {
             "DATE" | "DATE-TIME" => Ok(Self::DateOrDateTime(CalDateOrDateTime::parse_prop(
-                prop, timezones,
+                prop, timezones, value_type,
             )?)),
             "PERIOD" => Ok(Self::Period(Period::parse_prop(prop, timezones)?)),
             _ => panic!(),

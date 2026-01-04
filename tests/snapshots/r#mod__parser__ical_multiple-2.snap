@@ -4,7 +4,7 @@ expression: cal
 ---
 IcalCalendar {
     properties: [
-        Property {
+        ContentLine {
             name: "ATTENDEE",
             params: [
                 (
@@ -25,7 +25,7 @@ IcalCalendar {
                 "mailto:foo1@bar",
             ),
         },
-        Property {
+        ContentLine {
             name: "ATTENDEE",
             params: [
                 (
@@ -46,7 +46,7 @@ IcalCalendar {
                 "mailto:foo2@bar",
             ),
         },
-        Property {
+        ContentLine {
             name: "ATTENDEE",
             params: [
                 (
@@ -60,7 +60,7 @@ IcalCalendar {
                 "mailto:foo3@bar",
             ),
         },
-        Property {
+        ContentLine {
             name: "ATTENDEE",
             params: [
                 (
@@ -74,7 +74,7 @@ IcalCalendar {
                 "mailto:foo4@bar",
             ),
         },
-        Property {
+        ContentLine {
             name: "ATTENDEE",
             params: [
                 (
@@ -94,7 +94,7 @@ IcalCalendar {
                 "mailto:foo5@bar",
             ),
         },
-        Property {
+        ContentLine {
             name: "ATTENDEE",
             params: [
                 (
@@ -114,7 +114,7 @@ IcalCalendar {
                 "mailto:foo6@bar",
             ),
         },
-        Property {
+        ContentLine {
             name: "ATTENDEE",
             params: [
                 (
@@ -146,7 +146,7 @@ IcalCalendar {
                 "mailto:foo@bar.com",
             ),
         },
-        Property {
+        ContentLine {
             name: "X-FOO",
             params: [
                 (
@@ -160,7 +160,7 @@ IcalCalendar {
                 "FOO;BAR",
             ),
         },
-        Property {
+        ContentLine {
             name: "X-FOO2",
             params: [
                 (
@@ -180,7 +180,7 @@ IcalCalendar {
                 "FOO;BAR",
             ),
         },
-        Property {
+        ContentLine {
             name: "X-BAR",
             params: [
                 (
@@ -194,7 +194,7 @@ IcalCalendar {
                 "BAZ;BAR",
             ),
         },
-        Property {
+        ContentLine {
             name: "X-BAZ",
             params: [
                 (
@@ -214,7 +214,7 @@ IcalCalendar {
                 "BAZ;BAR",
             ),
         },
-        Property {
+        ContentLine {
             name: "X-BAZ2",
             params: [
                 (
@@ -240,5 +240,5 @@ IcalCalendar {
     todos: [],
     journals: [],
     free_busys: [],
-    timezones: [],
+    vtimezones: [],
 }

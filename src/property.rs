@@ -70,7 +70,7 @@ pub enum PropertyError {
     feature = "rkyv",
     derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)
 )]
-pub struct Property {
+pub struct ContentLine {
     /// Property name.
     pub name: String,
     /// Property list of parameters.
@@ -79,10 +79,10 @@ pub struct Property {
     pub value: Option<String>,
 }
 
-impl Property {
+impl ContentLine {
     /// Return a new `Property` object.
-    pub fn new() -> Property {
-        Property {
+    pub fn new() -> ContentLine {
+        ContentLine {
             name: String::new(),
             params: vec![],
             value: None,
@@ -105,7 +105,7 @@ impl Property {
     }
 }
 
-impl fmt::Display for Property {
+impl fmt::Display for ContentLine {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
             f,
@@ -126,7 +126,7 @@ impl<B: BufRead> PropertyParser<B> {
         PropertyParser(LineReader::new(reader))
     }
 
-    fn parse(&self, line: Line) -> Result<Property, PropertyError> {
+    fn parse(&self, line: Line) -> Result<ContentLine, PropertyError> {
         let to_parse = line.as_str();
 
         // Find end of parameter name
@@ -206,7 +206,7 @@ impl<B: BufRead> PropertyParser<B> {
             return Err(PropertyError::MissingValue(line.number()));
         }
         to_parse = to_parse.split_at(1).1;
-        Ok(Property {
+        Ok(ContentLine {
             name: prop_name.to_string(),
             params,
             value: (!to_parse.is_empty()).then_some(to_parse.to_string()),
@@ -215,9 +215,9 @@ impl<B: BufRead> PropertyParser<B> {
 }
 
 impl<B: BufRead> Iterator for PropertyParser<B> {
-    type Item = Result<Property, PropertyError>;
+    type Item = Result<ContentLine, PropertyError>;
 
-    fn next(&mut self) -> Option<Result<Property, PropertyError>> {
+    fn next(&mut self) -> Option<Result<ContentLine, PropertyError>> {
         self.0.next().map(|line| self.parse(line))
     }
 }

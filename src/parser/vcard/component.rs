@@ -1,10 +1,11 @@
 use crate::parser::{Component, ComponentMut, ParserError};
-use crate::property::{Property, PropertyParser};
+use crate::property::{ContentLine, PropertyParser};
+use std::collections::HashMap;
 use std::io::BufRead;
 
 #[derive(Debug, Clone, Default, Eq, PartialEq, Hash)]
 pub struct VcardContact<const VERIFIED: bool = true> {
-    pub properties: Vec<Property>,
+    pub properties: Vec<ContentLine>,
 }
 
 impl VcardContact<false> {
@@ -26,7 +27,7 @@ impl<const VERIFIED: bool> Component for VcardContact<VERIFIED> {
     const NAMES: &[&str] = &["VCARD"];
     type Unverified = VcardContact<false>;
 
-    fn get_properties(&self) -> &Vec<Property> {
+    fn get_properties(&self) -> &Vec<ContentLine> {
         &self.properties
     }
 
@@ -40,7 +41,7 @@ impl<const VERIFIED: bool> Component for VcardContact<VERIFIED> {
 impl ComponentMut for VcardContact<false> {
     type Verified = VcardContact<true>;
 
-    fn get_properties_mut(&mut self) -> &mut Vec<Property> {
+    fn get_properties_mut(&mut self) -> &mut Vec<ContentLine> {
         &mut self.properties
     }
 
@@ -52,7 +53,10 @@ impl ComponentMut for VcardContact<false> {
         Err(ParserError::InvalidComponent(name.to_owned()))
     }
 
-    fn verify(self) -> Result<Self::Verified, ParserError> {
+    fn build(
+        self,
+        _timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+    ) -> Result<Self::Verified, ParserError> {
         let verified = VcardContact {
             properties: self.properties,
         };

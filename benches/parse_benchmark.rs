@@ -21,22 +21,22 @@ fn benchmark(c: &mut Criterion) {
     c.bench_function("ics serialise ical_everything.ics", |b| {
         b.iter(|| cal.generate())
     });
-    #[cfg(feature = "rkyv")]
-    c.bench_function("rkyv serialise ical_everything.ics", |b| {
-        b.iter(|| rkyv::to_bytes::<rkyv::rancor::Error>(&cal).unwrap())
-    });
+    // #[cfg(feature = "rkyv")]
+    // c.bench_function("rkyv serialise ical_everything.ics", |b| {
+    //     b.iter(|| rkyv::to_bytes::<rkyv::rancor::Error>(&cal).unwrap())
+    // });
 
-    let rkyv_bytes = include_bytes!("ical_everything.rkyv");
-    #[cfg(feature = "rkyv")]
-    c.bench_function("rkyv deserialise ical_everything.ics", |b| {
-        b.iter(|| {
-            use ical::parser::ical::component::ArchivedIcalCalendar;
-
-            let archived =
-                rkyv::access::<ArchivedIcalCalendar, rkyv::rancor::Error>(rkyv_bytes).unwrap();
-            rkyv::deserialize::<_, rkyv::rancor::Error>(archived).unwrap();
-        })
-    });
+    // let rkyv_bytes = include_bytes!("ical_everything.rkyv");
+    // #[cfg(feature = "rkyv")]
+    // c.bench_function("rkyv deserialise ical_everything.ics", |b| {
+    //     b.iter(|| {
+    //         use ical::parser::ical::component::ArchivedIcalCalendar;
+    //
+    //         let archived =
+    //             rkyv::access::<ArchivedIcalCalendar, rkyv::rancor::Error>(rkyv_bytes).unwrap();
+    //         rkyv::deserialize::<_, rkyv::rancor::Error>(archived).unwrap();
+    //     })
+    // });
 }
 
 criterion_group!(benches, benchmark);

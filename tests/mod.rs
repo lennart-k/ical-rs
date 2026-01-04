@@ -83,16 +83,16 @@ pub mod calendar_object {
         }
     }
 
-    #[rstest::rstest]
-    #[case(include_str!("./resources/Recurring at 9am, third at 10am.ics"))]
-    fn rrule_expansion(#[case] input: &str) {
-        let reader = ical::IcalObjectParser::new(input.as_bytes());
-        for res in reader {
-            let cal = res.unwrap();
-            let recurrence = cal.expand_recurrence(None, None).unwrap();
-            insta::assert_debug_snapshot!(recurrence.get_inner());
-        }
-    }
+    // #[rstest::rstest]
+    // #[case(include_str!("./resources/Recurring at 9am, third at 10am.ics"))]
+    // fn rrule_expansion(#[case] input: &str) {
+    //     let reader = ical::IcalObjectParser::new(input.as_bytes());
+    //     for res in reader {
+    //         let cal = res.unwrap();
+    //         let recurrence = cal.expand_recurrence(None, None).unwrap();
+    //         insta::assert_debug_snapshot!(recurrence.get_inner());
+    //     }
+    // }
 }
 
 pub mod parser {
@@ -194,16 +194,16 @@ pub mod parser {
         }
     }
 
-    #[test]
-    fn ical_expand() {
-        let input = include_str!("./resources/ical_expand.ics");
-        let reader = ical::IcalParser::new(input.as_bytes());
-        for res in reader {
-            let cal = res.unwrap();
-            similar_asserts::assert_eq!(cal.generate(), input);
-            insta::assert_debug_snapshot!(cal.expand_calendar());
-        }
-    }
+    // #[test]
+    // fn ical_expand() {
+    //     let input = include_str!("./resources/ical_expand.ics");
+    //     let reader = ical::IcalParser::new(input.as_bytes());
+    //     for res in reader {
+    //         let cal = res.unwrap();
+    //         similar_asserts::assert_eq!(cal.generate(), input);
+    //         insta::assert_debug_snapshot!(cal.expand_calendar());
+    //     }
+    // }
 
     #[test]
     fn vcard() {

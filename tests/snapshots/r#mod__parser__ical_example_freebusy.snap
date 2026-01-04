@@ -4,14 +4,14 @@ expression: cal
 ---
 IcalCalendar {
     properties: [
-        Property {
+        ContentLine {
             name: "VERSION",
             params: [],
             value: Some(
                 "2.0",
             ),
         },
-        Property {
+        ContentLine {
             name: "PRODID",
             params: [],
             value: Some(
@@ -26,49 +26,49 @@ IcalCalendar {
     free_busys: [
         IcalFreeBusy {
             properties: [
-                Property {
+                ContentLine {
                     name: "ORGANIZER",
                     params: [],
                     value: Some(
                         "mailto:jsmith@example.com",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "DTSTART",
                     params: [],
                     value: Some(
                         "19980313T141711Z",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "DTEND",
                     params: [],
                     value: Some(
                         "19980410T141711Z",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "FREEBUSY",
                     params: [],
                     value: Some(
                         "19980314T233000Z/19980315T003000Z",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "FREEBUSY",
                     params: [],
                     value: Some(
                         "19980316T153000Z/19980316T163000Z",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "FREEBUSY",
                     params: [],
                     value: Some(
                         "19980318T030000Z/19980318T040000Z",
                     ),
                 },
-                Property {
+                ContentLine {
                     name: "URL",
                     params: [],
                     value: Some(
@@ -78,5 +78,5 @@ IcalCalendar {
             ],
         },
     ],
-    timezones: [],
+    vtimezones: [],
 }

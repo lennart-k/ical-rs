@@ -3,7 +3,7 @@ mod property;
 
 pub use crate::parser::ical::component::{IcalCalendar, IcalEvent};
 pub use crate::parser::vcard::component::VcardContact;
-pub use crate::property::Property;
+pub use crate::property::ContentLine;
 
 ///
 /// Emits the content of the Component in ical-format.
@@ -15,8 +15,7 @@ pub trait Emitter {
 }
 
 mod helper {
-
-    /// Creates a param for a [`Property`](property/struct.Property.html).
+    /// Creates a param for a [`ContentLine`](property/struct.ContentLine.html).
     ///
     /// # Example
     /// ```
@@ -31,7 +30,7 @@ mod helper {
         };
     }
 
-    /// Creates a [`Property`](property/struct.Property.html) for use with
+    /// Creates a [`ContentLine`](property/struct.ContentLine.html) for use with
     /// [IcalCalendarBuilder](generator/struct.IcalCalendarBuilder.html),
     /// [IcalEventBuilder](generator/struct.IcalEventBuilder.html),
     /// [IcalVcardBuilder](generator/struct.IcalVcardBuilder.html),
@@ -40,14 +39,14 @@ mod helper {
     /// # Example
     /// ```
     /// # #[macro_use] extern crate ical;
-    /// # use ical::property::Property;
+    /// # use ical::property::ContentLine;
     /// let prop = ical_property!(
     ///             "NAME",
     ///             "value",
     ///             ical_param!("param2", "pvalue1", "pvalue2"),
     ///             ical_param!("param3", "pvalue3")
     ///         );
-    /// let debug_output = "Property { \
+    /// let debug_output = "ContentLine { \
     ///     name: \"NAME\", \
     ///     params: [\
     ///         (\"param2\", [\"pvalue1\", \"pvalue2\"]), \
@@ -60,14 +59,14 @@ mod helper {
     #[macro_export]
     macro_rules! ical_property {
         ($name:literal, $value:expr) => {
-            Property {
+            ContentLine {
                 name: String::from($name),
                 value: Some($value.into()),
                 params: vec![],
             }
         };
         ($name:literal, $value:expr, $($params:expr),+) => {
-            Property {
+            ContentLine {
                 name: String::from($name),
                 value: Some(String::from($value)),
                 params: vec![$($params,)+],
