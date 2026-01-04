@@ -3,6 +3,7 @@ source: tests/mod.rs
 expression: card
 ---
 VcardContact {
+    uid: None,
     properties: [
         ContentLine {
             name: "VERSION",

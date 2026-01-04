@@ -96,8 +96,13 @@ impl ComponentMut for IcalTodoBuilder {
         let IcalDTSTAMPProperty(_dtstamp) = self.safe_get_required(timezones)?;
 
         // OPTIONAL, but ONLY ONCE: class / completed / created / description / dtstart / geo / last-mod / location / organizer / percent / priority / recurid / seq / status / summary / url / rrule
-        let _dtstart = self.safe_get_optional::<IcalDTSTARTProperty>(timezones)?;
-        let _recurid = self.safe_get_optional::<IcalRECURIDProperty>(timezones)?;
+        let dtstart = self.safe_get_optional::<IcalDTSTARTProperty>(timezones)?;
+        let recurid = self.safe_get_optional::<IcalRECURIDProperty>(timezones)?;
+        if let Some(IcalDTSTARTProperty(dtstart)) = &dtstart
+            && let Some(recurid) = &recurid
+        {
+            recurid.validate_dtstart(dtstart)?;
+        }
         // OPTIONAL, but MUTUALLY EXCLUSIVE
         if self.has_prop::<IcalDURATIONProperty>() && self.has_prop::<IcalDUEProperty>() {
             return Err(ParserError::PropertyConflict(

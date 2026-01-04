@@ -1,4 +1,8 @@
-use crate::{component::IcalAlarm, parser::Component, property::ContentLine};
+use crate::{
+    component::IcalAlarm,
+    parser::{Component, IcalRECURIDProperty},
+    property::ContentLine,
+};
 use itertools::Itertools;
 
 pub use builder::IcalEventBuilder;
@@ -7,6 +11,7 @@ mod builder;
 #[derive(Debug, Clone, Default)]
 pub struct IcalEvent {
     pub uid: String,
+    pub recurid: Option<IcalRECURIDProperty>,
     pub properties: Vec<ContentLine>,
     pub alarms: Vec<IcalAlarm>,
 }

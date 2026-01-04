@@ -75,10 +75,13 @@ impl ComponentMut for IcalEventBuilder {
             self.safe_get_optional::<IcalMETHODProperty>(timezones)?
                 .is_none()
         );
-        let IcalDTSTARTProperty(_dtstart) = self.safe_get_required(timezones)?;
+        let IcalDTSTARTProperty(dtstart) = self.safe_get_required(timezones)?;
 
         // OPTIONAL, but NOT MORE THAN ONCE: class / created / description / geo / last-mod / location / organizer / priority / seq / status / summary / transp / url / recurid / rrule
-        let _recurid = self.safe_get_optional::<IcalRECURIDProperty>(timezones)?;
+        let recurid = self.safe_get_optional::<IcalRECURIDProperty>(timezones)?;
+        if let Some(recurid) = &recurid {
+            recurid.validate_dtstart(&dtstart)?;
+        }
 
         // OPTIONAL, but MUTUALLY EXCLUSIVE
         if self.has_prop::<IcalDTENDProperty>() && self.has_prop::<IcalDURATIONProperty>() {
@@ -93,6 +96,7 @@ impl ComponentMut for IcalEventBuilder {
 
         Ok(IcalEvent {
             uid,
+            recurid,
             properties: self.properties,
             alarms: self
                 .alarms

@@ -8,6 +8,12 @@ pub enum Timezone {
     Olson(Tz),
 }
 
+impl Timezone {
+    pub fn is_local(&self) -> bool {
+        matches!(self, Self::Local)
+    }
+}
+
 impl From<Timezone> for rrule::Tz {
     fn from(value: Timezone) -> Self {
         match value {

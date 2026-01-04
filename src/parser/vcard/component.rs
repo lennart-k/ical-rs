@@ -1,14 +1,20 @@
-use crate::parser::{Component, ComponentMut, ParserError};
+use crate::parser::{Component, ComponentMut, GetProperty, IcalUIDProperty, ParserError};
 use crate::property::{ContentLine, PropertyParser};
 use std::collections::HashMap;
 use std::io::BufRead;
 
-#[derive(Debug, Clone, Default, Eq, PartialEq, Hash)]
-pub struct VcardContact<const VERIFIED: bool = true> {
+#[derive(Debug, Clone)]
+pub struct VcardContact {
+    pub uid: Option<String>,
     pub properties: Vec<ContentLine>,
 }
 
-impl VcardContact<false> {
+#[derive(Debug, Clone, Default)]
+pub struct VcardContactBuilder {
+    pub properties: Vec<ContentLine>,
+}
+
+impl VcardContactBuilder {
     pub fn new() -> Self {
         Self {
             properties: Vec::new(),
@@ -16,30 +22,42 @@ impl VcardContact<false> {
     }
 }
 
-impl VcardContact<true> {
+impl VcardContact {
     pub fn get_uid(&self) -> Option<&str> {
-        self.get_property("UID")
-            .and_then(|prop| prop.value.as_deref())
+        self.uid.as_deref()
     }
 }
 
-impl<const VERIFIED: bool> Component for VcardContact<VERIFIED> {
+impl Component for VcardContactBuilder {
     const NAMES: &[&str] = &["VCARD"];
-    type Unverified = VcardContact<false>;
+    type Unverified = VcardContactBuilder;
 
     fn get_properties(&self) -> &Vec<ContentLine> {
         &self.properties
     }
 
     fn mutable(self) -> Self::Unverified {
-        VcardContact {
+        self
+    }
+}
+
+impl Component for VcardContact {
+    const NAMES: &[&str] = &["VCARD"];
+    type Unverified = VcardContactBuilder;
+
+    fn get_properties(&self) -> &Vec<ContentLine> {
+        &self.properties
+    }
+
+    fn mutable(self) -> Self::Unverified {
+        VcardContactBuilder {
             properties: self.properties,
         }
     }
 }
 
-impl ComponentMut for VcardContact<false> {
-    type Verified = VcardContact<true>;
+impl ComponentMut for VcardContactBuilder {
+    type Verified = VcardContact;
 
     fn get_properties_mut(&mut self) -> &mut Vec<ContentLine> {
         &mut self.properties
@@ -55,16 +73,16 @@ impl ComponentMut for VcardContact<false> {
 
     fn build(
         self,
-        _timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
     ) -> Result<Self::Verified, ParserError> {
+        let uid = self
+            .safe_get_optional::<IcalUIDProperty>(timezones)?
+            .map(Into::into);
+
         let verified = VcardContact {
+            uid,
             properties: self.properties,
         };
-
-        #[cfg(feature = "test")]
-        {
-            verified.get_uid();
-        }
 
         Ok(verified)
     }

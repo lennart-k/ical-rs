@@ -135,9 +135,45 @@ property!("DTEND", "DATE-TIME", IcalDTENDProperty, CalDateOrDateTime);
 property!("DUE", "DATE-TIME", IcalDUEProperty, CalDateOrDateTime);
 property!("METHOD", "TEXT", IcalMETHODProperty, String);
 property!("DURATION", "DURATION", IcalDURATIONProperty, Duration);
-property!(
-    "RECURRENCE-ID",
-    "DATE-TIME",
-    IcalRECURIDProperty,
-    CalDateOrDateTime
-);
+
+#[derive(Debug, Clone, Default)]
+pub enum RecurIdRange {
+    #[default]
+    This,
+    ThisAndFuture,
+}
+#[derive(Debug, Clone)]
+pub struct IcalRECURIDProperty(pub CalDateOrDateTime, pub RecurIdRange);
+impl ICalProperty for IcalRECURIDProperty {
+    const NAME: &'static str = "RECURRENCE-ID";
+    const DEFAULT_TYPE: &'static str = "DATE-TIME";
+
+    fn parse_prop(
+        prop: &ContentLine,
+        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+    ) -> Result<Self, ParserError> {
+        let dt = ParseProp::parse_prop(prop, timezones, Self::DEFAULT_TYPE)?;
+        let range = match prop.get_param("RANGE") {
+            Some("THISANDFUTURE") => RecurIdRange::ThisAndFuture,
+            None => RecurIdRange::This,
+            _ => panic!("Invalid range parameter"),
+        };
+        Ok(Self(dt, range))
+    }
+}
+impl IcalRECURIDProperty {
+    pub fn validate_dtstart(&self, dtstart: &CalDateOrDateTime) -> Result<(), ParserError> {
+        assert_eq!(
+            self.0.is_date(),
+            dtstart.is_date(),
+            "DTSTART and RECURRENCE-ID have different value types"
+        );
+        assert_eq!(
+            self.0.timezone().is_local(),
+            dtstart.timezone().is_local(),
+            "DTSTART and RECURRENCE-ID have different timezone types"
+        );
+
+        Ok(())
+    }
+}
