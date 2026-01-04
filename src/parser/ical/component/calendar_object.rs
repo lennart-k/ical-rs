@@ -23,6 +23,13 @@ type CalendarInnerDataBuilder =
     CalendarInnerData<IcalEventBuilder, IcalTodoBuilder, IcalJournalBuilder>;
 
 impl CalendarInnerData<IcalEvent, IcalTodo, IcalJournal> {
+    pub fn get_uid(&self) -> &str {
+        match self {
+            Self::Event(main, _) => main.get_uid(),
+            Self::Journal(main, _) => main.get_uid(),
+            Self::Todo(main, _) => main.get_uid(),
+        }
+    }
     pub fn mutable(self) -> CalendarInnerDataBuilder {
         match self {
             Self::Event(event, overrides) => CalendarInnerData::Event(
@@ -84,6 +91,10 @@ pub struct IcalCalendarObject {
 impl IcalCalendarObject {
     pub const fn get_inner(&self) -> &CalendarInnerData {
         &self.inner
+    }
+
+    pub fn get_uid(&self) -> &str {
+        self.inner.get_uid()
     }
 
     pub const fn get_vtimezones(&self) -> &HashMap<String, IcalTimeZone> {

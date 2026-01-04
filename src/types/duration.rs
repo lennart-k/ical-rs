@@ -1,7 +1,4 @@
-use crate::{
-    property::ContentLine,
-    types::{Value, duration},
-};
+use crate::{property::ContentLine, types::Value};
 use chrono::Duration;
 use lazy_static::lazy_static;
 
