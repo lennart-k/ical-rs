@@ -1,3 +1,5 @@
+use chrono::{DateTime, Utc};
+
 use crate::{
     PropertyParser,
     component::{IcalEventBuilder, IcalJournalBuilder, IcalTodoBuilder},
@@ -90,6 +92,26 @@ impl IcalCalendarObject {
 
     pub fn get_timezones(&self) -> &HashMap<String, Option<chrono_tz::Tz>> {
         &self.timezones
+    }
+
+    pub fn expand_recurrence(
+        self,
+        start: Option<DateTime<Utc>>,
+        end: Option<DateTime<Utc>>,
+    ) -> Self {
+        match self.inner {
+            CalendarInnerData::Event(main, overrides) => {
+                let mut events = main.expand_recurrence(start, end, overrides);
+                let first = events.remove(0);
+                Self {
+                    properties: self.properties,
+                    inner: CalendarInnerData::Event(first, events),
+                    timezones: HashMap::new(),
+                    vtimezones: HashMap::new(),
+                }
+            }
+            _ => self,
+        }
     }
 }
 

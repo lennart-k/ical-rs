@@ -3,7 +3,8 @@ use crate::{
     component::{IcalAlarmBuilder, IcalEvent},
     parser::{
         Component, ComponentMut, GetProperty, IcalDTENDProperty, IcalDTSTAMPProperty,
-        IcalDTSTARTProperty, IcalDURATIONProperty, IcalMETHODProperty, IcalRECURIDProperty,
+        IcalDTSTARTProperty, IcalDURATIONProperty, IcalEXDATEProperty, IcalEXRULEProperty,
+        IcalMETHODProperty, IcalRDATEProperty, IcalRECURIDProperty, IcalRRULEProperty,
         IcalUIDProperty, ParserError,
     },
     property::ContentLine,
@@ -89,13 +90,45 @@ impl ComponentMut for IcalEventBuilder {
                 "both DTEND and DURATION are defined",
             ));
         }
-        let _dtend = self.safe_get_optional::<IcalDTENDProperty>(timezones)?;
-        let _duration = self.safe_get_optional::<IcalDURATIONProperty>(timezones)?;
+        let dtend = self
+            .safe_get_optional::<IcalDTENDProperty>(timezones)?
+            .map(Into::into);
+        let duration = self
+            .safe_get_optional::<IcalDURATIONProperty>(timezones)?
+            .map(Into::into);
 
         // OPTIONAL, allowed multiple times: attach / attendee / categories / comment / contact / exdate / rstatus / related / resources / rdate / x-prop / iana-prop
+        let rrule_dtstart = dtstart.utc().with_timezone(&rrule::Tz::UTC);
+        let rdates = self
+            .safe_get_all::<IcalRDATEProperty>(timezones)?
+            .into_iter()
+            .map(|exdate| exdate.0)
+            .collect();
+        let exdates = self
+            .safe_get_all::<IcalEXDATEProperty>(timezones)?
+            .into_iter()
+            .map(|exdate| exdate.0)
+            .collect();
+        let rrules = self
+            .safe_get_all::<IcalRRULEProperty>(timezones)?
+            .into_iter()
+            .map(|rrule| rrule.0.validate(rrule_dtstart))
+            .collect::<Result<Vec<_>, _>>()?;
+        let exrules = self
+            .safe_get_all::<IcalEXRULEProperty>(timezones)?
+            .into_iter()
+            .map(|rrule| rrule.0.validate(rrule_dtstart))
+            .collect::<Result<Vec<_>, _>>()?;
 
         Ok(IcalEvent {
             uid,
+            dtstart,
+            dtend,
+            duration,
+            rdates,
+            rrules,
+            exdates,
+            exrules,
             recurid,
             properties: self.properties,
             alarms: self

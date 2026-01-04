@@ -1,3 +1,4 @@
+use crate::types::Value;
 use crate::{
     parser::{Component, ParserError},
     property::ContentLine,
@@ -5,6 +6,7 @@ use crate::{
 };
 use chrono::Duration;
 use std::collections::HashMap;
+use std::str::FromStr;
 
 pub trait ICalProperty: Sized {
     const NAME: &'static str;
@@ -96,6 +98,18 @@ impl ParseProp for chrono::Duration {
     }
 }
 
+impl ParseProp for rrule::RRule<rrule::Unvalidated> {
+    fn parse_prop(
+        prop: &ContentLine,
+        _timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        _default_type: &str,
+    ) -> Result<Self, ParserError> {
+        Ok(rrule::RRule::from_str(
+            prop.value.as_deref().unwrap_or_default(),
+        )?)
+    }
+}
+
 macro_rules! property {
     ($name:literal, $default_type:literal, $prop:ty) => {
         impl ICalProperty for $prop {
@@ -115,6 +129,21 @@ macro_rules! property {
         #[derive(Debug, Clone, PartialEq, Eq, derive_more::Into)]
         pub struct $prop(pub $inner);
         property!($name, $default_type, $prop);
+
+        impl From<$prop> for ContentLine {
+            fn from(prop: $prop) -> Self {
+                let mut params = vec![];
+                let value_type = Value::value_type(&prop.0);
+                if value_type != $default_type {
+                    params.push(("VALUE".to_owned(), vec![value_type.to_owned()]));
+                }
+                ContentLine {
+                    name: $name.to_owned(),
+                    params,
+                    value: Some(Value::value(&prop.0)),
+                }
+            }
+        }
     };
 }
 
@@ -133,10 +162,24 @@ property!(
 );
 property!("DTEND", "DATE-TIME", IcalDTENDProperty, CalDateOrDateTime);
 property!("DUE", "DATE-TIME", IcalDUEProperty, CalDateOrDateTime);
+property!("RDATE", "DATE-TIME", IcalRDATEProperty, CalDateOrDateTime);
+property!("EXDATE", "DATE-TIME", IcalEXDATEProperty, CalDateOrDateTime);
+property!(
+    "RRULE",
+    "RECUR",
+    IcalRRULEProperty,
+    rrule::RRule<rrule::Unvalidated>
+);
+property!(
+    "EXRULE",
+    "RECUR",
+    IcalEXRULEProperty,
+    rrule::RRule<rrule::Unvalidated>
+);
 property!("METHOD", "TEXT", IcalMETHODProperty, String);
 property!("DURATION", "DURATION", IcalDURATIONProperty, Duration);
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub enum RecurIdRange {
     #[default]
     This,
@@ -175,5 +218,23 @@ impl IcalRECURIDProperty {
         );
 
         Ok(())
+    }
+}
+
+impl From<IcalRECURIDProperty> for crate::property::ContentLine {
+    fn from(value: IcalRECURIDProperty) -> Self {
+        let mut params = vec![];
+        let value_type = value.0.value_type();
+        if value_type != IcalRECURIDProperty::DEFAULT_TYPE {
+            params.push(("VALUE".to_owned(), vec![value_type.to_owned()]));
+        }
+        if value.1 == RecurIdRange::ThisAndFuture {
+            params.push(("RANGE".to_owned(), vec!["THISANDFUTURE".to_owned()]));
+        }
+        Self {
+            name: IcalRECURIDProperty::NAME.to_owned(),
+            params,
+            value: Some(value.0.format()),
+        }
     }
 }

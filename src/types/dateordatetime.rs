@@ -7,7 +7,7 @@ use chrono::{DateTime, Duration, NaiveDate, NaiveTime, Utc};
 
 use crate::{
     property::ContentLine,
-    types::{CalDate, CalDateTime, CalDateTimeError, Timezone},
+    types::{CalDate, CalDateTime, CalDateTimeError, Timezone, Value},
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
@@ -62,6 +62,27 @@ impl CalDateOrDateTime {
             Self::Date(date) => date.naive_date().and_time(NaiveTime::default()).and_utc(),
         }
     }
+
+    pub fn utc_or_local(&self) -> Self {
+        match self {
+            Self::DateTime(datetime) => Self::DateTime(datetime.utc_or_local()),
+            Self::Date(date) => Self::Date(date.utc_or_local()),
+        }
+    }
+
+    pub fn format(&self) -> String {
+        match self {
+            Self::DateTime(datetime) => datetime.format(),
+            Self::Date(date) => date.format(),
+        }
+    }
+
+    pub fn value_type(&self) -> &'static str {
+        match self {
+            Self::DateTime(_) => "DATE-TIME",
+            Self::Date(_) => "DATE",
+        }
+    }
 }
 
 impl Sub<&CalDateOrDateTime> for CalDateOrDateTime {
@@ -103,5 +124,21 @@ impl Add<Duration> for CalDateOrDateTime {
 
     fn add(self, duration: Duration) -> Self::Output {
         CalDateTime::from(self) + duration
+    }
+}
+
+impl Value for CalDateOrDateTime {
+    fn value_type(&self) -> &'static str {
+        match self {
+            CalDateOrDateTime::DateTime(datetime) => datetime.value_type(),
+            CalDateOrDateTime::Date(date) => date.value_type(),
+        }
+    }
+
+    fn value(&self) -> String {
+        match self {
+            CalDateOrDateTime::DateTime(datetime) => datetime.value(),
+            CalDateOrDateTime::Date(date) => date.value(),
+        }
     }
 }

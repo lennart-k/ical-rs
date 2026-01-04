@@ -1,4 +1,4 @@
-use crate::types::{CalDateTimeError, Timezone};
+use crate::types::{CalDateTimeError, Timezone, Value};
 use crate::{property::ContentLine, types::CalDateTime};
 use chrono::{DateTime, Datelike, Duration, NaiveDate, NaiveTime};
 use chrono_tz::Tz;
@@ -48,7 +48,7 @@ impl CalDate {
             .as_ref()
             .ok_or_else(|| CalDateTimeError::InvalidDatetimeFormat("empty property".into()))?;
 
-        let timezone = if let Some(tzid) = prop.get_param("TZID") {
+        let timezone = if let Some(tzid) = prop.get_tzid() {
             if let Some(timezone) = timezones.get(tzid) {
                 timezone.to_owned()
             } else {
@@ -134,6 +134,15 @@ impl CalDate {
     pub fn succ_opt(&self) -> Option<Self> {
         Some(Self(self.0.succ_opt()?, self.1.clone()))
     }
+
+    pub fn utc_or_local(&self) -> Self {
+        let tz = if self.1.is_local() {
+            Timezone::Local
+        } else {
+            Timezone::utc()
+        };
+        Self(self.0, tz)
+    }
 }
 
 impl Datelike for CalDate {
@@ -185,5 +194,14 @@ impl Datelike for CalDate {
     }
     fn with_ordinal0(&self, ordinal0: u32) -> Option<Self> {
         Some(Self(self.0.with_ordinal0(ordinal0)?, self.1.to_owned()))
+    }
+}
+
+impl Value for CalDate {
+    fn value_type(&self) -> &'static str {
+        "DATE"
+    }
+    fn value(&self) -> String {
+        self.format()
     }
 }

@@ -1,4 +1,4 @@
-use crate::types::Timezone;
+use crate::types::{Timezone, Value};
 use crate::{property::ContentLine, types::CalDateTimeError};
 use chrono::{DateTime, Datelike, Duration, Local, NaiveDate, NaiveDateTime, Utc};
 use chrono_tz::Tz;
@@ -118,6 +118,14 @@ impl CalDateTime {
     }
 
     #[must_use]
+    pub fn utc_or_local(&self) -> Self {
+        match self.timezone() {
+            Timezone::Local => self.clone(),
+            Timezone::Olson(_) => Self(self.0.with_timezone(&Timezone::utc())),
+        }
+    }
+
+    #[must_use]
     pub fn timezone(&self) -> Timezone {
         self.0.timezone()
     }
@@ -188,5 +196,14 @@ impl Datelike for CalDateTime {
     }
     fn with_ordinal0(&self, ordinal0: u32) -> Option<Self> {
         Some(Self(self.0.with_ordinal0(ordinal0)?))
+    }
+}
+
+impl Value for CalDateTime {
+    fn value_type(&self) -> &'static str {
+        "DATE-TIME"
+    }
+    fn value(&self) -> String {
+        self.format()
     }
 }

@@ -1,4 +1,7 @@
-use crate::property::ContentLine;
+use crate::{
+    property::ContentLine,
+    types::{Value, duration},
+};
 use chrono::Duration;
 use lazy_static::lazy_static;
 
@@ -69,6 +72,43 @@ pub fn parse_duration(string: &str) -> Result<Duration, InvalidDuration> {
     }
 
     Ok(duration)
+}
+
+impl Value for Duration {
+    fn value_type(&self) -> &'static str {
+        "DURATION"
+    }
+    fn value(&self) -> String {
+        let mut abs_duration = self.abs();
+        let mut out = String::new();
+        if self < &abs_duration {
+            out.push('-');
+        }
+        out.push('P');
+
+        let days = abs_duration.num_days();
+        if days > 0 {
+            out.push_str(&format!("{days}D"));
+        }
+        abs_duration -= Duration::days(days);
+        let hours = abs_duration.num_hours();
+        if hours > 0 {
+            out.push_str(&format!("{hours}H"));
+        }
+        abs_duration -= Duration::hours(hours);
+        let minutes = abs_duration.num_minutes();
+        if minutes > 0 {
+            out.push_str(&format!("{minutes}M"));
+        }
+        abs_duration -= Duration::minutes(minutes);
+        let seconds = abs_duration.num_seconds();
+        if seconds > 0 {
+            out.push_str(&format!("{seconds}S"));
+        }
+        abs_duration -= Duration::seconds(seconds);
+
+        out
+    }
 }
 
 #[cfg(test)]

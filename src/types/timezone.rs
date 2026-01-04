@@ -12,6 +12,10 @@ impl Timezone {
     pub fn is_local(&self) -> bool {
         matches!(self, Self::Local)
     }
+
+    pub fn utc() -> Self {
+        Self::Olson(chrono_tz::UTC)
+    }
 }
 
 impl From<Timezone> for rrule::Tz {

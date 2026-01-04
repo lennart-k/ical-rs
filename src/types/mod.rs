@@ -1,6 +1,7 @@
 mod duration;
 pub use duration::*;
 mod timezone;
+use rrule::{RRule, Unvalidated};
 pub use timezone::*;
 mod date;
 mod period;
@@ -27,4 +28,30 @@ pub enum CalDateTimeError {
     ParseError(String),
     #[error("Duration string {0} has an invalid format")]
     InvalidDurationFormat(String),
+}
+
+pub trait Value {
+    fn value_type(&self) -> &'static str;
+
+    fn value(&self) -> String;
+}
+
+impl Value for String {
+    fn value_type(&self) -> &'static str {
+        "TEXT"
+    }
+
+    fn value(&self) -> String {
+        self.to_owned()
+    }
+}
+
+impl Value for RRule<Unvalidated> {
+    fn value_type(&self) -> &'static str {
+        "RECUR"
+    }
+
+    fn value(&self) -> String {
+        self.to_string()
+    }
 }
