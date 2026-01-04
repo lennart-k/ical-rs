@@ -25,7 +25,22 @@ IcalCalendar {
     journals: [],
     free_busys: [
         IcalFreeBusy {
+            uid: "hello",
             properties: [
+                ContentLine {
+                    name: "UID",
+                    params: [],
+                    value: Some(
+                        "hello",
+                    ),
+                },
+                ContentLine {
+                    name: "DTSTAMP",
+                    params: [],
+                    value: Some(
+                        "20250726T130653Z",
+                    ),
+                },
                 ContentLine {
                     name: "ORGANIZER",
                     params: [],
