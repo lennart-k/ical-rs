@@ -1,12 +1,13 @@
 use crate::{
     PropertyParser,
+    component::IcalAlarmBuilder,
     parser::{
-        Component, ComponentMut, GetProperty, IcalDURATIONProperty, IcalUIDProperty, ParserError,
+        Component, ComponentMut, GetProperty, IcalDTSTAMPProperty, IcalDTSTARTProperty,
+        IcalDUEProperty, IcalDURATIONProperty, IcalRECURIDProperty, IcalUIDProperty, ParserError,
         ical::component::IcalAlarm,
     },
     property::ContentLine,
 };
-use chrono::Duration;
 use itertools::Itertools;
 use std::{collections::HashMap, io::BufRead};
 
@@ -20,7 +21,7 @@ pub struct IcalTodo {
 #[derive(Debug, Clone, Default)]
 pub struct IcalTodoBuilder {
     pub properties: Vec<ContentLine>,
-    pub alarms: Vec<IcalAlarm<false>>,
+    pub alarms: Vec<IcalAlarmBuilder>,
 }
 
 impl IcalTodo {
@@ -76,7 +77,7 @@ impl ComponentMut for IcalTodoBuilder {
     ) -> Result<(), ParserError> {
         match value {
             "VALARM" => {
-                let mut alarm = IcalAlarm::new();
+                let mut alarm = IcalAlarmBuilder::new();
                 alarm.parse(line_parser)?;
                 self.alarms.push(alarm);
             }
@@ -90,10 +91,23 @@ impl ComponentMut for IcalTodoBuilder {
         self,
         timezones: &HashMap<String, Option<chrono_tz::Tz>>,
     ) -> Result<IcalTodo, ParserError> {
+        // REQUIRED, but ONLY ONCE
         let IcalUIDProperty(uid) = self.safe_get_required(timezones)?;
-        let _duration: Option<Duration> = self
-            .safe_get_optional::<IcalDURATIONProperty>(timezones)?
-            .map(Into::into);
+        let IcalDTSTAMPProperty(_dtstamp) = self.safe_get_required(timezones)?;
+
+        // OPTIONAL, but ONLY ONCE: class / completed / created / description / dtstart / geo / last-mod / location / organizer / percent / priority / recurid / seq / status / summary / url / rrule
+        let _dtstart = self.safe_get_optional::<IcalDTSTARTProperty>(timezones)?;
+        let _recurid = self.safe_get_optional::<IcalRECURIDProperty>(timezones)?;
+        // OPTIONAL, but MUTUALLY EXCLUSIVE
+        if self.has_prop::<IcalDURATIONProperty>() && self.has_prop::<IcalDUEProperty>() {
+            return Err(ParserError::PropertyConflict(
+                "both DUE and DURATION are defined",
+            ));
+        }
+        let _duration = self.safe_get_optional::<IcalDURATIONProperty>(timezones)?;
+        let _due = self.safe_get_optional::<IcalDUEProperty>(timezones)?;
+
+        // OPTIONAL, MULTIPLE ALLOWED: attach / attendee / categories / comment / contact / exdate / rstatus / related / resources / rdate / x-prop / iana-prop
 
         let verified = IcalTodo {
             uid,

@@ -8,15 +8,16 @@ use crate::{
 use std::{collections::HashMap, io::BufRead};
 
 #[derive(Debug, Clone, Default)]
-#[cfg_attr(
-    feature = "rkyv",
-    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)
-)]
-pub struct IcalAlarm<const VERIFIED: bool = true> {
+pub struct IcalAlarmBuilder {
     pub properties: Vec<ContentLine>,
 }
 
-impl IcalAlarm<false> {
+#[derive(Debug, Clone)]
+pub struct IcalAlarm {
+    pub properties: Vec<ContentLine>,
+}
+
+impl IcalAlarmBuilder {
     pub fn new() -> Self {
         Self {
             properties: Vec::new(),
@@ -24,23 +25,36 @@ impl IcalAlarm<false> {
     }
 }
 
-impl<const VERIFIED: bool> Component for IcalAlarm<VERIFIED> {
+impl Component for IcalAlarmBuilder {
     const NAMES: &[&str] = &["VALARM"];
-    type Unverified = IcalAlarm<false>;
+    type Unverified = IcalAlarmBuilder;
 
     fn get_properties(&self) -> &Vec<ContentLine> {
         &self.properties
     }
 
     fn mutable(self) -> Self::Unverified {
-        IcalAlarm {
+        self
+    }
+}
+
+impl Component for IcalAlarm {
+    const NAMES: &[&str] = &["VALARM"];
+    type Unverified = IcalAlarmBuilder;
+
+    fn get_properties(&self) -> &Vec<ContentLine> {
+        &self.properties
+    }
+
+    fn mutable(self) -> Self::Unverified {
+        IcalAlarmBuilder {
             properties: self.properties,
         }
     }
 }
 
-impl ComponentMut for IcalAlarm<false> {
-    type Verified = IcalAlarm<true>;
+impl ComponentMut for IcalAlarmBuilder {
+    type Verified = IcalAlarm;
 
     fn get_properties_mut(&mut self) -> &mut Vec<ContentLine> {
         &mut self.properties
@@ -58,14 +72,14 @@ impl ComponentMut for IcalAlarm<false> {
     fn build(
         self,
         _timezones: &HashMap<String, Option<chrono_tz::Tz>>,
-    ) -> Result<IcalAlarm<true>, ParserError> {
+    ) -> Result<IcalAlarm, ParserError> {
         Ok(IcalAlarm {
             properties: self.properties,
         })
     }
 }
 
-impl<const VERIFIED: bool> IcalAlarm<VERIFIED> {
+impl IcalAlarm {
     pub fn get_tzids(&self) -> Vec<&str> {
         self.properties
             .iter()

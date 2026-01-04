@@ -1,10 +1,10 @@
 use crate::{
     PropertyParser,
-    component::IcalEvent,
+    component::{IcalAlarmBuilder, IcalEvent},
     parser::{
-        Component, ComponentMut, GetProperty, IcalDTENDProperty, IcalDTSTARTProperty,
-        IcalDURATIONProperty, IcalMETHODProperty, IcalUIDProperty, ParserError,
-        ical::component::IcalAlarm,
+        Component, ComponentMut, GetProperty, IcalDTENDProperty, IcalDTSTAMPProperty,
+        IcalDTSTARTProperty, IcalDURATIONProperty, IcalMETHODProperty, IcalRECURIDProperty,
+        IcalUIDProperty, ParserError,
     },
     property::ContentLine,
 };
@@ -13,7 +13,7 @@ use std::{collections::HashMap, io::BufRead};
 #[derive(Debug, Clone, Default)]
 pub struct IcalEventBuilder {
     pub properties: Vec<ContentLine>,
-    pub alarms: Vec<IcalAlarm<false>>,
+    pub alarms: Vec<IcalAlarmBuilder>,
 }
 
 impl IcalEventBuilder {
@@ -52,7 +52,7 @@ impl ComponentMut for IcalEventBuilder {
     ) -> Result<(), ParserError> {
         match value {
             "VALARM" => {
-                let mut alarm = IcalAlarm::new();
+                let mut alarm = IcalAlarmBuilder::new();
                 alarm.parse(line_parser)?;
                 self.alarms.push(alarm);
             }
@@ -66,22 +66,30 @@ impl ComponentMut for IcalEventBuilder {
         self,
         timezones: &HashMap<String, Option<chrono_tz::Tz>>,
     ) -> Result<IcalEvent, ParserError> {
+        // The following are REQUIRED, but MUST NOT occur more than once: dtstamp / uid
+        let IcalDTSTAMPProperty(_dtstamp) = self.safe_get_required(timezones)?;
         let IcalUIDProperty(uid) = self.safe_get_required(timezones)?;
-
+        // REQUIRED if METHOD not specified:
         // For now just ensure that no METHOD property exists
         assert!(
             self.safe_get_optional::<IcalMETHODProperty>(timezones)?
                 .is_none()
         );
-
-        // If METHOD is undefined, DTSTART MUST be defined
         let IcalDTSTARTProperty(_dtstart) = self.safe_get_required(timezones)?;
 
+        // OPTIONAL, but NOT MORE THAN ONCE: class / created / description / geo / last-mod / location / organizer / priority / seq / status / summary / transp / url / recurid / rrule
+        let _recurid = self.safe_get_optional::<IcalRECURIDProperty>(timezones)?;
+
+        // OPTIONAL, but MUTUALLY EXCLUSIVE
         if self.has_prop::<IcalDTENDProperty>() && self.has_prop::<IcalDURATIONProperty>() {
             return Err(ParserError::PropertyConflict(
                 "both DTEND and DURATION are defined",
             ));
         }
+        let _dtend = self.safe_get_optional::<IcalDTENDProperty>(timezones)?;
+        let _duration = self.safe_get_optional::<IcalDURATIONProperty>(timezones)?;
+
+        // OPTIONAL, allowed multiple times: attach / attendee / categories / comment / contact / exdate / rstatus / related / resources / rdate / x-prop / iana-prop
 
         Ok(IcalEvent {
             uid,

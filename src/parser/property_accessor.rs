@@ -31,9 +31,15 @@ pub trait GetProperty: Component {
         &self,
         timezones: &HashMap<String, Option<chrono_tz::Tz>>,
     ) -> Result<Option<T>, ParserError> {
-        let Some(prop) = self.get_property(T::NAME) else {
+        let mut props = self.get_named_properties(T::NAME).into_iter();
+        let Some(prop) = props.next() else {
             return Ok(None);
         };
+        if props.next().is_some() {
+            return Err(ParserError::PropertyConflict(
+                "Multiple instances of property",
+            ));
+        }
         ICalProperty::parse_prop(prop, timezones).map(Some)
     }
 
@@ -132,6 +138,6 @@ property!("DURATION", "DURATION", IcalDURATIONProperty, Duration);
 property!(
     "RECURRENCE-ID",
     "DATE-TIME",
-    IcalRECURRENCEIDProperty,
+    IcalRECURIDProperty,
     CalDateOrDateTime
 );

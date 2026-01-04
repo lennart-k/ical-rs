@@ -1,11 +1,8 @@
 use crate::{component::IcalAlarm, parser::Component, property::ContentLine};
-
-mod builder;
-// mod fallible;
-// mod properties;
+use itertools::Itertools;
 
 pub use builder::IcalEventBuilder;
-use itertools::Itertools;
+mod builder;
 
 #[derive(Debug, Clone, Default)]
 pub struct IcalEvent {

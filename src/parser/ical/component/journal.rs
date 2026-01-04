@@ -1,6 +1,9 @@
 use crate::{
     PropertyParser,
-    parser::{Component, ComponentMut, GetProperty, IcalUIDProperty, ParserError},
+    parser::{
+        Component, ComponentMut, GetProperty, IcalDTSTAMPProperty, IcalDTSTARTProperty,
+        IcalRECURIDProperty, IcalUIDProperty, ParserError,
+    },
     property::ContentLine,
 };
 use itertools::Itertools;
@@ -78,9 +81,14 @@ impl ComponentMut for IcalJournalBuilder {
         self,
         timezones: &HashMap<String, Option<chrono_tz::Tz>>,
     ) -> Result<IcalJournal, ParserError> {
+        // REQUIRED, ONLY ONCE
         let IcalUIDProperty(uid) = self.safe_get_required(timezones)?;
-        // let IcalDTSTAMPProperty(dtstamp) = self.safe_get_required(timezones)?;
+        let IcalDTSTAMPProperty(_dtstamp) = self.safe_get_required(timezones)?;
 
+        // OPTIONAL, ONLY ONCE: class / created / dtstart / last-mod / organizer / recurid / seq / status / summary / url / rrule
+        let _dtstart = self.safe_get_optional::<IcalDTSTARTProperty>(timezones)?;
+        let _recurid = self.safe_get_optional::<IcalRECURIDProperty>(timezones)?;
+        // OPTIONAL, MULTIPLE ALLOWED: attach / attendee / categories / comment / contact / description / exdate / related / rdate / rstatus / x-prop / iana-prop
         let verified = IcalJournal {
             uid,
             properties: self.properties,

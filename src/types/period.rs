@@ -1,7 +1,6 @@
-use std::collections::HashMap;
-
-use chrono::{DateTime, Duration};
+use chrono::Duration;
 use chrono_tz::Tz;
+use std::collections::HashMap;
 
 use crate::{
     property::ContentLine,

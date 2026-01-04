@@ -1,6 +1,9 @@
 use crate::{
     PropertyParser,
-    parser::{Component, ComponentMut, ParserError},
+    parser::{
+        Component, ComponentMut, GetProperty, IcalDTENDProperty, IcalDTSTAMPProperty,
+        IcalDTSTARTProperty, IcalUIDProperty, ParserError,
+    },
     property::ContentLine,
 };
 use itertools::Itertools;
@@ -13,6 +16,7 @@ pub struct IcalFreeBusyBuilder {
 
 #[derive(Debug, Clone, Default)]
 pub struct IcalFreeBusy {
+    pub uid: String,
     pub properties: Vec<ContentLine>,
 }
 
@@ -70,9 +74,18 @@ impl ComponentMut for IcalFreeBusyBuilder {
 
     fn build(
         self,
-        _timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
     ) -> Result<IcalFreeBusy, ParserError> {
+        // REQUIRED, but NOT MORE THAN ONCE
+        let IcalUIDProperty(uid) = self.safe_get_required(timezones)?;
+        let IcalDTSTAMPProperty(_dtstamp) = self.safe_get_required(timezones)?;
+        // OPTIONAL, but NOT MORE THAN ONCE: contact / dtstart / dtend / organizer / url /
+        let _dtstart = self.safe_get_optional::<IcalDTSTARTProperty>(timezones)?;
+        let _dtend = self.safe_get_optional::<IcalDTENDProperty>(timezones)?;
+        // OPTIONAL, allowed multiple times: attendee / comment / freebusy / rstatus / x-prop / iana-prop
+
         Ok(IcalFreeBusy {
+            uid,
             properties: self.properties,
         })
     }

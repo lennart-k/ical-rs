@@ -1,6 +1,9 @@
 use crate::{
     PropertyParser,
-    component::{IcalEventBuilder, IcalFreeBusyBuilder, IcalJournalBuilder, IcalTodoBuilder},
+    component::{
+        IcalAlarmBuilder, IcalEventBuilder, IcalFreeBusyBuilder, IcalJournalBuilder,
+        IcalTodoBuilder,
+    },
     parser::{
         Component, ComponentMut, ParserError,
         ical::component::{
@@ -15,6 +18,7 @@ use std::{collections::HashMap, io::BufRead};
 /// An ICAL calendar.
 pub struct IcalCalendar<
     const VERIFIED: bool = true,
+    A = IcalAlarm,
     E = IcalEvent,
     F = IcalFreeBusy,
     J = IcalJournal,
@@ -22,14 +26,20 @@ pub struct IcalCalendar<
 > {
     pub properties: Vec<ContentLine>,
     pub events: Vec<E>,
-    pub alarms: Vec<IcalAlarm<VERIFIED>>,
+    pub alarms: Vec<A>,
     pub todos: Vec<T>,
     pub journals: Vec<J>,
     pub free_busys: Vec<F>,
     pub vtimezones: Vec<IcalTimeZone<VERIFIED>>,
 }
-pub type IcalCalendarBuilder =
-    IcalCalendar<false, IcalEventBuilder, IcalFreeBusyBuilder, IcalJournalBuilder, IcalTodoBuilder>;
+pub type IcalCalendarBuilder = IcalCalendar<
+    false,
+    IcalAlarmBuilder,
+    IcalEventBuilder,
+    IcalFreeBusyBuilder,
+    IcalJournalBuilder,
+    IcalTodoBuilder,
+>;
 
 impl IcalCalendar<false> {
     pub fn new() -> Self {
@@ -101,7 +111,7 @@ impl ComponentMut for IcalCalendarBuilder {
     ) -> Result<(), ParserError> {
         match value {
             "VALARM" => {
-                let mut alarm = IcalAlarm::new();
+                let mut alarm = IcalAlarmBuilder::new();
                 alarm.parse(line_parser)?;
                 self.alarms.push(alarm);
             }
