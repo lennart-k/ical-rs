@@ -23,14 +23,19 @@ impl Emitter for IcalTimeZoneTransition {
 }
 
 macro_rules! generate_emitter {
-    ($struct:ty, $key:literal, $($prop:ident),+) => {
+    ($struct:ty, $key:literal, $($prop:ident),*) => {
         impl Emitter for $struct {
             fn generate(&self) -> String {
                 let mut text = format!("BEGIN:{key}\r\n", key = $key);
+                text += &crate::parser::Component::get_properties(self)
+                    .iter()
+                    .map(Emitter::generate)
+                    .collect::<String>();
                 $(text += &self.$prop
-                .iter()
-                .map(Emitter::generate)
-                .collect::<String>();)+
+                    .iter()
+                    .map(Emitter::generate)
+                    .collect::<String>();
+                )*
                 text + "END:" + $key + "\r\n"
             }
         }
@@ -38,18 +43,17 @@ macro_rules! generate_emitter {
 }
 
 use crate::parser::vcard::component::VcardContact;
-generate_emitter!(VcardContact, "VCARD", properties);
+generate_emitter!(VcardContact, "VCARD",);
 
-generate_emitter!(IcalAlarm, "VALARM", properties);
-generate_emitter!(IcalFreeBusy, "VFREEBUSY", properties);
-generate_emitter!(IcalJournal, "VJOURNAL", properties);
-generate_emitter!(IcalEvent, "VEVENT", properties, alarms);
-generate_emitter!(IcalTodo, "VTODO", properties, alarms);
-generate_emitter!(IcalTimeZone<true>, "VTIMEZONE", properties, transitions);
+generate_emitter!(IcalAlarm, "VALARM",);
+generate_emitter!(IcalFreeBusy, "VFREEBUSY",);
+generate_emitter!(IcalJournal, "VJOURNAL",);
+generate_emitter!(IcalEvent, "VEVENT", alarms);
+generate_emitter!(IcalTodo, "VTODO", alarms);
+generate_emitter!(IcalTimeZone<true>, "VTIMEZONE", transitions);
 generate_emitter!(
     IcalCalendar,
     "VCALENDAR",
-    properties,
     vtimezones,
     events,
     alarms,
