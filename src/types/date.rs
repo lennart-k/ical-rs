@@ -145,6 +145,7 @@ impl CalDate {
     }
 }
 
+#[cfg(not(tarpaulin_include))]
 impl Datelike for CalDate {
     fn year(&self) -> i32 {
         self.0.year()
@@ -203,5 +204,21 @@ impl Value for CalDate {
     }
     fn value(&self) -> String {
         self.format()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use chrono::Duration;
+
+    use crate::types::CalDate;
+
+    #[test]
+    fn test_date() {
+        let a = CalDate::parse("20121212", None).unwrap();
+        let b = CalDate::parse("2012-12-13", None).unwrap();
+        assert_eq!((a.clone() + Duration::days(1)).0, b.as_datetime());
+        assert!(b > a);
+        assert!(b >= a);
     }
 }
