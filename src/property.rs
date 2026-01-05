@@ -37,14 +37,11 @@
 //! }
 //! ```
 
-// Sys mods
+use derive_more::From;
 use std::fmt;
 use std::io::BufRead;
 use std::iter::Iterator;
 
-use derive_more::{Deref, From};
-
-// Internal mods
 use crate::{
     PARAM_DELIMITER, PARAM_NAME_DELIMITER, PARAM_QUOTE, PARAM_VALUE_DELIMITER, VALUE_DELIMITER,
     line::{Line, LineReader},
@@ -121,18 +118,6 @@ impl ContentLine {
             params: ContentLineParams::default(),
             value: None,
         }
-    }
-
-    pub fn get_param(&self, name: &str) -> Option<&str> {
-        self.params.get_param(name)
-    }
-
-    pub fn get_tzid(&self) -> Option<&str> {
-        self.get_param("TZID")
-    }
-
-    pub fn get_value_type(&self) -> Option<&str> {
-        self.get_param("VALUE")
     }
 }
 

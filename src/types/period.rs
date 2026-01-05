@@ -58,7 +58,7 @@ impl Period {
             .as_ref()
             .ok_or_else(|| CalDateTimeError::InvalidDatetimeFormat("empty property".into()))?;
 
-        let timezone = if let Some(tzid) = prop.get_param("TZID") {
+        let timezone = if let Some(tzid) = prop.params.get_tzid() {
             if let Some(timezone) = timezones.get(tzid) {
                 timezone.to_owned()
             } else {
@@ -116,7 +116,7 @@ impl DateOrDateTimeOrPeriod {
         timezones: &HashMap<String, Option<chrono_tz::Tz>>,
         default_type: &str,
     ) -> Result<Self, CalDateTimeError> {
-        let value_type = prop.get_param("VALUE").unwrap_or(default_type);
+        let value_type = prop.params.get_value_type().unwrap_or(default_type);
         match value_type {
             "DATE" | "DATE-TIME" => Ok(Self::DateOrDateTime(CalDateOrDateTime::parse_prop(
                 prop, timezones, value_type,

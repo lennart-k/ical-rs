@@ -62,7 +62,7 @@ impl CalDateTime {
             .as_ref()
             .ok_or_else(|| CalDateTimeError::InvalidDatetimeFormat("empty property".into()))?;
 
-        let timezone = if let Some(tzid) = prop.get_param("TZID") {
+        let timezone = if let Some(tzid) = prop.params.get_tzid() {
             if let Some(timezone) = timezones.get(tzid) {
                 timezone.to_owned()
             } else {

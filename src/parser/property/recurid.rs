@@ -23,7 +23,7 @@ impl ICalProperty for IcalRECURIDProperty {
         timezones: &HashMap<String, Option<chrono_tz::Tz>>,
     ) -> Result<Self, ParserError> {
         let dt = ParseProp::parse_prop(prop, timezones, Self::DEFAULT_TYPE)?;
-        let range = match prop.get_param("RANGE") {
+        let range = match prop.params.get_param("RANGE") {
             Some("THISANDFUTURE") => RecurIdRange::ThisAndFuture,
             None => RecurIdRange::This,
             _ => panic!("Invalid range parameter"),

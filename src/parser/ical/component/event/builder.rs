@@ -2,10 +2,9 @@ use crate::{
     PropertyParser,
     component::{IcalAlarmBuilder, IcalEvent},
     parser::{
-        Component, ComponentMut, GetProperty, IcalDTENDProperty, IcalDTSTAMPProperty,
-        IcalDTSTARTProperty, IcalDURATIONProperty, IcalEXDATEProperty, IcalEXRULEProperty,
-        IcalMETHODProperty, IcalRDATEProperty, IcalRECURIDProperty, IcalRRULEProperty,
-        IcalUIDProperty, ParserError,
+        Component, ComponentMut, GetProperty, IcalDTENDProperty, IcalDTSTARTProperty,
+        IcalDURATIONProperty, IcalEXDATEProperty, IcalEXRULEProperty, IcalMETHODProperty,
+        IcalRDATEProperty, IcalRECURIDProperty, IcalRRULEProperty, IcalUIDProperty, ParserError,
     },
     property::ContentLine,
 };

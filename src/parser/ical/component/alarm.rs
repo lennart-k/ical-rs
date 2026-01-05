@@ -83,7 +83,7 @@ impl IcalAlarm {
     pub fn get_tzids(&self) -> Vec<&str> {
         self.properties
             .iter()
-            .filter_map(|prop| prop.get_tzid())
+            .filter_map(|prop| prop.params.get_tzid())
             .unique()
             .collect()
     }

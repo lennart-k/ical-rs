@@ -22,7 +22,7 @@ impl CalDateOrDateTime {
         timezones: &HashMap<String, Option<chrono_tz::Tz>>,
         default_type: &str,
     ) -> Result<Self, CalDateTimeError> {
-        Ok(match prop.get_value_type().unwrap_or(default_type) {
+        Ok(match prop.params.get_value_type().unwrap_or(default_type) {
             "DATE" => Self::Date(CalDate::parse_prop(prop, timezones)?),
             "DATE-TIME" => Self::DateTime(CalDateTime::parse_prop(prop, timezones)?),
             _ => {
