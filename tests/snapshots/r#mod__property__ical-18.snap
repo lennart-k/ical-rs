@@ -3,5 +3,5 @@ source: tests/mod.rs
 expression: prop
 ---
 name: ATTENDEE
-params: [("CN", ["Foo, Bar"])]
+params: ContentLineParams([("CN", ["Foo, Bar"])])
 value: Some("mailto:foo3@bar")

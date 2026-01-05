@@ -3,5 +3,5 @@ source: tests/mod.rs
 expression: prop
 ---
 name: CALADRURI
-params: []
+params: ContentLineParams([])
 value: Some("http://example.com/calendar/jdoe")

@@ -6,230 +6,254 @@ IcalCalendar {
     properties: [
         ContentLine {
             name: "ATTENDEE",
-            params: [
-                (
-                    "DELEGATED-TO",
-                    [
-                        "mailto:foo7@bar",
-                        "mailto:foo8@bar",
-                    ],
-                ),
-                (
-                    "CN",
-                    [
-                        "Foo, Bar",
-                    ],
-                ),
-            ],
+            params: ContentLineParams(
+                [
+                    (
+                        "DELEGATED-TO",
+                        [
+                            "mailto:foo7@bar",
+                            "mailto:foo8@bar",
+                        ],
+                    ),
+                    (
+                        "CN",
+                        [
+                            "Foo, Bar",
+                        ],
+                    ),
+                ],
+            ),
             value: Some(
                 "mailto:foo1@bar",
             ),
         },
         ContentLine {
             name: "ATTENDEE",
-            params: [
-                (
-                    "DELEGATED-TO",
-                    [
-                        "mailto:foo7@bar",
-                        "mailto:foo8@bar",
-                    ],
-                ),
-                (
-                    "CN",
-                    [
-                        "Foo; Bar",
-                    ],
-                ),
-            ],
+            params: ContentLineParams(
+                [
+                    (
+                        "DELEGATED-TO",
+                        [
+                            "mailto:foo7@bar",
+                            "mailto:foo8@bar",
+                        ],
+                    ),
+                    (
+                        "CN",
+                        [
+                            "Foo; Bar",
+                        ],
+                    ),
+                ],
+            ),
             value: Some(
                 "mailto:foo2@bar",
             ),
         },
         ContentLine {
             name: "ATTENDEE",
-            params: [
-                (
-                    "CN",
-                    [
-                        "Foo, Bar",
-                    ],
-                ),
-            ],
+            params: ContentLineParams(
+                [
+                    (
+                        "CN",
+                        [
+                            "Foo, Bar",
+                        ],
+                    ),
+                ],
+            ),
             value: Some(
                 "mailto:foo3@bar",
             ),
         },
         ContentLine {
             name: "ATTENDEE",
-            params: [
-                (
-                    "CN",
-                    [
-                        "Foo; Bar",
-                    ],
-                ),
-            ],
+            params: ContentLineParams(
+                [
+                    (
+                        "CN",
+                        [
+                            "Foo; Bar",
+                        ],
+                    ),
+                ],
+            ),
             value: Some(
                 "mailto:foo4@bar",
             ),
         },
         ContentLine {
             name: "ATTENDEE",
-            params: [
-                (
-                    "DELEGATED-TO",
-                    [
-                        "mailto:foo7@bar",
-                    ],
-                ),
-                (
-                    "CN",
-                    [
-                        "Foo, Bar",
-                    ],
-                ),
-            ],
+            params: ContentLineParams(
+                [
+                    (
+                        "DELEGATED-TO",
+                        [
+                            "mailto:foo7@bar",
+                        ],
+                    ),
+                    (
+                        "CN",
+                        [
+                            "Foo, Bar",
+                        ],
+                    ),
+                ],
+            ),
             value: Some(
                 "mailto:foo5@bar",
             ),
         },
         ContentLine {
             name: "ATTENDEE",
-            params: [
-                (
-                    "DELEGATED-TO",
-                    [
-                        "mailto:foo7@bar",
-                    ],
-                ),
-                (
-                    "CN",
-                    [
-                        "Foo; Bar",
-                    ],
-                ),
-            ],
+            params: ContentLineParams(
+                [
+                    (
+                        "DELEGATED-TO",
+                        [
+                            "mailto:foo7@bar",
+                        ],
+                    ),
+                    (
+                        "CN",
+                        [
+                            "Foo; Bar",
+                        ],
+                    ),
+                ],
+            ),
             value: Some(
                 "mailto:foo6@bar",
             ),
         },
         ContentLine {
             name: "ATTENDEE",
-            params: [
-                (
-                    "ROLE",
-                    [
-                        "REQ-PARTICIPANT;foo",
-                    ],
-                ),
-                (
-                    "DELEGATED-FROM",
-                    [
-                        "mailto:bar@baz.com",
-                    ],
-                ),
-                (
-                    "PARTSTAT",
-                    [
-                        "ACCEPTED",
-                    ],
-                ),
-                (
-                    "RSVP",
-                    [
-                        "TRUE",
-                    ],
-                ),
-            ],
+            params: ContentLineParams(
+                [
+                    (
+                        "ROLE",
+                        [
+                            "REQ-PARTICIPANT;foo",
+                        ],
+                    ),
+                    (
+                        "DELEGATED-FROM",
+                        [
+                            "mailto:bar@baz.com",
+                        ],
+                    ),
+                    (
+                        "PARTSTAT",
+                        [
+                            "ACCEPTED",
+                        ],
+                    ),
+                    (
+                        "RSVP",
+                        [
+                            "TRUE",
+                        ],
+                    ),
+                ],
+            ),
             value: Some(
                 "mailto:foo@bar.com",
             ),
         },
         ContentLine {
             name: "X-FOO",
-            params: [
-                (
-                    "PARAM1",
-                    [
-                        "VAL1",
-                    ],
-                ),
-            ],
+            params: ContentLineParams(
+                [
+                    (
+                        "PARAM1",
+                        [
+                            "VAL1",
+                        ],
+                    ),
+                ],
+            ),
             value: Some(
                 "FOO;BAR",
             ),
         },
         ContentLine {
             name: "X-FOO2",
-            params: [
-                (
-                    "PARAM1",
-                    [
-                        "VAL1",
-                    ],
-                ),
-                (
-                    "PARAM2",
-                    [
-                        "VAL2",
-                    ],
-                ),
-            ],
+            params: ContentLineParams(
+                [
+                    (
+                        "PARAM1",
+                        [
+                            "VAL1",
+                        ],
+                    ),
+                    (
+                        "PARAM2",
+                        [
+                            "VAL2",
+                        ],
+                    ),
+                ],
+            ),
             value: Some(
                 "FOO;BAR",
             ),
         },
         ContentLine {
             name: "X-BAR",
-            params: [
-                (
-                    "PARAM1",
-                    [
-                        "VAL1:FOO",
-                    ],
-                ),
-            ],
+            params: ContentLineParams(
+                [
+                    (
+                        "PARAM1",
+                        [
+                            "VAL1:FOO",
+                        ],
+                    ),
+                ],
+            ),
             value: Some(
                 "BAZ;BAR",
             ),
         },
         ContentLine {
             name: "X-BAZ",
-            params: [
-                (
-                    "PARAM1",
-                    [
-                        "VAL1:FOO",
-                    ],
-                ),
-                (
-                    "PARAM2",
-                    [
-                        "VAL2",
-                    ],
-                ),
-            ],
+            params: ContentLineParams(
+                [
+                    (
+                        "PARAM1",
+                        [
+                            "VAL1:FOO",
+                        ],
+                    ),
+                    (
+                        "PARAM2",
+                        [
+                            "VAL2",
+                        ],
+                    ),
+                ],
+            ),
             value: Some(
                 "BAZ;BAR",
             ),
         },
         ContentLine {
             name: "X-BAZ2",
-            params: [
-                (
-                    "PARAM1",
-                    [
-                        "VAL1",
-                    ],
-                ),
-                (
-                    "PARAM2",
-                    [
-                        "VAL2:FOO",
-                    ],
-                ),
-            ],
+            params: ContentLineParams(
+                [
+                    (
+                        "PARAM1",
+                        [
+                            "VAL1",
+                        ],
+                    ),
+                    (
+                        "PARAM2",
+                        [
+                            "VAL2:FOO",
+                        ],
+                    ),
+                ],
+            ),
             value: Some(
                 "BAZ;BAR",
             ),

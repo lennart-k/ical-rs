@@ -3,5 +3,5 @@ source: tests/mod.rs
 expression: prop
 ---
 name: LANG
-params: [("PREF", ["1"])]
+params: ContentLineParams([("PREF", ["1"])])
 value: Some("fr")

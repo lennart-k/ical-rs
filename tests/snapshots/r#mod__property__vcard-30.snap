@@ -3,5 +3,5 @@ source: tests/mod.rs
 expression: prop
 ---
 name: TEL
-params: [("VALUE", ["uri"]), ("TYPE", ["home"])]
+params: ContentLineParams([("VALUE", ["uri"]), ("TYPE", ["home"])])
 value: Some("tel:+33-01-23-45-67")

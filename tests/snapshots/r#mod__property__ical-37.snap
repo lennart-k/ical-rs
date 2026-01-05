@@ -3,5 +3,5 @@ source: tests/mod.rs
 expression: prop
 ---
 name: DESCRIPTION
-params: []
+params: ContentLineParams([])
 value: None

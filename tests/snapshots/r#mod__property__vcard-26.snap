@@ -3,5 +3,5 @@ source: tests/mod.rs
 expression: prop
 ---
 name: REV
-params: []
+params: ContentLineParams([])
 value: Some("19951031T222710Z")

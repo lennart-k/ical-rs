@@ -3,5 +3,5 @@ source: tests/mod.rs
 expression: prop
 ---
 name: SOUND
-params: []
+params: ContentLineParams([])
 value: Some("CID:JOHNQPUBLIC.part8.19960229T080000.xyzMail@example.com")

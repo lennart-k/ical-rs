@@ -6,21 +6,27 @@ IcalCalendar {
     properties: [
         ContentLine {
             name: "CALSCALE",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "GREGORIAN",
             ),
         },
         ContentLine {
             name: "PRODID",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "-//Example Inc.//Example Calendar//EN",
             ),
         },
         ContentLine {
             name: "VERSION",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "2.0",
             ),
@@ -29,18 +35,27 @@ IcalCalendar {
     events: [
         IcalEvent {
             uid: "4088E990AD89CB3DBB484909",
-            recurid: None,
-            properties: [
-                ContentLine {
-                    name: "DTSTAMP",
-                    params: [],
-                    value: Some(
-                        "20080205T191224Z",
+            dtstamp: IcalDTSTAMPProperty(
+                DateTime(
+                    CalDateTime(
+                        2008-02-05T19:12:24Olson(
+                            UTC,
+                        ),
                     ),
-                },
-                ContentLine {
-                    name: "DTSTART",
-                    params: [
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
+            dtstart: IcalDTSTARTProperty(
+                Date(
+                    CalDate(
+                        2008-10-06,
+                        Local,
+                    ),
+                ),
+                ContentLineParams(
+                    [
                         (
                             "VALUE",
                             [
@@ -48,25 +63,62 @@ IcalCalendar {
                             ],
                         ),
                     ],
+                ),
+            ),
+            dtend: None,
+            duration: None,
+            rdates: [],
+            rrules: [],
+            exdates: [],
+            exrules: [],
+            recurid: None,
+            properties: [
+                ContentLine {
+                    name: "DTSTAMP",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: Some(
+                        "20080205T191224Z",
+                    ),
+                },
+                ContentLine {
+                    name: "DTSTART",
+                    params: ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
                     value: Some(
                         "20081006",
                     ),
                 },
                 ContentLine {
                     name: "SUMMARY",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "Missing description value, but includes header",
                     ),
                 },
                 ContentLine {
                     name: "DESCRIPTION",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: None,
                 },
                 ContentLine {
                     name: "UID",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "4088E990AD89CB3DBB484909",
                     ),

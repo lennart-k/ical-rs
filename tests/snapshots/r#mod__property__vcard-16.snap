@@ -3,5 +3,5 @@ source: tests/mod.rs
 expression: prop
 ---
 name: KIND
-params: []
+params: ContentLineParams([])
 value: Some("individual")

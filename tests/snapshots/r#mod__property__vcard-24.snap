@@ -3,5 +3,5 @@ source: tests/mod.rs
 expression: prop
 ---
 name: PHOTO
-params: []
+params: ContentLineParams([])
 value: Some("http://www.example.com/pub/photos/jqpublic.gif")

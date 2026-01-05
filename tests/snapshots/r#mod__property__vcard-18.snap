@@ -3,5 +3,5 @@ source: tests/mod.rs
 expression: prop
 ---
 name: LOGO
-params: []
+params: ContentLineParams([])
 value: Some("http://www.example.com/pub/logos/abccorp.jpg")

@@ -3,5 +3,5 @@ source: tests/mod.rs
 expression: prop
 ---
 name: N
-params: []
+params: ContentLineParams([])
 value: Some("Stevenson;John;Philip,Paul;Dr.;Jr.,M.D.,A.C.P.")

@@ -3,5 +3,5 @@ source: tests/mod.rs
 expression: prop
 ---
 name: NOTE
-params: []
+params: ContentLineParams([])
 value: Some("This fax number is operational 0800 to 1715 EST\\, Mon-Fri")
