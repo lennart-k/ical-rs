@@ -147,6 +147,7 @@ impl From<CalDateTime> for DateTime<Utc> {
     }
 }
 
+#[cfg(not(tarpaulin_include))]
 impl Datelike for CalDateTime {
     fn year(&self) -> i32 {
         self.0.year()
