@@ -59,9 +59,7 @@ IcalCalendar {
             dtstart: IcalDTSTARTProperty(
                 DateTime(
                     CalDateTime(
-                        2021-05-27T10:30:00Local(
-                            +02:00,
-                        ),
+                        2021-05-27T10:30:00Local,
                     ),
                 ),
                 ContentLineParams(
@@ -79,9 +77,7 @@ IcalCalendar {
                 IcalDTENDProperty(
                     DateTime(
                         CalDateTime(
-                            2021-05-27T12:00:00Local(
-                                +02:00,
-                            ),
+                            2021-05-27T12:00:00Local,
                         ),
                     ),
                     ContentLineParams(
