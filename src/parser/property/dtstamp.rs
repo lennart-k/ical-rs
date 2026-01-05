@@ -23,9 +23,9 @@ mod tests {
     use std::collections::HashMap;
 
     #[rstest]
-    #[case("DTSTART:19980118T073000Z\r\n")]
-    #[case("DTSTART;TZID=Europe/Berlin:19980118T073000Z\r\n")]
-    #[case("DTSTART;TZID=W. Europe Standard Time:20210527T120000\r\n")]
+    #[case("DTSTAMP:19980118T073000Z\r\n")]
+    #[case("DTSTAMP;TZID=Europe/Berlin:19980118T073000Z\r\n")]
+    #[case("DTSTAMP;TZID=W. Europe Standard Time:20210527T120000\r\n")]
     fn roundtrip(#[case] input: &str) {
         let content_line = crate::PropertyParser::from_reader(input.as_bytes())
             .next()
