@@ -76,6 +76,9 @@ impl Value for Duration {
         "DURATION"
     }
     fn value(&self) -> String {
+        if self.is_zero() {
+            return "PT0S".to_owned();
+        }
         let mut abs_duration = self.abs();
         let mut out = String::new();
         if self < &abs_duration {
@@ -83,26 +86,39 @@ impl Value for Duration {
         }
         out.push('P');
 
+        // Return weeks if duration can be expressed exactly by number of weeks
+        let weeks = abs_duration.num_weeks();
+        if weeks > 0 && abs_duration == Duration::weeks(weeks) {
+            out.push_str(&format!("{weeks}W"));
+            return out;
+        }
+
         let days = abs_duration.num_days();
         if days > 0 {
             out.push_str(&format!("{days}D"));
+            abs_duration -= Duration::days(days);
         }
-        abs_duration -= Duration::days(days);
+        if abs_duration.is_zero() {
+            return out;
+        }
+
+        out.push('T');
+
         let hours = abs_duration.num_hours();
         if hours > 0 {
             out.push_str(&format!("{hours}H"));
+            abs_duration -= Duration::hours(hours);
         }
-        abs_duration -= Duration::hours(hours);
         let minutes = abs_duration.num_minutes();
         if minutes > 0 {
             out.push_str(&format!("{minutes}M"));
+            abs_duration -= Duration::minutes(minutes);
         }
-        abs_duration -= Duration::minutes(minutes);
         let seconds = abs_duration.num_seconds();
         if seconds > 0 {
             out.push_str(&format!("{seconds}S"));
+            abs_duration -= Duration::seconds(seconds);
         }
-        abs_duration -= Duration::seconds(seconds);
 
         out
     }
@@ -110,29 +126,40 @@ impl Value for Duration {
 
 #[cfg(test)]
 mod tests {
+    use crate::types::Value;
+
     use super::parse_duration;
     use chrono::Duration;
+    use rstest::rstest;
 
     #[test]
     fn test_parse_duration() {
         assert!(parse_duration("P1D12W").is_err());
         assert!(parse_duration("P1W12D").is_err());
-        assert_eq!(parse_duration("-P12W").unwrap(), -Duration::weeks(12));
-        assert_eq!(parse_duration("P12W").unwrap(), Duration::weeks(12));
-        assert_eq!(parse_duration("P12D").unwrap(), Duration::days(12));
-        assert_eq!(parse_duration("PT12H").unwrap(), Duration::hours(12));
-        assert_eq!(parse_duration("PT12M").unwrap(), Duration::minutes(12));
-        assert_eq!(parse_duration("PT12S").unwrap(), Duration::seconds(12));
-        assert_eq!(
-            parse_duration("PT10M12S").unwrap(),
-            Duration::minutes(10) + Duration::seconds(12)
-        );
-        assert_eq!(
-            parse_duration("P2DT10M12S").unwrap(),
-            Duration::days(2) + Duration::minutes(10) + Duration::seconds(12)
-        );
         assert!(parse_duration("PT10S12M").is_err());
         // This should yield an error but it's easier to just let it slip through as 0s
         assert_eq!(parse_duration("P").unwrap(), Duration::zero());
+    }
+
+    #[rstest]
+    #[case("P12W", Duration::weeks(12))]
+    #[case("-P12W", -Duration::weeks(12))]
+    #[case("P12D", Duration::days(12))]
+    #[case("PT12H", Duration::hours(12))]
+    #[case("PT12M", Duration::minutes(12))]
+    #[case("PT12S", Duration::seconds(12))]
+    #[case("-PT12S", -Duration::seconds(12))]
+    #[case("P2DT10M12S",
+            Duration::days(2) + Duration::minutes(10) + Duration::seconds(12))]
+    #[case(
+            "PT10M12S",
+            Duration::minutes(10) + Duration::seconds(12)
+    )]
+    // On a roundtrip, P should not be serialised to P
+    #[case("PT0S", Duration::zero())]
+    fn test_duration_roundtrip(#[case] value: &str, #[case] ref_duration: Duration) {
+        let duration = parse_duration(value).unwrap();
+        assert_eq!(duration, ref_duration);
+        assert_eq!(duration.value(), value);
     }
 }
