@@ -1,3 +1,11 @@
+macro_rules! set_snapshot_suffix {
+    ($($expr:expr),*) => {
+        let mut settings = insta::Settings::clone_current();
+        settings.set_snapshot_suffix(format!($($expr,)*));
+        let _guard = settings.bind_to_scope();
+    }
+}
+
 pub mod property {
     extern crate ical;
 
@@ -57,14 +65,15 @@ pub mod calendar_object {
     use ical::generator::Emitter;
 
     #[rstest::rstest]
-    #[case(include_str!("./resources/ical_example_1.ics"))]
-    #[case(include_str!("./resources/ical_example_2.ics"))]
-    #[case(include_str!("./resources/ical_example_rrule.ics"))]
-    #[case(include_str!("./resources/ical_events.ics"))]
-    #[case(include_str!("./resources/ical_special_symbols.ics"))]
-    #[case(include_str!("./resources/ical_todos.ics"))]
-    #[case(include_str!("./resources/ical_journals.ics"))]
-    fn valid_objects(#[case] input: &str) {
+    #[case(0, include_str!("./resources/ical_example_1.ics"))]
+    #[case(1, include_str!("./resources/ical_example_2.ics"))]
+    #[case(2, include_str!("./resources/ical_example_rrule.ics"))]
+    #[case(3, include_str!("./resources/ical_events.ics"))]
+    #[case(4, include_str!("./resources/ical_special_symbols.ics"))]
+    #[case(5, include_str!("./resources/ical_todos.ics"))]
+    #[case(6, include_str!("./resources/ical_journals.ics"))]
+    fn valid_objects(#[case] case: usize, #[case] input: &str) {
+        set_snapshot_suffix!("{case}");
         let generic_reader = ical::IcalParser::new(input.as_bytes());
         let reader = ical::IcalObjectParser::new(input.as_bytes());
         for (g_res, res) in generic_reader.zip(reader) {
@@ -75,8 +84,9 @@ pub mod calendar_object {
     }
 
     #[rstest::rstest]
-    #[case(include_str!("./resources/ical_freebusy.ics"))]
-    fn invalid_objects(#[case] input: &str) {
+    #[case(0, include_str!("./resources/ical_freebusy.ics"))]
+    fn invalid_objects(#[case] case: usize, #[case] input: &str) {
+        set_snapshot_suffix!("{case}");
         let reader = ical::IcalObjectParser::new(input.as_bytes());
         for res in reader {
             assert!(res.is_err());
@@ -84,8 +94,10 @@ pub mod calendar_object {
     }
 
     #[rstest::rstest]
-    #[case(include_str!("./resources/Recurring at 9am, third at 10am.ics"))]
-    fn rrule_expansion(#[case] input: &str) {
+    #[case(0, include_str!("./resources/Recurring at 9am, third at 10am.ics"))]
+    #[case(1, include_str!("./resources/recurring_wholeday.ics"))]
+    fn rrule_expansion(#[case] case: usize, #[case] input: &str) {
+        set_snapshot_suffix!("{case}");
         let reader = ical::IcalObjectParser::new(input.as_bytes());
         for res in reader {
             let cal = res.unwrap();

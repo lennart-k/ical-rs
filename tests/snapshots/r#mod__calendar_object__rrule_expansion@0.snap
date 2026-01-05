@@ -4,7 +4,7 @@ expression: recurrence.get_inner()
 ---
 Event(
     IcalEvent {
-        uid: "wholeday",
+        uid: "459aa1c8ba359d55e03584cbc3ad1e05b2113b79",
         dtstamp: IcalDTSTAMPProperty(
             DateTime(
                 CalDateTime(
@@ -18,10 +18,9 @@ Event(
             ),
         ),
         dtstart: IcalDTSTARTProperty(
-            Date(
-                CalDate(
-                    2025-12-30,
-                    Olson(
+            DateTime(
+                CalDateTime(
+                    2025-12-30T09:00:00Olson(
                         UTC,
                     ),
                 ),
@@ -30,7 +29,20 @@ Event(
                 [],
             ),
         ),
-        dtend: None,
+        dtend: Some(
+            IcalDTENDProperty(
+                DateTime(
+                    CalDateTime(
+                        2025-12-30T12:25:00Olson(
+                            UTC,
+                        ),
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
+        ),
         duration: None,
         rdates: [],
         rrules: [],
@@ -38,10 +50,9 @@ Event(
         exrules: [],
         recurid: Some(
             IcalRECURIDProperty(
-                Date(
-                    CalDate(
-                        2025-12-30,
-                        Olson(
+                DateTime(
+                    CalDateTime(
+                        2025-12-30T09:00:00Olson(
                             UTC,
                         ),
                     ),
@@ -56,7 +67,7 @@ Event(
                     [],
                 ),
                 value: Some(
-                    "wholeday",
+                    "459aa1c8ba359d55e03584cbc3ad1e05b2113b79",
                 ),
             },
             ContentLine {
@@ -71,17 +82,10 @@ Event(
             ContentLine {
                 name: "DTSTART",
                 params: ContentLineParams(
-                    [
-                        (
-                            "VALUE",
-                            [
-                                "DATE",
-                            ],
-                        ),
-                    ],
+                    [],
                 ),
                 value: Some(
-                    "20251230",
+                    "20251230T090000Z",
                 ),
             },
             ContentLine {
@@ -99,23 +103,61 @@ Event(
                     [],
                 ),
                 value: Some(
-                    "wholeday event",
+                    "Recurring at 10am\\, last a 11am",
+                ),
+            },
+            ContentLine {
+                name: "TRANSP",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: Some(
+                    "OPAQUE",
+                ),
+            },
+            ContentLine {
+                name: "CLASS",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: Some(
+                    "PUBLIC",
+                ),
+            },
+            ContentLine {
+                name: "CREATED",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: Some(
+                    "20251228T114744Z",
+                ),
+            },
+            ContentLine {
+                name: "LAST-MODIFIED",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: Some(
+                    "20251228T114806Z",
                 ),
             },
             ContentLine {
                 name: "RECURRENCE-ID",
                 params: ContentLineParams(
-                    [
-                        (
-                            "VALUE",
-                            [
-                                "DATE",
-                            ],
-                        ),
-                    ],
+                    [],
                 ),
                 value: Some(
-                    "20251230",
+                    "20251230T090000Z",
+                ),
+            },
+            ContentLine {
+                name: "DURATION",
+                params: ContentLineParams(
+                    [],
+                ),
+                value: Some(
+                    "PT3H25M",
                 ),
             },
         ],
@@ -123,7 +165,7 @@ Event(
     },
     [
         IcalEvent {
-            uid: "wholeday",
+            uid: "459aa1c8ba359d55e03584cbc3ad1e05b2113b79",
             dtstamp: IcalDTSTAMPProperty(
                 DateTime(
                     CalDateTime(
@@ -137,10 +179,9 @@ Event(
                 ),
             ),
             dtstart: IcalDTSTARTProperty(
-                Date(
-                    CalDate(
-                        2025-12-31,
-                        Olson(
+                DateTime(
+                    CalDateTime(
+                        2025-12-31T09:00:00Olson(
                             UTC,
                         ),
                     ),
@@ -149,7 +190,20 @@ Event(
                     [],
                 ),
             ),
-            dtend: None,
+            dtend: Some(
+                IcalDTENDProperty(
+                    DateTime(
+                        CalDateTime(
+                            2025-12-31T12:25:00Olson(
+                                UTC,
+                            ),
+                        ),
+                    ),
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
             duration: None,
             rdates: [],
             rrules: [],
@@ -157,10 +211,9 @@ Event(
             exrules: [],
             recurid: Some(
                 IcalRECURIDProperty(
-                    Date(
-                        CalDate(
-                            2025-12-31,
-                            Olson(
+                    DateTime(
+                        CalDateTime(
+                            2025-12-31T09:00:00Olson(
                                 UTC,
                             ),
                         ),
@@ -175,7 +228,7 @@ Event(
                         [],
                     ),
                     value: Some(
-                        "wholeday",
+                        "459aa1c8ba359d55e03584cbc3ad1e05b2113b79",
                     ),
                 },
                 ContentLine {
@@ -190,17 +243,10 @@ Event(
                 ContentLine {
                     name: "DTSTART",
                     params: ContentLineParams(
-                        [
-                            (
-                                "VALUE",
-                                [
-                                    "DATE",
-                                ],
-                            ),
-                        ],
+                        [],
                     ),
                     value: Some(
-                        "20251231",
+                        "20251231T090000Z",
                     ),
                 },
                 ContentLine {
@@ -218,30 +264,68 @@ Event(
                         [],
                     ),
                     value: Some(
-                        "wholeday event",
+                        "Recurring at 10am\\, last a 11am",
+                    ),
+                },
+                ContentLine {
+                    name: "TRANSP",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: Some(
+                        "OPAQUE",
+                    ),
+                },
+                ContentLine {
+                    name: "CLASS",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: Some(
+                        "PUBLIC",
+                    ),
+                },
+                ContentLine {
+                    name: "CREATED",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: Some(
+                        "20251228T114744Z",
+                    ),
+                },
+                ContentLine {
+                    name: "LAST-MODIFIED",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: Some(
+                        "20251228T114806Z",
                     ),
                 },
                 ContentLine {
                     name: "RECURRENCE-ID",
                     params: ContentLineParams(
-                        [
-                            (
-                                "VALUE",
-                                [
-                                    "DATE",
-                                ],
-                            ),
-                        ],
+                        [],
                     ),
                     value: Some(
-                        "20251231",
+                        "20251231T090000Z",
+                    ),
+                },
+                ContentLine {
+                    name: "DURATION",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: Some(
+                        "PT3H25M",
                     ),
                 },
             ],
             alarms: [],
         },
         IcalEvent {
-            uid: "wholeday",
+            uid: "459aa1c8ba359d55e03584cbc3ad1e05b2113b79",
             dtstamp: IcalDTSTAMPProperty(
                 DateTime(
                     CalDateTime(
@@ -255,10 +339,9 @@ Event(
                 ),
             ),
             dtstart: IcalDTSTARTProperty(
-                Date(
-                    CalDate(
-                        2026-01-01,
-                        Olson(
+                DateTime(
+                    CalDateTime(
+                        2026-01-01T09:00:00Olson(
                             UTC,
                         ),
                     ),
@@ -267,7 +350,20 @@ Event(
                     [],
                 ),
             ),
-            dtend: None,
+            dtend: Some(
+                IcalDTENDProperty(
+                    DateTime(
+                        CalDateTime(
+                            2026-01-01T12:25:00Olson(
+                                UTC,
+                            ),
+                        ),
+                    ),
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
             duration: None,
             rdates: [],
             rrules: [],
@@ -275,10 +371,9 @@ Event(
             exrules: [],
             recurid: Some(
                 IcalRECURIDProperty(
-                    Date(
-                        CalDate(
-                            2026-01-01,
-                            Olson(
+                    DateTime(
+                        CalDateTime(
+                            2026-01-01T09:00:00Olson(
                                 UTC,
                             ),
                         ),
@@ -293,7 +388,7 @@ Event(
                         [],
                     ),
                     value: Some(
-                        "wholeday",
+                        "459aa1c8ba359d55e03584cbc3ad1e05b2113b79",
                     ),
                 },
                 ContentLine {
@@ -308,17 +403,10 @@ Event(
                 ContentLine {
                     name: "DTSTART",
                     params: ContentLineParams(
-                        [
-                            (
-                                "VALUE",
-                                [
-                                    "DATE",
-                                ],
-                            ),
-                        ],
+                        [],
                     ),
                     value: Some(
-                        "20260101",
+                        "20260101T090000Z",
                     ),
                 },
                 ContentLine {
@@ -336,30 +424,68 @@ Event(
                         [],
                     ),
                     value: Some(
-                        "wholeday event",
+                        "Recurring at 10am\\, last a 11am",
+                    ),
+                },
+                ContentLine {
+                    name: "TRANSP",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: Some(
+                        "OPAQUE",
+                    ),
+                },
+                ContentLine {
+                    name: "CLASS",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: Some(
+                        "PUBLIC",
+                    ),
+                },
+                ContentLine {
+                    name: "CREATED",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: Some(
+                        "20251228T114744Z",
+                    ),
+                },
+                ContentLine {
+                    name: "LAST-MODIFIED",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: Some(
+                        "20251228T114806Z",
                     ),
                 },
                 ContentLine {
                     name: "RECURRENCE-ID",
                     params: ContentLineParams(
-                        [
-                            (
-                                "VALUE",
-                                [
-                                    "DATE",
-                                ],
-                            ),
-                        ],
+                        [],
                     ),
                     value: Some(
-                        "20260101",
+                        "20260101T090000Z",
+                    ),
+                },
+                ContentLine {
+                    name: "DURATION",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: Some(
+                        "PT3H25M",
                     ),
                 },
             ],
             alarms: [],
         },
         IcalEvent {
-            uid: "wholeday",
+            uid: "459aa1c8ba359d55e03584cbc3ad1e05b2113b79",
             dtstamp: IcalDTSTAMPProperty(
                 DateTime(
                     CalDateTime(
@@ -373,10 +499,9 @@ Event(
                 ),
             ),
             dtstart: IcalDTSTARTProperty(
-                Date(
-                    CalDate(
-                        2026-01-02,
-                        Olson(
+                DateTime(
+                    CalDateTime(
+                        2026-01-02T10:00:00Olson(
                             UTC,
                         ),
                     ),
@@ -385,7 +510,20 @@ Event(
                     [],
                 ),
             ),
-            dtend: None,
+            dtend: Some(
+                IcalDTENDProperty(
+                    DateTime(
+                        CalDateTime(
+                            2026-01-02T12:25:00Olson(
+                                UTC,
+                            ),
+                        ),
+                    ),
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
             duration: None,
             rdates: [],
             rrules: [],
@@ -393,10 +531,9 @@ Event(
             exrules: [],
             recurid: Some(
                 IcalRECURIDProperty(
-                    Date(
-                        CalDate(
-                            2026-01-02,
-                            Olson(
+                    DateTime(
+                        CalDateTime(
+                            2026-01-02T09:00:00Olson(
                                 UTC,
                             ),
                         ),
@@ -411,7 +548,7 @@ Event(
                         [],
                     ),
                     value: Some(
-                        "wholeday",
+                        "459aa1c8ba359d55e03584cbc3ad1e05b2113b79",
                     ),
                 },
                 ContentLine {
@@ -426,17 +563,19 @@ Event(
                 ContentLine {
                     name: "DTSTART",
                     params: ContentLineParams(
-                        [
-                            (
-                                "VALUE",
-                                [
-                                    "DATE",
-                                ],
-                            ),
-                        ],
+                        [],
                     ),
                     value: Some(
-                        "20260102",
+                        "20260102T100000Z",
+                    ),
+                },
+                ContentLine {
+                    name: "DTEND",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: Some(
+                        "20260102T122500Z",
                     ),
                 },
                 ContentLine {
@@ -445,7 +584,7 @@ Event(
                         [],
                     ),
                     value: Some(
-                        "3",
+                        "4",
                     ),
                 },
                 ContentLine {
@@ -454,23 +593,52 @@ Event(
                         [],
                     ),
                     value: Some(
-                        "wholeday event",
+                        "Recurring at 10am\\, last a 11am",
+                    ),
+                },
+                ContentLine {
+                    name: "TRANSP",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: Some(
+                        "OPAQUE",
+                    ),
+                },
+                ContentLine {
+                    name: "CLASS",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: Some(
+                        "PUBLIC",
+                    ),
+                },
+                ContentLine {
+                    name: "CREATED",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: Some(
+                        "20251228T114744Z",
+                    ),
+                },
+                ContentLine {
+                    name: "LAST-MODIFIED",
+                    params: ContentLineParams(
+                        [],
+                    ),
+                    value: Some(
+                        "20251228T114818Z",
                     ),
                 },
                 ContentLine {
                     name: "RECURRENCE-ID",
                     params: ContentLineParams(
-                        [
-                            (
-                                "VALUE",
-                                [
-                                    "DATE",
-                                ],
-                            ),
-                        ],
+                        [],
                     ),
                     value: Some(
-                        "20260102",
+                        "20260102T090000Z",
                     ),
                 },
             ],
