@@ -1,13 +1,13 @@
 use crate::types::CalDateOrDateTime;
 
 super::property!(
-    "DTSTART",
+    "DTSTAMP",
     "DATE-TIME",
-    IcalDTSTARTProperty,
+    IcalDTSTAMPProperty,
     CalDateOrDateTime
 );
 
-impl IcalDTSTARTProperty {
+impl IcalDTSTAMPProperty {
     pub fn utc_or_local(self) -> Self {
         let Self(dt, mut params) = self;
         params.remove("TZID");
@@ -17,7 +17,7 @@ impl IcalDTSTARTProperty {
 
 #[cfg(test)]
 mod tests {
-    use super::IcalDTSTARTProperty;
+    use super::IcalDTSTAMPProperty;
     use crate::{generator::Emitter, parser::ICalProperty, property::ContentLine};
     use rstest::rstest;
     use std::collections::HashMap;
@@ -34,7 +34,7 @@ mod tests {
         let mut timezones = HashMap::new();
         timezones.insert("Europe/Berlin".to_owned(), Some(chrono_tz::Europe::Berlin));
         timezones.insert("W. Europe Standard Time".to_owned(), None);
-        let prop = IcalDTSTARTProperty::parse_prop(&content_line, &timezones).unwrap();
+        let prop = IcalDTSTAMPProperty::parse_prop(&content_line, &timezones).unwrap();
         let roundtrip: ContentLine = prop.into();
         similar_asserts::assert_eq!(roundtrip.generate(), input);
     }

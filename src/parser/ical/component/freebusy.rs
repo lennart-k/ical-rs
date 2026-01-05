@@ -17,7 +17,7 @@ pub struct IcalFreeBusyBuilder {
 #[derive(Debug, Clone)]
 pub struct IcalFreeBusy {
     pub uid: String,
-    dtstamp: IcalDTSTAMPProperty,
+    pub dtstamp: IcalDTSTAMPProperty,
     pub properties: Vec<ContentLine>,
 }
 

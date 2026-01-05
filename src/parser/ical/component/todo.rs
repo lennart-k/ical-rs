@@ -14,7 +14,7 @@ use std::{collections::HashMap, io::BufRead};
 #[derive(Debug, Clone)]
 pub struct IcalTodo {
     uid: String,
-    dtstamp: IcalDTSTAMPProperty,
+    pub dtstamp: IcalDTSTAMPProperty,
     pub properties: Vec<ContentLine>,
     pub alarms: Vec<IcalAlarm>,
 }

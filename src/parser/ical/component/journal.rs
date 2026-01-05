@@ -17,7 +17,7 @@ pub struct IcalJournalBuilder {
 #[derive(Debug, Clone)]
 pub struct IcalJournal {
     uid: String,
-    dtstamp: IcalDTSTAMPProperty,
+    pub dtstamp: IcalDTSTAMPProperty,
     pub properties: Vec<ContentLine>,
 }
 

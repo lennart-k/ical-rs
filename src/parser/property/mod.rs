@@ -16,6 +16,12 @@ mod dtstart;
 pub use dtstart::*;
 mod recurid;
 pub use recurid::*;
+mod due;
+pub use due::*;
+mod dtstamp;
+pub use dtstamp::*;
+mod dtend;
+pub use dtend::*;
 
 pub trait ICalProperty: Sized {
     const NAME: &'static str;
@@ -203,30 +209,6 @@ impl From<String> for IcalUIDProperty {
     }
 }
 
-property!(
-    "DTSTAMP",
-    "DATE-TIME",
-    IcalDTSTAMPProperty,
-    CalDateOrDateTime
-);
-impl IcalDTSTAMPProperty {
-    pub fn utc_or_local(self) -> Self {
-        let Self(dt, mut params) = self;
-        params.remove("TZID");
-        Self(dt.utc_or_local(), params)
-    }
-}
-
-property!("DTEND", "DATE-TIME", IcalDTENDProperty, CalDateOrDateTime);
-impl IcalDTENDProperty {
-    pub fn utc_or_local(self) -> Self {
-        let Self(dt, mut params) = self;
-        params.remove("TZID");
-        Self(dt.utc_or_local(), params)
-    }
-}
-
-property!("DUE", "DATE-TIME", IcalDUEProperty, CalDateOrDateTime);
 property!(
     "RRULE",
     "RECUR",
