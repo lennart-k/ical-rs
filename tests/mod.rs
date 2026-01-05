@@ -1,13 +1,4 @@
 pub mod property {
-    use std::collections::HashMap;
-
-    use ical::{
-        generator::Emitter,
-        parser::{ICalProperty, IcalRDATEProperty},
-        property::ContentLine,
-    };
-    use rstest::rstest;
-
     extern crate ical;
 
     #[test]

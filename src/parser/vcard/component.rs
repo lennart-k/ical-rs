@@ -14,14 +14,6 @@ pub struct VcardContactBuilder {
     pub properties: Vec<ContentLine>,
 }
 
-impl VcardContactBuilder {
-    pub fn new() -> Self {
-        Self {
-            properties: Vec::new(),
-        }
-    }
-}
-
 impl VcardContact {
     pub fn get_uid(&self) -> Option<&str> {
         self.uid.as_deref()
