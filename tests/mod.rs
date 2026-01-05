@@ -72,6 +72,7 @@ pub mod calendar_object {
     #[case(4, include_str!("./resources/ical_special_symbols.ics"))]
     #[case(5, include_str!("./resources/ical_todos.ics"))]
     #[case(6, include_str!("./resources/ical_journals.ics"))]
+    #[case(7, include_str!("./resources/recurring_wholeday.ics"))]
     fn valid_objects(#[case] case: usize, #[case] input: &str) {
         set_snapshot_suffix!("{case}");
         let generic_reader = ical::IcalParser::new(input.as_bytes());
