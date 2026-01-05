@@ -89,14 +89,6 @@ impl CalDate {
         if let Ok(date) = NaiveDate::parse_from_str(value, LOCAL_DATE) {
             return Ok(Self(date, timezone));
         }
-
-        if let Ok(date) = NaiveDate::parse_from_str(value, "%Y-%m-%d") {
-            return Ok(Self(date, timezone));
-        }
-        if let Ok(date) = NaiveDate::parse_from_str(value, "%Y%m%d") {
-            return Ok(Self(date, timezone));
-        }
-
         Err(CalDateTimeError::InvalidDatetimeFormat(value.to_string()))
     }
 
@@ -216,7 +208,7 @@ mod tests {
     #[test]
     fn test_date() {
         let a = CalDate::parse("20121212", None).unwrap();
-        let b = CalDate::parse("2012-12-13", None).unwrap();
+        let b = CalDate::parse("20121213", None).unwrap();
         assert_eq!((a.clone() + Duration::days(1)).0, b.as_datetime());
         assert!(b > a);
         assert!(b >= a);
