@@ -4,9 +4,10 @@ use std::collections::HashMap;
 
 use crate::{
     property::ContentLine,
-    types::{CalDateOrDateTime, CalDateTime, CalDateTimeError, parse_duration},
+    types::{CalDateOrDateTime, CalDateTime, CalDateTimeError, Value, parse_duration},
 };
 
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum DateTimeOrDuration {
     DateTime(CalDateTime),
     Duration(Duration),
@@ -19,8 +20,32 @@ impl DateTimeOrDuration {
         }
         Ok(Self::Duration(parse_duration(value).unwrap()))
     }
+
+    pub fn utc_or_local(&self) -> Self {
+        match self {
+            Self::DateTime(datetime) => Self::DateTime(datetime.utc_or_local()),
+            Self::Duration(duration) => Self::Duration(duration.to_owned()),
+        }
+    }
 }
 
+impl Value for DateTimeOrDuration {
+    fn value_type(&self) -> Option<&'static str> {
+        match self {
+            Self::DateTime(dt) => dt.value_type(),
+            Self::Duration(dur) => dur.value_type(),
+        }
+    }
+
+    fn value(&self) -> String {
+        match self {
+            Self::DateTime(dt) => dt.value(),
+            Self::Duration(dur) => dur.value(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Period(CalDateTime, DateTimeOrDuration);
 
 impl Period {
@@ -51,14 +76,35 @@ impl Period {
     }
 
     pub fn parse(value: &str, timezone: Option<Tz>) -> Result<Self, CalDateTimeError> {
-        let (start, end) = value.split_once('/').unwrap();
+        let (start, end) = value
+            .split_once('/')
+            .ok_or_else(|| CalDateTimeError::InvalidPeriodFormat(value.to_owned()))?;
 
         let start = CalDateTime::parse(start, timezone)?;
         let end = DateTimeOrDuration::parse(end, timezone)?;
         Ok(Self(start, end))
     }
+
+    pub fn utc_or_local(&self) -> Self {
+        Self(self.0.utc_or_local(), self.1.utc_or_local())
+    }
 }
 
+impl Value for Period {
+    fn value_type(&self) -> Option<&'static str> {
+        Some("PERIOD")
+    }
+
+    fn value(&self) -> String {
+        format!(
+            "{start}/{end}",
+            start = self.0.value(),
+            end = self.1.value()
+        )
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum DateOrDateTimeOrPeriod {
     DateOrDateTime(CalDateOrDateTime),
     Period(Period),
@@ -84,6 +130,29 @@ impl DateOrDateTimeOrPeriod {
         match self {
             Self::DateOrDateTime(dodt) => dodt.clone(),
             Self::Period(Period(start, _)) => start.clone().into(),
+        }
+    }
+
+    pub fn utc_or_local(&self) -> Self {
+        match self {
+            Self::DateOrDateTime(dodt) => Self::DateOrDateTime(dodt.utc_or_local()),
+            Self::Period(period) => Self::Period(period.utc_or_local()),
+        }
+    }
+}
+
+impl Value for DateOrDateTimeOrPeriod {
+    fn value_type(&self) -> Option<&'static str> {
+        match self {
+            Self::DateOrDateTime(dodt) => Value::value_type(dodt),
+            Self::Period(period) => period.value_type(),
+        }
+    }
+
+    fn value(&self) -> String {
+        match self {
+            Self::DateOrDateTime(dodt) => dodt.value(),
+            Self::Period(period) => period.value(),
         }
     }
 }

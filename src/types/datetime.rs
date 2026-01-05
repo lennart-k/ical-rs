@@ -200,8 +200,8 @@ impl Datelike for CalDateTime {
 }
 
 impl Value for CalDateTime {
-    fn value_type(&self) -> &'static str {
-        "DATE-TIME"
+    fn value_type(&self) -> Option<&'static str> {
+        Some("DATE-TIME")
     }
     fn value(&self) -> String {
         self.format()

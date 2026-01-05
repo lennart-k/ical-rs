@@ -128,7 +128,7 @@ impl Add<Duration> for CalDateOrDateTime {
 }
 
 impl Value for CalDateOrDateTime {
-    fn value_type(&self) -> &'static str {
+    fn value_type(&self) -> Option<&'static str> {
         match self {
             CalDateOrDateTime::DateTime(datetime) => datetime.value_type(),
             CalDateOrDateTime::Date(date) => date.value_type(),

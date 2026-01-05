@@ -72,9 +72,10 @@ pub fn parse_duration(string: &str) -> Result<Duration, InvalidDuration> {
 }
 
 impl Value for Duration {
-    fn value_type(&self) -> &'static str {
-        "DURATION"
+    fn value_type(&self) -> Option<&'static str> {
+        Some("DURATION")
     }
+
     fn value(&self) -> String {
         if self.is_zero() {
             return "PT0S".to_owned();

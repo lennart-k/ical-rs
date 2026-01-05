@@ -1,6 +1,7 @@
 mod duration;
 pub use duration::*;
 mod timezone;
+use itertools::Itertools;
 use rrule::{RRule, Unvalidated};
 pub use timezone::*;
 mod date;
@@ -28,17 +29,19 @@ pub enum CalDateTimeError {
     ParseError(String),
     #[error("Duration string {0} has an invalid format")]
     InvalidDurationFormat(String),
+    #[error("Invalid period format: {0}")]
+    InvalidPeriodFormat(String),
 }
 
 pub trait Value {
-    fn value_type(&self) -> &'static str;
+    fn value_type(&self) -> Option<&'static str>;
 
     fn value(&self) -> String;
 }
 
 impl Value for String {
-    fn value_type(&self) -> &'static str {
-        "TEXT"
+    fn value_type(&self) -> Option<&'static str> {
+        Some("TEXT")
     }
 
     fn value(&self) -> String {
@@ -47,11 +50,21 @@ impl Value for String {
 }
 
 impl Value for RRule<Unvalidated> {
-    fn value_type(&self) -> &'static str {
-        "RECUR"
+    fn value_type(&self) -> Option<&'static str> {
+        Some("RECUR")
     }
 
     fn value(&self) -> String {
         self.to_string()
+    }
+}
+
+impl<V: Value> Value for Vec<V> {
+    fn value_type(&self) -> Option<&'static str> {
+        self.first().and_then(Value::value_type)
+    }
+
+    fn value(&self) -> String {
+        self.iter().map(Value::value).join(",")
     }
 }

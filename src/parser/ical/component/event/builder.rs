@@ -68,7 +68,7 @@ impl ComponentMut for IcalEventBuilder {
         timezones: &HashMap<String, Option<chrono_tz::Tz>>,
     ) -> Result<IcalEvent, ParserError> {
         // The following are REQUIRED, but MUST NOT occur more than once: dtstamp / uid
-        let IcalDTSTAMPProperty(_dtstamp) = self.safe_get_required(timezones)?;
+        let IcalDTSTAMPProperty(dtstamp) = self.safe_get_required(timezones)?;
         let IcalUIDProperty(uid) = self.safe_get_required(timezones)?;
         // REQUIRED if METHOD not specified:
         // For now just ensure that no METHOD property exists
@@ -99,11 +99,7 @@ impl ComponentMut for IcalEventBuilder {
 
         // OPTIONAL, allowed multiple times: attach / attendee / categories / comment / contact / exdate / rstatus / related / resources / rdate / x-prop / iana-prop
         let rrule_dtstart = dtstart.utc().with_timezone(&rrule::Tz::UTC);
-        let rdates = self
-            .safe_get_all::<IcalRDATEProperty>(timezones)?
-            .into_iter()
-            .map(|exdate| exdate.0)
-            .collect();
+        let rdates = self.safe_get_all::<IcalRDATEProperty>(timezones)?;
         let exdates = self
             .safe_get_all::<IcalEXDATEProperty>(timezones)?
             .into_iter()
@@ -122,6 +118,7 @@ impl ComponentMut for IcalEventBuilder {
 
         Ok(IcalEvent {
             uid,
+            dtstamp,
             dtstart,
             dtend,
             duration,

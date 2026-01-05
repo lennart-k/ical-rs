@@ -6,10 +6,6 @@ use crate::{
 use std::{collections::HashMap, io::BufRead};
 
 #[derive(Debug, Clone, Default)]
-#[cfg_attr(
-    feature = "rkyv",
-    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)
-)]
 pub struct IcalTimeZone<const VERIFIED: bool = true> {
     pub properties: Vec<ContentLine>,
     pub transitions: Vec<IcalTimeZoneTransition<true>>,
@@ -141,10 +137,6 @@ pub enum IcalTimeZoneTransitionType {
 }
 
 #[derive(Debug, Clone, Default)]
-#[cfg_attr(
-    feature = "rkyv",
-    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)
-)]
 pub struct IcalTimeZoneTransition<const VERIFIED: bool = true> {
     pub transition: IcalTimeZoneTransitionType,
     pub properties: Vec<ContentLine>,

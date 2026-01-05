@@ -2,7 +2,7 @@ use crate::{
     component::IcalAlarm,
     parser::{
         Component, ICalProperty, IcalDTENDProperty, IcalDTSTAMPProperty, IcalDTSTARTProperty,
-        IcalDURATIONProperty, IcalRECURIDProperty, RecurIdRange,
+        IcalDURATIONProperty, IcalRDATEProperty, IcalRECURIDProperty, RecurIdRange,
     },
     property::ContentLine,
     types::{CalDate, CalDateOrDateTime, CalDateTime, Timezone},
@@ -17,16 +17,17 @@ mod builder;
 #[derive(Debug, Clone)]
 pub struct IcalEvent {
     uid: String,
+    dtstamp: CalDateOrDateTime,
     dtstart: CalDateOrDateTime,
     dtend: Option<CalDateOrDateTime>,
     duration: Option<Duration>,
-    rdates: Vec<CalDateOrDateTime>,
+    rdates: Vec<IcalRDATEProperty>,
     rrules: Vec<RRule>,
     exdates: Vec<CalDateOrDateTime>,
     exrules: Vec<RRule>,
-    pub recurid: Option<IcalRECURIDProperty>,
-    pub properties: Vec<ContentLine>,
-    pub alarms: Vec<IcalAlarm>,
+    recurid: Option<IcalRECURIDProperty>,
+    pub(crate) properties: Vec<ContentLine>,
+    pub(crate) alarms: Vec<IcalAlarm>,
 }
 
 impl IcalEvent {
@@ -63,6 +64,7 @@ impl IcalEvent {
     pub fn to_utc_or_local(self) -> Self {
         // Very naive way to replace known properties with UTC props
         let dtstart = self.dtstart.utc_or_local();
+        let dtstamp = self.dtstamp.utc_or_local();
         let exdates = self
             .exdates
             .into_iter()
@@ -75,31 +77,26 @@ impl IcalEvent {
             .collect();
         let dtend = self.dtend.map(|dt| dt.utc_or_local());
 
-        let mut properties = self.properties;
-        properties.retain(|prop| prop.name != "DTSTART");
-        properties.push(IcalDTSTARTProperty(dtstart.clone()).into());
-
-        properties.retain(|prop| prop.name != "DTSTAMP");
-        properties.push(IcalDTSTAMPProperty(dtstart.clone()).into());
-
-        properties.retain(|prop| prop.name != "DTEND");
-        if let Some(dtend) = dtend.clone() {
-            properties.push(IcalDTENDProperty(dtend).into());
-        }
-
-        Self {
+        let mut ev = Self {
             uid: self.uid,
-            dtstart,
-            dtend,
+            dtstamp: dtstamp.clone(),
+            dtstart: dtstart.clone(),
+            dtend: dtend.clone(),
             duration: self.duration,
             rrules: self.rrules,
             rdates,
             exrules: self.exrules,
             exdates,
             recurid: self.recurid,
-            properties,
+            properties: self.properties,
             alarms: self.alarms,
+        };
+        ev.replace_or_push_property(IcalDTSTARTProperty(dtstart));
+        ev.replace_or_push_property(IcalDTSTAMPProperty(dtstamp));
+        if let Some(dtend) = dtend {
+            ev.replace_or_push_property(IcalDTENDProperty(dtend));
         }
+        ev
     }
 
     pub fn get_duration(&self) -> Option<Duration> {
@@ -123,7 +120,10 @@ impl IcalEvent {
                 .set_rdates(
                     self.rdates
                         .iter()
-                        .map(|date| date.to_owned().into())
+                        .flat_map(|IcalRDATEProperty(dates, _)| {
+                            // TODO: Support periods
+                            dates.iter().map(|date| date.start().into())
+                        })
                         .collect(),
                 )
                 .set_exrules(self.exrules.to_owned())
@@ -206,6 +206,7 @@ impl IcalEvent {
             properties.retain(|prop| prop.name != "DTEND");
             let mut ev = IcalEvent {
                 uid: template.uid.clone(),
+                dtstamp: template.dtstamp.clone(),
                 dtstart: recurid.clone(),
                 recurid: Some(IcalRECURIDProperty(recurid.clone(), RecurIdRange::This)),
                 dtend: template

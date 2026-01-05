@@ -1,12 +1,21 @@
-use crate::types::Value;
 use crate::{
     parser::{Component, ParserError},
     property::ContentLine,
-    types::{CalDateOrDateTime, parse_duration},
+    types::{CalDateOrDateTime, DateOrDateTimeOrPeriod, parse_duration},
 };
-use chrono::Duration;
 use std::collections::HashMap;
 use std::str::FromStr;
+
+mod duration;
+pub use duration::*;
+mod exdate;
+pub use exdate::*;
+mod rdate;
+pub use rdate::*;
+mod dtstart;
+pub use dtstart::*;
+mod recurid;
+pub use recurid::*;
 
 pub trait ICalProperty: Sized {
     const NAME: &'static str;
@@ -78,6 +87,16 @@ impl ParseProp for String {
     }
 }
 
+impl ParseProp for DateOrDateTimeOrPeriod {
+    fn parse_prop(
+        prop: &ContentLine,
+        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        default_type: &str,
+    ) -> Result<Self, ParserError> {
+        Ok(Self::parse_prop(prop, timezones, default_type)?)
+    }
+}
+
 impl ParseProp for CalDateOrDateTime {
     fn parse_prop(
         prop: &ContentLine,
@@ -110,17 +129,46 @@ impl ParseProp for rrule::RRule<rrule::Unvalidated> {
     }
 }
 
+impl<T: ParseProp> ParseProp for Vec<T> {
+    fn parse_prop(
+        prop: &ContentLine,
+        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        default_type: &str,
+    ) -> Result<Self, ParserError> {
+        let mut out = vec![];
+        for value in prop
+            .value
+            .as_deref()
+            .unwrap_or_default()
+            .trim_end_matches(',')
+            .split(',')
+        {
+            let content_line = ContentLine {
+                name: prop.name.to_owned(),
+                params: prop.params.to_owned(),
+                value: Some(value.to_owned()),
+            };
+            out.push(T::parse_prop(&content_line, timezones, default_type)?);
+        }
+        Ok(out)
+    }
+}
+
 macro_rules! property {
     ($name:literal, $default_type:literal, $prop:ty) => {
-        impl ICalProperty for $prop {
+        impl crate::parser::property::ICalProperty for $prop {
             const NAME: &'static str = $name;
             const DEFAULT_TYPE: &'static str = $default_type;
 
             fn parse_prop(
-                prop: &ContentLine,
-                timezones: &HashMap<String, Option<chrono_tz::Tz>>,
-            ) -> Result<Self, ParserError> {
-                Ok(Self(ParseProp::parse_prop(prop, timezones, $default_type)?))
+                prop: &crate::property::ContentLine,
+                timezones: &std::collections::HashMap<String, Option<chrono_tz::Tz>>,
+            ) -> Result<Self, crate::parser::ParserError> {
+                Ok(Self(crate::parser::ParseProp::parse_prop(
+                    prop,
+                    timezones,
+                    $default_type,
+                )?))
             }
         }
     };
@@ -128,32 +176,27 @@ macro_rules! property {
     ($name:literal, $default_type:literal, $prop:ident, $inner:ty) => {
         #[derive(Debug, Clone, PartialEq, Eq, derive_more::Into)]
         pub struct $prop(pub $inner);
-        property!($name, $default_type, $prop);
+        crate::parser::property!($name, $default_type, $prop);
 
-        impl From<$prop> for ContentLine {
+        impl From<$prop> for crate::property::ContentLine {
             fn from(prop: $prop) -> Self {
                 let mut params = vec![];
-                let value_type = Value::value_type(&prop.0);
+                let value_type = crate::types::Value::value_type(&prop.0).unwrap_or($default_type);
                 if value_type != $default_type {
                     params.push(("VALUE".to_owned(), vec![value_type.to_owned()]));
                 }
-                ContentLine {
+                crate::property::ContentLine {
                     name: $name.to_owned(),
                     params,
-                    value: Some(Value::value(&prop.0)),
+                    value: Some(crate::types::Value::value(&prop.0)),
                 }
             }
         }
     };
 }
+pub(crate) use property;
 
 property!("UID", "TEXT", IcalUIDProperty, String);
-property!(
-    "DTSTART",
-    "DATE-TIME",
-    IcalDTSTARTProperty,
-    CalDateOrDateTime
-);
 property!(
     "DTSTAMP",
     "DATE-TIME",
@@ -162,8 +205,6 @@ property!(
 );
 property!("DTEND", "DATE-TIME", IcalDTENDProperty, CalDateOrDateTime);
 property!("DUE", "DATE-TIME", IcalDUEProperty, CalDateOrDateTime);
-property!("RDATE", "DATE-TIME", IcalRDATEProperty, CalDateOrDateTime);
-property!("EXDATE", "DATE-TIME", IcalEXDATEProperty, CalDateOrDateTime);
 property!(
     "RRULE",
     "RECUR",
@@ -177,64 +218,3 @@ property!(
     rrule::RRule<rrule::Unvalidated>
 );
 property!("METHOD", "TEXT", IcalMETHODProperty, String);
-property!("DURATION", "DURATION", IcalDURATIONProperty, Duration);
-
-#[derive(Debug, Clone, Default, PartialEq, Eq)]
-pub enum RecurIdRange {
-    #[default]
-    This,
-    ThisAndFuture,
-}
-#[derive(Debug, Clone)]
-pub struct IcalRECURIDProperty(pub CalDateOrDateTime, pub RecurIdRange);
-impl ICalProperty for IcalRECURIDProperty {
-    const NAME: &'static str = "RECURRENCE-ID";
-    const DEFAULT_TYPE: &'static str = "DATE-TIME";
-
-    fn parse_prop(
-        prop: &ContentLine,
-        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
-    ) -> Result<Self, ParserError> {
-        let dt = ParseProp::parse_prop(prop, timezones, Self::DEFAULT_TYPE)?;
-        let range = match prop.get_param("RANGE") {
-            Some("THISANDFUTURE") => RecurIdRange::ThisAndFuture,
-            None => RecurIdRange::This,
-            _ => panic!("Invalid range parameter"),
-        };
-        Ok(Self(dt, range))
-    }
-}
-impl IcalRECURIDProperty {
-    pub fn validate_dtstart(&self, dtstart: &CalDateOrDateTime) -> Result<(), ParserError> {
-        assert_eq!(
-            self.0.is_date(),
-            dtstart.is_date(),
-            "DTSTART and RECURRENCE-ID have different value types"
-        );
-        assert_eq!(
-            self.0.timezone().is_local(),
-            dtstart.timezone().is_local(),
-            "DTSTART and RECURRENCE-ID have different timezone types"
-        );
-
-        Ok(())
-    }
-}
-
-impl From<IcalRECURIDProperty> for crate::property::ContentLine {
-    fn from(value: IcalRECURIDProperty) -> Self {
-        let mut params = vec![];
-        let value_type = value.0.value_type();
-        if value_type != IcalRECURIDProperty::DEFAULT_TYPE {
-            params.push(("VALUE".to_owned(), vec![value_type.to_owned()]));
-        }
-        if value.1 == RecurIdRange::ThisAndFuture {
-            params.push(("RANGE".to_owned(), vec!["THISANDFUTURE".to_owned()]));
-        }
-        Self {
-            name: IcalRECURIDProperty::NAME.to_owned(),
-            params,
-            value: Some(value.0.format()),
-        }
-    }
-}

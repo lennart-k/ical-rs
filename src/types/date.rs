@@ -198,8 +198,8 @@ impl Datelike for CalDate {
 }
 
 impl Value for CalDate {
-    fn value_type(&self) -> &'static str {
-        "DATE"
+    fn value_type(&self) -> Option<&'static str> {
+        Some("DATE")
     }
     fn value(&self) -> String {
         self.format()

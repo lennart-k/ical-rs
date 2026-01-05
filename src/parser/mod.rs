@@ -16,8 +16,8 @@ use std::collections::HashMap;
 use std::io::BufRead;
 use std::marker::PhantomData;
 
-mod property_accessor;
-pub use property_accessor::*;
+mod property;
+pub use property::*;
 
 #[derive(Debug, thiserror::Error, PartialEq, Eq)]
 pub enum ParserError {
