@@ -100,10 +100,11 @@ pub mod calendar_object {
     fn rrule_expansion(#[case] case: usize, #[case] input: &str) {
         set_snapshot_suffix!("{case}");
         let reader = ical::IcalObjectParser::new(input.as_bytes());
-        for res in reader {
+        for (i, res) in reader.enumerate() {
             let cal = res.unwrap();
             let recurrence = cal.expand_recurrence(None, None);
-            insta::assert_debug_snapshot!(recurrence.get_inner());
+            insta::assert_snapshot!(format!("{i}_ics"), recurrence.generate());
+            insta::assert_debug_snapshot!(format!("{i}_data"), recurrence.get_inner());
         }
     }
 }
