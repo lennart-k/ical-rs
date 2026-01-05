@@ -14,6 +14,7 @@ use std::{collections::HashMap, io::BufRead};
 #[derive(Debug, Clone)]
 pub struct IcalTodo {
     uid: String,
+    dtstamp: IcalDTSTAMPProperty,
     pub properties: Vec<ContentLine>,
     pub alarms: Vec<IcalAlarm>,
 }
@@ -92,13 +93,13 @@ impl ComponentMut for IcalTodoBuilder {
         timezones: &HashMap<String, Option<chrono_tz::Tz>>,
     ) -> Result<IcalTodo, ParserError> {
         // REQUIRED, but ONLY ONCE
-        let IcalUIDProperty(uid) = self.safe_get_required(timezones)?;
-        let IcalDTSTAMPProperty(_dtstamp) = self.safe_get_required(timezones)?;
+        let IcalUIDProperty(uid, _) = self.safe_get_required(timezones)?;
+        let dtstamp = self.safe_get_required(timezones)?;
 
         // OPTIONAL, but ONLY ONCE: class / completed / created / description / dtstart / geo / last-mod / location / organizer / percent / priority / recurid / seq / status / summary / url / rrule
         let dtstart = self.safe_get_optional::<IcalDTSTARTProperty>(timezones)?;
         let recurid = self.safe_get_optional::<IcalRECURIDProperty>(timezones)?;
-        if let Some(IcalDTSTARTProperty(dtstart)) = &dtstart
+        if let Some(IcalDTSTARTProperty(dtstart, _)) = &dtstart
             && let Some(recurid) = &recurid
         {
             recurid.validate_dtstart(dtstart)?;
@@ -116,6 +117,7 @@ impl ComponentMut for IcalTodoBuilder {
 
         let verified = IcalTodo {
             uid,
+            dtstamp,
             properties: self.properties,
             alarms: self
                 .alarms

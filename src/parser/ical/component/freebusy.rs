@@ -14,9 +14,10 @@ pub struct IcalFreeBusyBuilder {
     pub properties: Vec<ContentLine>,
 }
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone)]
 pub struct IcalFreeBusy {
     pub uid: String,
+    dtstamp: IcalDTSTAMPProperty,
     pub properties: Vec<ContentLine>,
 }
 
@@ -77,8 +78,8 @@ impl ComponentMut for IcalFreeBusyBuilder {
         timezones: &HashMap<String, Option<chrono_tz::Tz>>,
     ) -> Result<IcalFreeBusy, ParserError> {
         // REQUIRED, but NOT MORE THAN ONCE
-        let IcalUIDProperty(uid) = self.safe_get_required(timezones)?;
-        let IcalDTSTAMPProperty(_dtstamp) = self.safe_get_required(timezones)?;
+        let IcalUIDProperty(uid, _) = self.safe_get_required(timezones)?;
+        let dtstamp = self.safe_get_required(timezones)?;
         // OPTIONAL, but NOT MORE THAN ONCE: contact / dtstart / dtend / organizer / url /
         let _dtstart = self.safe_get_optional::<IcalDTSTARTProperty>(timezones)?;
         let _dtend = self.safe_get_optional::<IcalDTENDProperty>(timezones)?;
@@ -86,6 +87,7 @@ impl ComponentMut for IcalFreeBusyBuilder {
 
         Ok(IcalFreeBusy {
             uid,
+            dtstamp,
             properties: self.properties,
         })
     }

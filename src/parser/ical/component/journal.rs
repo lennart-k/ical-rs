@@ -17,6 +17,7 @@ pub struct IcalJournalBuilder {
 #[derive(Debug, Clone)]
 pub struct IcalJournal {
     uid: String,
+    dtstamp: IcalDTSTAMPProperty,
     pub properties: Vec<ContentLine>,
 }
 
@@ -82,13 +83,13 @@ impl ComponentMut for IcalJournalBuilder {
         timezones: &HashMap<String, Option<chrono_tz::Tz>>,
     ) -> Result<IcalJournal, ParserError> {
         // REQUIRED, ONLY ONCE
-        let IcalUIDProperty(uid) = self.safe_get_required(timezones)?;
-        let IcalDTSTAMPProperty(_dtstamp) = self.safe_get_required(timezones)?;
+        let IcalUIDProperty(uid, _) = self.safe_get_required(timezones)?;
+        let dtstamp = self.safe_get_required(timezones)?;
 
         // OPTIONAL, ONLY ONCE: class / created / dtstart / last-mod / organizer / recurid / seq / status / summary / url / rrule
         let dtstart = self.safe_get_optional::<IcalDTSTARTProperty>(timezones)?;
         let recurid = self.safe_get_optional::<IcalRECURIDProperty>(timezones)?;
-        if let Some(IcalDTSTARTProperty(dtstart)) = &dtstart
+        if let Some(IcalDTSTARTProperty(dtstart, _)) = &dtstart
             && let Some(recurid) = &recurid
         {
             recurid.validate_dtstart(dtstart)?;
@@ -97,6 +98,7 @@ impl ComponentMut for IcalJournalBuilder {
         // OPTIONAL, MULTIPLE ALLOWED: attach / attendee / categories / comment / contact / description / exdate / related / rdate / rstatus / x-prop / iana-prop
         let verified = IcalJournal {
             uid,
+            dtstamp,
             properties: self.properties,
         };
         Ok(verified)

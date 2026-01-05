@@ -6,14 +6,18 @@ IcalCalendar {
     properties: [
         ContentLine {
             name: "VERSION",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "2.0",
             ),
         },
         ContentLine {
             name: "PRODID",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "-//RDU Software//NONSGML HandCal//EN",
             ),
@@ -26,66 +30,96 @@ IcalCalendar {
     free_busys: [
         IcalFreeBusy {
             uid: "hello",
+            dtstamp: IcalDTSTAMPProperty(
+                DateTime(
+                    CalDateTime(
+                        2025-07-26T13:06:53Olson(
+                            UTC,
+                        ),
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
             properties: [
                 ContentLine {
                     name: "UID",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "hello",
                     ),
                 },
                 ContentLine {
                     name: "DTSTAMP",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "20250726T130653Z",
                     ),
                 },
                 ContentLine {
                     name: "ORGANIZER",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "mailto:jsmith@example.com",
                     ),
                 },
                 ContentLine {
                     name: "DTSTART",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "19980313T141711Z",
                     ),
                 },
                 ContentLine {
                     name: "DTEND",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "19980410T141711Z",
                     ),
                 },
                 ContentLine {
                     name: "FREEBUSY",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "19980314T233000Z/19980315T003000Z",
                     ),
                 },
                 ContentLine {
                     name: "FREEBUSY",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "19980316T153000Z/19980316T163000Z",
                     ),
                 },
                 ContentLine {
                     name: "FREEBUSY",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "19980318T030000Z/19980318T040000Z",
                     ),
                 },
                 ContentLine {
                     name: "URL",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "http://www.example.com/calendar/busytime/jsmith.ifb",
                     ),

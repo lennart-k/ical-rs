@@ -1,47 +1,17 @@
-use crate::{
-    parser::{ICalProperty, ParseProp},
-    property::ContentLine,
-    types::DateOrDateTimeOrPeriod,
-};
+use crate::types::DateOrDateTimeOrPeriod;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct IcalRDATEProperty(pub Vec<DateOrDateTimeOrPeriod>, pub Option<String>);
-
-impl ICalProperty for IcalRDATEProperty {
-    const NAME: &'static str = "RDATE";
-    const DEFAULT_TYPE: &'static str = "DATE-TIME";
-
-    fn parse_prop(
-        prop: &crate::property::ContentLine,
-        timezones: &std::collections::HashMap<String, Option<chrono_tz::Tz>>,
-    ) -> Result<Self, crate::parser::ParserError> {
-        let dates = ParseProp::parse_prop(prop, timezones, Self::DEFAULT_TYPE)?;
-        Ok(Self(dates, prop.get_tzid().map(ToOwned::to_owned)))
-    }
-}
-
-impl From<IcalRDATEProperty> for ContentLine {
-    fn from(prop: IcalRDATEProperty) -> Self {
-        let mut params = vec![];
-        let value_type =
-            crate::types::Value::value_type(&prop.0).unwrap_or(IcalRDATEProperty::DEFAULT_TYPE);
-        if value_type != IcalRDATEProperty::DEFAULT_TYPE {
-            params.push(("VALUE".to_owned(), vec![value_type.to_owned()]));
-        }
-        if let Some(tzid) = prop.1 {
-            params.push(("TZID".to_owned(), vec![tzid]));
-        }
-        crate::property::ContentLine {
-            name: IcalRDATEProperty::NAME.to_owned(),
-            params,
-            value: Some(crate::types::Value::value(&prop.0)),
-        }
-    }
-}
+super::property!(
+    "RDATE",
+    "DATE-TIME",
+    IcalRDATEProperty,
+    Vec<DateOrDateTimeOrPeriod>
+);
 
 impl IcalRDATEProperty {
-    pub fn utc_or_local(&self) -> Self {
-        Self(self.0.iter().map(|dt| dt.utc_or_local()).collect(), None)
+    pub fn utc_or_local(self) -> Self {
+        let Self(inner, mut params) = self;
+        params.remove("TZID");
+        Self(inner.iter().map(|dt| dt.utc_or_local()).collect(), params)
     }
 }
 

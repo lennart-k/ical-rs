@@ -6,21 +6,27 @@ IcalCalendar {
     properties: [
         ContentLine {
             name: "PRODID",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "-//Ximian//NONSGML Evolution Calendar//EN",
             ),
         },
         ContentLine {
             name: "VERSION",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "2.0",
             ),
         },
         ContentLine {
             name: "METHOD",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "PUBLISH",
             ),
@@ -32,80 +38,112 @@ IcalCalendar {
     journals: [
         IcalJournal {
             uid: "84f728973b37b1cb9abf7556adde789b780779f7",
+            dtstamp: IcalDTSTAMPProperty(
+                DateTime(
+                    CalDateTime(
+                        2025-07-26T13:06:53Olson(
+                            UTC,
+                        ),
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
             properties: [
                 ContentLine {
                     name: "UID",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "84f728973b37b1cb9abf7556adde789b780779f7",
                     ),
                 },
                 ContentLine {
                     name: "DTSTAMP",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "20250726T130653Z",
                     ),
                 },
                 ContentLine {
                     name: "SUMMARY",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "journal entry!",
                     ),
                 },
                 ContentLine {
                     name: "DTSTART",
-                    params: [
-                        (
-                            "VALUE",
-                            [
-                                "DATE",
-                            ],
-                        ),
-                    ],
+                    params: ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
                     value: Some(
                         "20250705",
                     ),
                 },
                 ContentLine {
                     name: "CLASS",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "PRIVATE",
                     ),
                 },
                 ContentLine {
                     name: "DESCRIPTION",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "description\\n\\nnice",
                     ),
                 },
                 ContentLine {
                     name: "SEQUENCE",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "1",
                     ),
                 },
                 ContentLine {
                     name: "CREATED",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "20250726T130707Z",
                     ),
                 },
                 ContentLine {
                     name: "LAST-MODIFIED",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "20250726T130707Z",
                     ),
                 },
                 ContentLine {
                     name: "X-EVOLUTION-CALDAV-ETAG",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "0af7d703351f3eed3c08491bdcb10a4c138181cc6be73d5b58aa13ccab898b55",
                     ),

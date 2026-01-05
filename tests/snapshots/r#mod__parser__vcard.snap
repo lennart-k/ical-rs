@@ -7,300 +7,364 @@ VcardContact {
     properties: [
         ContentLine {
             name: "VERSION",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "4.0",
             ),
         },
         ContentLine {
             name: "ADR",
-            params: [
-                (
-                    "TYPE",
-                    [
-                        "work",
-                    ],
-                ),
-            ],
+            params: ContentLineParams(
+                [
+                    (
+                        "TYPE",
+                        [
+                            "work",
+                        ],
+                    ),
+                ],
+            ),
             value: Some(
                 "pobox;apt;street;city;state;zipcode;country",
             ),
         },
         ContentLine {
             name: "ANNIVERSARY",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "19960415",
             ),
         },
         ContentLine {
             name: "BDAY",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "--0203",
             ),
         },
         ContentLine {
             name: "CALADRURI",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "http://example.com/calendar/jdoe",
             ),
         },
         ContentLine {
             name: "CALURI",
-            params: [
-                (
-                    "MEDIATYPE",
-                    [
-                        "text/calendar",
-                    ],
-                ),
-            ],
+            params: ContentLineParams(
+                [
+                    (
+                        "MEDIATYPE",
+                        [
+                            "text/calendar",
+                        ],
+                    ),
+                ],
+            ),
             value: Some(
                 "ftp://ftp.example.com/calA.ics",
             ),
         },
         ContentLine {
             name: "CLIENTPIDMAP",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "1;urn:uuid:3df403f4-5924-4bb7-b077-3c711d9eb34b",
             ),
         },
         ContentLine {
             name: "EMAIL",
-            params: [
-                (
-                    "TYPE",
-                    [
-                        "work",
-                    ],
-                ),
-            ],
+            params: ContentLineParams(
+                [
+                    (
+                        "TYPE",
+                        [
+                            "work",
+                        ],
+                    ),
+                ],
+            ),
             value: Some(
                 "jqpublic@xyz.example.com",
             ),
         },
         ContentLine {
             name: "FBURL",
-            params: [
-                (
-                    "MEDIATYPE",
-                    [
-                        "text/calendar",
-                    ],
-                ),
-            ],
+            params: ContentLineParams(
+                [
+                    (
+                        "MEDIATYPE",
+                        [
+                            "text/calendar",
+                        ],
+                    ),
+                ],
+            ),
             value: Some(
                 "ftp://example.com/busy/project-a.ifb",
             ),
         },
         ContentLine {
             name: "FN",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "J. Doe",
             ),
         },
         ContentLine {
             name: "GENDER",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "M;Fellow",
             ),
         },
         ContentLine {
             name: "GEO",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "geo:37.386013\\,-122.082932",
             ),
         },
         ContentLine {
             name: "IMPP",
-            params: [
-                (
-                    "PREF",
-                    [
-                        "1",
-                    ],
-                ),
-            ],
+            params: ContentLineParams(
+                [
+                    (
+                        "PREF",
+                        [
+                            "1",
+                        ],
+                    ),
+                ],
+            ),
             value: Some(
                 "xmpp:alice@example.com",
             ),
         },
         ContentLine {
             name: "KEY",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "http://www.example.com/keys/jdoe.cer",
             ),
         },
         ContentLine {
             name: "KIND",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "individual",
             ),
         },
         ContentLine {
             name: "LANG",
-            params: [
-                (
-                    "PREF",
-                    [
-                        "1",
-                    ],
-                ),
-            ],
+            params: ContentLineParams(
+                [
+                    (
+                        "PREF",
+                        [
+                            "1",
+                        ],
+                    ),
+                ],
+            ),
             value: Some(
                 "fr",
             ),
         },
         ContentLine {
             name: "LOGO",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "http://www.example.com/pub/logos/abccorp.jpg",
             ),
         },
         ContentLine {
             name: "MEMBER",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "urn:uuid:03a0e51f-d1aa-4385-8a53-e29025acd8af",
             ),
         },
         ContentLine {
             name: "N",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "Stevenson;John;Philip,Paul;Dr.;Jr.,M.D.,A.C.P.",
             ),
         },
         ContentLine {
             name: "NICKNAME",
-            params: [
-                (
-                    "TYPE",
-                    [
-                        "work",
-                    ],
-                ),
-            ],
+            params: ContentLineParams(
+                [
+                    (
+                        "TYPE",
+                        [
+                            "work",
+                        ],
+                    ),
+                ],
+            ),
             value: Some(
                 "Boss",
             ),
         },
         ContentLine {
             name: "NOTE",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "This fax number is operational 0800 to 1715 EST\\, Mon-Fri",
             ),
         },
         ContentLine {
             name: "ORG",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "ABC\\, Inc.;North American Division;Marketing",
             ),
         },
         ContentLine {
             name: "PHOTO",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "http://www.example.com/pub/photos/jqpublic.gif",
             ),
         },
         ContentLine {
             name: "RELATED",
-            params: [
-                (
-                    "TYPE",
-                    [
-                        "friend",
-                    ],
-                ),
-            ],
+            params: ContentLineParams(
+                [
+                    (
+                        "TYPE",
+                        [
+                            "friend",
+                        ],
+                    ),
+                ],
+            ),
             value: Some(
                 "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6",
             ),
         },
         ContentLine {
             name: "REV",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "19951031T222710Z",
             ),
         },
         ContentLine {
             name: "ROLE",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "Project Leader",
             ),
         },
         ContentLine {
             name: "SOUND",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "CID:JOHNQPUBLIC.part8.19960229T080000.xyzMail@example.com",
             ),
         },
         ContentLine {
             name: "SOURCE",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "ldap://ldap.example.com/cn=Babs%20Jensen\\,%20o=Babsco\\,%20c=US",
             ),
         },
         ContentLine {
             name: "TEL",
-            params: [
-                (
-                    "VALUE",
-                    [
-                        "uri",
-                    ],
-                ),
-                (
-                    "TYPE",
-                    [
-                        "home",
-                    ],
-                ),
-            ],
+            params: ContentLineParams(
+                [
+                    (
+                        "VALUE",
+                        [
+                            "uri",
+                        ],
+                    ),
+                    (
+                        "TYPE",
+                        [
+                            "home",
+                        ],
+                    ),
+                ],
+            ),
             value: Some(
                 "tel:+33-01-23-45-67",
             ),
         },
         ContentLine {
             name: "TITLE",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "Research Scientist",
             ),
         },
         ContentLine {
             name: "TZ",
-            params: [
-                (
-                    "VALUE",
-                    [
-                        "utc-offset",
-                    ],
-                ),
-            ],
+            params: ContentLineParams(
+                [
+                    (
+                        "VALUE",
+                        [
+                            "utc-offset",
+                        ],
+                    ),
+                ],
+            ),
             value: Some(
                 "-0500",
             ),
         },
         ContentLine {
             name: "XML",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "<html xmlns=\"http://www.w3.org/1999/xhtml\"></html>",
             ),

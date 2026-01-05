@@ -6,21 +6,27 @@ IcalCalendar {
     properties: [
         ContentLine {
             name: "PRODID",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "-//Ximian//NONSGML Evolution Calendar//EN",
             ),
         },
         ContentLine {
             name: "VERSION",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "2.0",
             ),
         },
         ContentLine {
             name: "METHOD",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "PUBLISH",
             ),
@@ -31,101 +37,137 @@ IcalCalendar {
     todos: [
         IcalTodo {
             uid: "89b13d12c2142cc66192932e1e560ed344dfb174",
+            dtstamp: IcalDTSTAMPProperty(
+                DateTime(
+                    CalDateTime(
+                        2025-07-26T11:26:18Olson(
+                            UTC,
+                        ),
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
             properties: [
                 ContentLine {
                     name: "UID",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "89b13d12c2142cc66192932e1e560ed344dfb174",
                     ),
                 },
                 ContentLine {
                     name: "DTSTAMP",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "20250726T112618Z",
                     ),
                 },
                 ContentLine {
                     name: "SUMMARY",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "amazing task",
                     ),
                 },
                 ContentLine {
                     name: "DTSTART",
-                    params: [
-                        (
-                            "VALUE",
-                            [
-                                "DATE",
-                            ],
-                        ),
-                    ],
+                    params: ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
                     value: Some(
                         "20250804",
                     ),
                 },
                 ContentLine {
                     name: "DUE",
-                    params: [
-                        (
-                            "VALUE",
-                            [
-                                "DATE",
-                            ],
-                        ),
-                    ],
+                    params: ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
                     value: Some(
                         "20250819",
                     ),
                 },
                 ContentLine {
                     name: "PERCENT-COMPLETE",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "0",
                     ),
                 },
                 ContentLine {
                     name: "CLASS",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "PUBLIC",
                     ),
                 },
                 ContentLine {
                     name: "ESTIMATED-DURATION",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "P1D",
                     ),
                 },
                 ContentLine {
                     name: "SEQUENCE",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "1",
                     ),
                 },
                 ContentLine {
                     name: "CREATED",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "20250726T130323Z",
                     ),
                 },
                 ContentLine {
                     name: "LAST-MODIFIED",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "20250726T130323Z",
                     ),
                 },
                 ContentLine {
                     name: "X-EVOLUTION-CALDAV-ETAG",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "302e353d3134d1104500f9d9153454e6e21c5da41ae8a5fd26f8b0d98ee34979",
                     ),

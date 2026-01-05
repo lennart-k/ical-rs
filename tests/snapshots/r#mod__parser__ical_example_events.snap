@@ -6,21 +6,27 @@ IcalCalendar {
     properties: [
         ContentLine {
             name: "CALSCALE",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "GREGORIAN",
             ),
         },
         ContentLine {
             name: "PRODID",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "-//Ximian//NONSGML Evolution Calendar//EN",
             ),
         },
         ContentLine {
             name: "VERSION",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "2.0",
             ),
@@ -29,88 +35,163 @@ IcalCalendar {
     events: [
         IcalEvent {
             uid: "fa915b604e6e3f36772501ff869439e6a3c5cf67",
+            dtstamp: IcalDTSTAMPProperty(
+                DateTime(
+                    CalDateTime(
+                        2025-07-26T11:26:17Olson(
+                            UTC,
+                        ),
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
+            dtstart: IcalDTSTARTProperty(
+                Date(
+                    CalDate(
+                        2025-08-06,
+                        Local,
+                    ),
+                ),
+                ContentLineParams(
+                    [
+                        (
+                            "VALUE",
+                            [
+                                "DATE",
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            dtend: Some(
+                IcalDTENDProperty(
+                    Date(
+                        CalDate(
+                            2025-08-07,
+                            Local,
+                        ),
+                    ),
+                    ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
+                ),
+            ),
+            duration: None,
+            rdates: [],
+            rrules: [],
+            exdates: [],
+            exrules: [],
             recurid: None,
             properties: [
                 ContentLine {
                     name: "UID",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "fa915b604e6e3f36772501ff869439e6a3c5cf67",
                     ),
                 },
                 ContentLine {
                     name: "DTSTAMP",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "20250726T112617Z",
                     ),
                 },
                 ContentLine {
                     name: "DTSTART",
-                    params: [
-                        (
-                            "VALUE",
-                            [
-                                "DATE",
-                            ],
-                        ),
-                    ],
+                    params: ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
                     value: Some(
                         "20250806",
                     ),
                 },
                 ContentLine {
                     name: "DTEND",
-                    params: [
-                        (
-                            "VALUE",
-                            [
-                                "DATE",
-                            ],
-                        ),
-                    ],
+                    params: ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
                     value: Some(
                         "20250807",
                     ),
                 },
                 ContentLine {
                     name: "SEQUENCE",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "2",
                     ),
                 },
                 ContentLine {
                     name: "SUMMARY",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "all day event",
                     ),
                 },
                 ContentLine {
                     name: "TRANSP",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "OPAQUE",
                     ),
                 },
                 ContentLine {
                     name: "CLASS",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "PUBLIC",
                     ),
                 },
                 ContentLine {
                     name: "CREATED",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "20250726T144426Z",
                     ),
                 },
                 ContentLine {
                     name: "LAST-MODIFIED",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "20250726T144426Z",
                     ),

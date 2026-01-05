@@ -7,35 +7,43 @@ VcardContact {
     properties: [
         ContentLine {
             name: "version",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "4.0",
             ),
         },
         ContentLine {
             name: "fn",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "Alice Foobar",
             ),
         },
         ContentLine {
             name: "n",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "Foobar;Alice",
             ),
         },
         ContentLine {
             name: "email",
-            params: [
-                (
-                    "TYPE",
-                    [
-                        "internet",
-                    ],
-                ),
-            ],
+            params: ContentLineParams(
+                [
+                    (
+                        "TYPE",
+                        [
+                            "internet",
+                        ],
+                    ),
+                ],
+            ),
             value: Some(
                 "alice@example.org",
             ),

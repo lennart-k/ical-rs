@@ -164,31 +164,30 @@ macro_rules! property {
                 prop: &crate::property::ContentLine,
                 timezones: &std::collections::HashMap<String, Option<chrono_tz::Tz>>,
             ) -> Result<Self, crate::parser::ParserError> {
-                Ok(Self(crate::parser::ParseProp::parse_prop(
-                    prop,
-                    timezones,
-                    $default_type,
-                )?))
+                Ok(Self(
+                    crate::parser::ParseProp::parse_prop(prop, timezones, $default_type)?,
+                    prop.params.clone(),
+                ))
             }
         }
     };
 
     ($name:literal, $default_type:literal, $prop:ident, $inner:ty) => {
-        #[derive(Debug, Clone, PartialEq, Eq, derive_more::Into)]
-        pub struct $prop(pub $inner);
+        #[derive(Debug, Clone, PartialEq, Eq, derive_more::From)]
+        pub struct $prop(pub $inner, pub crate::property::ContentLineParams);
         crate::parser::property!($name, $default_type, $prop);
 
         impl From<$prop> for crate::property::ContentLine {
             fn from(prop: $prop) -> Self {
-                let mut params = vec![];
-                let value_type = crate::types::Value::value_type(&prop.0).unwrap_or($default_type);
+                let $prop(inner, mut params) = prop;
+                let value_type = crate::types::Value::value_type(&inner).unwrap_or($default_type);
                 if value_type != $default_type {
-                    params.push(("VALUE".to_owned(), vec![value_type.to_owned()]));
+                    params.replace_param("VALUE".to_owned(), value_type.to_owned());
                 }
                 crate::property::ContentLine {
                     name: $name.to_owned(),
                     params,
-                    value: Some(crate::types::Value::value(&prop.0)),
+                    value: Some(crate::types::Value::value(&inner)),
                 }
             }
         }
@@ -197,13 +196,36 @@ macro_rules! property {
 pub(crate) use property;
 
 property!("UID", "TEXT", IcalUIDProperty, String);
+
+impl From<String> for IcalUIDProperty {
+    fn from(value: String) -> Self {
+        Self(value, Default::default())
+    }
+}
+
 property!(
     "DTSTAMP",
     "DATE-TIME",
     IcalDTSTAMPProperty,
     CalDateOrDateTime
 );
+impl IcalDTSTAMPProperty {
+    pub fn utc_or_local(self) -> Self {
+        let Self(dt, mut params) = self;
+        params.remove("TZID");
+        Self(dt.utc_or_local(), params)
+    }
+}
+
 property!("DTEND", "DATE-TIME", IcalDTENDProperty, CalDateOrDateTime);
+impl IcalDTENDProperty {
+    pub fn utc_or_local(self) -> Self {
+        let Self(dt, mut params) = self;
+        params.remove("TZID");
+        Self(dt.utc_or_local(), params)
+    }
+}
+
 property!("DUE", "DATE-TIME", IcalDUEProperty, CalDateOrDateTime);
 property!(
     "RRULE",

@@ -6,21 +6,27 @@ IcalCalendar {
     properties: [
         ContentLine {
             name: "CALSCALE",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "GREGORIAN",
             ),
         },
         ContentLine {
             name: "PRODID",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "-//Ximian//NONSGML Evolution Calendar//EN",
             ),
         },
         ContentLine {
             name: "VERSION",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "2.0",
             ),
@@ -29,88 +35,165 @@ IcalCalendar {
     events: [
         IcalEvent {
             uid: "eb93535004f863c4e7a39b8b18daa6db3b353348",
+            dtstamp: IcalDTSTAMPProperty(
+                DateTime(
+                    CalDateTime(
+                        2025-07-23T19:12:44Olson(
+                            UTC,
+                        ),
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
+            dtstart: IcalDTSTARTProperty(
+                DateTime(
+                    CalDateTime(
+                        2025-07-23T21:00:00Olson(
+                            CEST,
+                        ),
+                    ),
+                ),
+                ContentLineParams(
+                    [
+                        (
+                            "TZID",
+                            [
+                                "Europe/Berlin",
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            dtend: Some(
+                IcalDTENDProperty(
+                    DateTime(
+                        CalDateTime(
+                            2025-07-23T21:25:00Olson(
+                                CEST,
+                            ),
+                        ),
+                    ),
+                    ContentLineParams(
+                        [
+                            (
+                                "TZID",
+                                [
+                                    "Europe/Berlin",
+                                ],
+                            ),
+                        ],
+                    ),
+                ),
+            ),
+            duration: None,
+            rdates: [],
+            rrules: [],
+            exdates: [],
+            exrules: [],
             recurid: None,
             properties: [
                 ContentLine {
                     name: "UID",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "eb93535004f863c4e7a39b8b18daa6db3b353348",
                     ),
                 },
                 ContentLine {
                     name: "DTSTAMP",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "20250723T191244Z",
                     ),
                 },
                 ContentLine {
                     name: "DTSTART",
-                    params: [
-                        (
-                            "TZID",
-                            [
-                                "Europe/Berlin",
-                            ],
-                        ),
-                    ],
+                    params: ContentLineParams(
+                        [
+                            (
+                                "TZID",
+                                [
+                                    "Europe/Berlin",
+                                ],
+                            ),
+                        ],
+                    ),
                     value: Some(
                         "20250723T210000",
                     ),
                 },
                 ContentLine {
                     name: "DTEND",
-                    params: [
-                        (
-                            "TZID",
-                            [
-                                "Europe/Berlin",
-                            ],
-                        ),
-                    ],
+                    params: ContentLineParams(
+                        [
+                            (
+                                "TZID",
+                                [
+                                    "Europe/Berlin",
+                                ],
+                            ),
+                        ],
+                    ),
                     value: Some(
                         "20250723T212500",
                     ),
                 },
                 ContentLine {
                     name: "SEQUENCE",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "2",
                     ),
                 },
                 ContentLine {
                     name: "SUMMARY",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "something with rrule",
                     ),
                 },
                 ContentLine {
                     name: "TRANSP",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "OPAQUE",
                     ),
                 },
                 ContentLine {
                     name: "CLASS",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "PUBLIC",
                     ),
                 },
                 ContentLine {
                     name: "CREATED",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "20250723T191256Z",
                     ),
                 },
                 ContentLine {
                     name: "LAST-MODIFIED",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "20250723T191256Z",
                     ),
@@ -128,14 +211,18 @@ IcalCalendar {
             properties: [
                 ContentLine {
                     name: "TZID",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "Europe/Berlin",
                     ),
                 },
                 ContentLine {
                     name: "X-LIC-LOCATION",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "Europe/Berlin",
                     ),
@@ -147,35 +234,45 @@ IcalCalendar {
                     properties: [
                         ContentLine {
                             name: "TZNAME",
-                            params: [],
+                            params: ContentLineParams(
+                                [],
+                            ),
                             value: Some(
                                 "CEST",
                             ),
                         },
                         ContentLine {
                             name: "TZOFFSETFROM",
-                            params: [],
+                            params: ContentLineParams(
+                                [],
+                            ),
                             value: Some(
                                 "+0100",
                             ),
                         },
                         ContentLine {
                             name: "TZOFFSETTO",
-                            params: [],
+                            params: ContentLineParams(
+                                [],
+                            ),
                             value: Some(
                                 "+0200",
                             ),
                         },
                         ContentLine {
                             name: "DTSTART",
-                            params: [],
+                            params: ContentLineParams(
+                                [],
+                            ),
                             value: Some(
                                 "19810329T020000",
                             ),
                         },
                         ContentLine {
                             name: "RRULE",
-                            params: [],
+                            params: ContentLineParams(
+                                [],
+                            ),
                             value: Some(
                                 "FREQ=YEARLY;UNTIL=20370329T010000Z;BYDAY=-1SU;BYMONTH=3",
                             ),
@@ -187,35 +284,45 @@ IcalCalendar {
                     properties: [
                         ContentLine {
                             name: "TZNAME",
-                            params: [],
+                            params: ContentLineParams(
+                                [],
+                            ),
                             value: Some(
                                 "CET",
                             ),
                         },
                         ContentLine {
                             name: "TZOFFSETFROM",
-                            params: [],
+                            params: ContentLineParams(
+                                [],
+                            ),
                             value: Some(
                                 "+0200",
                             ),
                         },
                         ContentLine {
                             name: "TZOFFSETTO",
-                            params: [],
+                            params: ContentLineParams(
+                                [],
+                            ),
                             value: Some(
                                 "+0100",
                             ),
                         },
                         ContentLine {
                             name: "DTSTART",
-                            params: [],
+                            params: ContentLineParams(
+                                [],
+                            ),
                             value: Some(
                                 "19961027T030000",
                             ),
                         },
                         ContentLine {
                             name: "RRULE",
-                            params: [],
+                            params: ContentLineParams(
+                                [],
+                            ),
                             value: Some(
                                 "FREQ=YEARLY;UNTIL=20361026T010000Z;BYDAY=-1SU;BYMONTH=10",
                             ),

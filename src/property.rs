@@ -42,6 +42,8 @@ use std::fmt;
 use std::io::BufRead;
 use std::iter::Iterator;
 
+use derive_more::{Deref, From};
+
 // Internal mods
 use crate::{
     PARAM_DELIMITER, PARAM_NAME_DELIMITER, PARAM_QUOTE, PARAM_VALUE_DELIMITER, VALUE_DELIMITER,
@@ -64,13 +66,49 @@ pub enum PropertyError {
     MissingValue(usize),
 }
 
+#[derive(Debug, Clone, Default, Eq, PartialEq, Hash, From)]
+pub struct ContentLineParams(pub(crate) Vec<(String, Vec<String>)>);
+
+impl ContentLineParams {
+    pub fn get_param(&self, name: &str) -> Option<&str> {
+        self.0
+            .iter()
+            .find(|(key, _)| name == key)
+            .and_then(|(_, value)| value.iter().map(String::as_str).next())
+    }
+
+    pub fn get_tzid(&self) -> Option<&str> {
+        self.get_param("TZID")
+    }
+
+    pub fn get_value_type(&self) -> Option<&str> {
+        self.get_param("VALUE")
+    }
+
+    pub fn replace_param(&mut self, name: String, value: String) {
+        if let Some(pos) = self.0.iter().position(|(n, _)| n == &name) {
+            self.0[pos] = (name, vec![value]);
+        } else {
+            self.0.push((name, vec![value]));
+        }
+    }
+
+    pub fn remove(&mut self, name: &str) {
+        self.0.retain(|(n, _)| n != name);
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.0.is_empty()
+    }
+}
+
 /// A VCARD/ICAL property.
 #[derive(Debug, Clone, Default, Eq, PartialEq, Hash)]
 pub struct ContentLine {
     /// Property name.
     pub name: String,
     /// Property list of parameters.
-    pub params: Vec<(String, Vec<String>)>,
+    pub params: ContentLineParams,
     /// Property value.
     pub value: Option<String>,
 }
@@ -80,16 +118,13 @@ impl ContentLine {
     pub fn new() -> ContentLine {
         ContentLine {
             name: String::new(),
-            params: vec![],
+            params: ContentLineParams::default(),
             value: None,
         }
     }
 
     pub fn get_param(&self, name: &str) -> Option<&str> {
-        self.params
-            .iter()
-            .find(|(key, _)| name == key)
-            .and_then(|(_, value)| value.iter().map(String::as_str).next())
+        self.params.get_param(name)
     }
 
     pub fn get_tzid(&self) -> Option<&str> {
@@ -204,7 +239,7 @@ impl<B: BufRead> PropertyParser<B> {
         to_parse = to_parse.split_at(1).1;
         Ok(ContentLine {
             name: prop_name.to_string(),
-            params,
+            params: params.into(),
             value: (!to_parse.is_empty()).then_some(to_parse.to_string()),
         })
     }

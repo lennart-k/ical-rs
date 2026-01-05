@@ -2,7 +2,8 @@ use crate::{
     component::IcalAlarm,
     parser::{
         Component, ICalProperty, IcalDTENDProperty, IcalDTSTAMPProperty, IcalDTSTARTProperty,
-        IcalDURATIONProperty, IcalRDATEProperty, IcalRECURIDProperty, RecurIdRange,
+        IcalDURATIONProperty, IcalEXDATEProperty, IcalRDATEProperty, IcalRECURIDProperty,
+        RecurIdRange,
     },
     property::ContentLine,
     types::{CalDate, CalDateOrDateTime, CalDateTime, Timezone},
@@ -17,13 +18,13 @@ mod builder;
 #[derive(Debug, Clone)]
 pub struct IcalEvent {
     uid: String,
-    dtstamp: CalDateOrDateTime,
-    dtstart: CalDateOrDateTime,
-    dtend: Option<CalDateOrDateTime>,
-    duration: Option<Duration>,
+    dtstamp: IcalDTSTAMPProperty,
+    dtstart: IcalDTSTARTProperty,
+    dtend: Option<IcalDTENDProperty>,
+    duration: Option<IcalDURATIONProperty>,
     rdates: Vec<IcalRDATEProperty>,
     rrules: Vec<RRule>,
-    exdates: Vec<CalDateOrDateTime>,
+    exdates: Vec<IcalEXDATEProperty>,
     exrules: Vec<RRule>,
     recurid: Option<IcalRECURIDProperty>,
     pub(crate) properties: Vec<ContentLine>,
@@ -91,19 +92,21 @@ impl IcalEvent {
             properties: self.properties,
             alarms: self.alarms,
         };
-        ev.replace_or_push_property(IcalDTSTARTProperty(dtstart));
-        ev.replace_or_push_property(IcalDTSTAMPProperty(dtstamp));
+        ev.replace_or_push_property(dtstart);
+        ev.replace_or_push_property(dtstamp);
         if let Some(dtend) = dtend {
-            ev.replace_or_push_property(IcalDTENDProperty(dtend));
+            ev.replace_or_push_property(dtend);
         }
         ev
     }
 
     pub fn get_duration(&self) -> Option<Duration> {
-        if let Some(dtend) = self.dtend.as_ref() {
-            return Some(dtend.clone() - &self.dtstart);
+        if let Some(IcalDTENDProperty(dtend, _)) = self.dtend.as_ref() {
+            return Some(dtend.clone() - &self.dtstart.0);
         };
         self.duration
+            .as_ref()
+            .map(|IcalDURATIONProperty(duration, _)| duration.to_owned())
     }
 
     pub fn get_rruleset(&self, dtstart: DateTime<rrule::Tz>) -> Option<RRuleSet> {
@@ -130,7 +133,9 @@ impl IcalEvent {
                 .set_exdates(
                     self.exdates
                         .iter()
-                        .map(|date| date.to_owned().into())
+                        .flat_map(|IcalEXDATEProperty(dates, _)| {
+                            dates.iter().map(|date| date.to_owned().into())
+                        })
                         .collect(),
                 ),
         )
@@ -158,7 +163,7 @@ impl IcalEvent {
             .map(|over| over.clone().to_utc_or_local())
             .collect();
         overrides.sort_by_key(|over| over.recurid.as_ref().unwrap().0.clone());
-        let dtstart_utc = main.dtstart.utc().with_timezone(&rrule::Tz::UTC);
+        let dtstart_utc = main.dtstart.0.utc().with_timezone(&rrule::Tz::UTC);
         let Some(mut rrule_set) = main.get_rruleset(dtstart_utc) else {
             return std::iter::once(main).chain(overrides).collect();
         };
@@ -174,7 +179,7 @@ impl IcalEvent {
 
         let mut template = &main;
         'recurrence: for instance in rrule_set.all(2048).dates {
-            let recurid = if main.dtstart.is_date() {
+            let recurid = if main.dtstart.0.is_date() {
                 CalDateOrDateTime::Date(CalDate(instance.to_utc().date_naive(), Timezone::utc()))
             } else {
                 CalDateOrDateTime::DateTime(CalDateTime::from(instance))
@@ -207,11 +212,11 @@ impl IcalEvent {
             let mut ev = IcalEvent {
                 uid: template.uid.clone(),
                 dtstamp: template.dtstamp.clone(),
-                dtstart: recurid.clone(),
+                dtstart: IcalDTSTARTProperty(recurid.clone(), Default::default()),
                 recurid: Some(IcalRECURIDProperty(recurid.clone(), RecurIdRange::This)),
-                dtend: template
-                    .get_duration()
-                    .map(|duration| (recurid.clone() + duration).into()),
+                dtend: template.get_duration().map(|duration| {
+                    IcalDTENDProperty((recurid.clone() + duration).into(), Default::default())
+                }),
                 alarms: vec![],
                 duration: None, // Set by DTEND
                 rdates: vec![],
@@ -220,10 +225,10 @@ impl IcalEvent {
                 exrules: vec![],
                 properties,
             };
-            ev.replace_or_push_property(IcalDTSTARTProperty(recurid.clone()));
+            ev.replace_or_push_property(IcalDTSTARTProperty(recurid.clone(), Default::default()));
             ev.replace_or_push_property(IcalRECURIDProperty(recurid, RecurIdRange::This));
             if let Some(duration) = template.get_duration() {
-                ev.replace_or_push_property(IcalDURATIONProperty(duration));
+                ev.replace_or_push_property(IcalDURATIONProperty(duration, Default::default()));
             }
 
             events.push(ev);

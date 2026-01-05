@@ -6,21 +6,27 @@ IcalCalendar {
     properties: [
         ContentLine {
             name: "METHOD",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "REQUEST",
             ),
         },
         ContentLine {
             name: "PRODID",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "Microsoft Exchange Server 2010",
             ),
         },
         ContentLine {
             name: "VERSION",
-            params: [],
+            params: ContentLineParams(
+                [],
+            ),
             value: Some(
                 "2.0",
             ),
@@ -29,290 +35,435 @@ IcalCalendar {
     events: [
         IcalEvent {
             uid: "040000C08200E00074C5B7101A89E00800000000EEB3773267BEA60100000000000000001000000023B1CC4F9EF21B4BBA06F5F3B4E42720",
+            dtstamp: IcalDTSTAMPProperty(
+                DateTime(
+                    CalDateTime(
+                        2020-11-19T11:29:15Olson(
+                            UTC,
+                        ),
+                    ),
+                ),
+                ContentLineParams(
+                    [],
+                ),
+            ),
+            dtstart: IcalDTSTARTProperty(
+                DateTime(
+                    CalDateTime(
+                        2020-11-24T11:00:00Local(
+                            +01:00,
+                        ),
+                    ),
+                ),
+                ContentLineParams(
+                    [
+                        (
+                            "TZID",
+                            [
+                                "W. Europe Standard Time",
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            dtend: Some(
+                IcalDTENDProperty(
+                    DateTime(
+                        CalDateTime(
+                            2020-11-24T11:30:00Local(
+                                +01:00,
+                            ),
+                        ),
+                    ),
+                    ContentLineParams(
+                        [
+                            (
+                                "TZID",
+                                [
+                                    "W. Europe Standard Time",
+                                ],
+                            ),
+                        ],
+                    ),
+                ),
+            ),
+            duration: None,
+            rdates: [],
+            rrules: [
+                RRule {
+                    freq: Daily,
+                    interval: 2,
+                    count: None,
+                    until: Some(
+                        2020-11-26T10:00:00UTC,
+                    ),
+                    week_start: Mon,
+                    by_set_pos: [],
+                    by_month: [],
+                    by_month_day: [],
+                    by_n_month_day: [],
+                    by_year_day: [],
+                    by_week_no: [],
+                    by_weekday: [],
+                    by_hour: [
+                        10,
+                    ],
+                    by_minute: [
+                        0,
+                    ],
+                    by_second: [
+                        0,
+                    ],
+                    by_easter: None,
+                    stage: PhantomData<rrule::core::Validated>,
+                },
+            ],
+            exdates: [],
+            exrules: [],
             recurid: None,
             properties: [
                 ContentLine {
                     name: "ATTENDEE",
-                    params: [
-                        (
-                            "ROLE",
-                            [
-                                "REQ-PARTICIPANT",
-                            ],
-                        ),
-                        (
-                            "PARTSTAT",
-                            [
-                                "NEEDS-ACTION",
-                            ],
-                        ),
-                        (
-                            "RSVP",
-                            [
-                                "TRUE",
-                            ],
-                        ),
-                        (
-                            "CN",
-                            [
-                                "Annonym Usernames",
-                            ],
-                        ),
-                    ],
+                    params: ContentLineParams(
+                        [
+                            (
+                                "ROLE",
+                                [
+                                    "REQ-PARTICIPANT",
+                                ],
+                            ),
+                            (
+                                "PARTSTAT",
+                                [
+                                    "NEEDS-ACTION",
+                                ],
+                            ),
+                            (
+                                "RSVP",
+                                [
+                                    "TRUE",
+                                ],
+                            ),
+                            (
+                                "CN",
+                                [
+                                    "Annonym Usernames",
+                                ],
+                            ),
+                        ],
+                    ),
                     value: Some(
                         "mailto:Annonym.Usernames@email.com",
                     ),
                 },
                 ContentLine {
                     name: "ATTENDEE",
-                    params: [
-                        (
-                            "ROLE",
-                            [
-                                "REQ-PARTICIPANT",
-                            ],
-                        ),
-                        (
-                            "PARTSTAT",
-                            [
-                                "NEEDS-ACTION",
-                            ],
-                        ),
-                        (
-                            "RSVP",
-                            [
-                                "TRUE",
-                            ],
-                        ),
-                        (
-                            "CN",
-                            [
-                                "Testmeeting channel",
-                            ],
-                        ),
-                    ],
+                    params: ContentLineParams(
+                        [
+                            (
+                                "ROLE",
+                                [
+                                    "REQ-PARTICIPANT",
+                                ],
+                            ),
+                            (
+                                "PARTSTAT",
+                                [
+                                    "NEEDS-ACTION",
+                                ],
+                            ),
+                            (
+                                "RSVP",
+                                [
+                                    "TRUE",
+                                ],
+                            ),
+                            (
+                                "CN",
+                                [
+                                    "Testmeeting channel",
+                                ],
+                            ),
+                        ],
+                    ),
                     value: Some(
                         "mailto:Testmeeting.channel@email365.onmicrosoft.com",
                     ),
                 },
                 ContentLine {
                     name: "DESCRIPTION",
-                    params: [
-                        (
-                            "LANGUAGE",
-                            [
-                                "en-US",
-                            ],
-                        ),
-                    ],
+                    params: ContentLineParams(
+                        [
+                            (
+                                "LANGUAGE",
+                                [
+                                    "en-US",
+                                ],
+                            ),
+                        ],
+                    ),
                     value: Some(
                         "\\n\\n\\n\\n________________________________________________________________________________\\nMicrosoft Teams-Besprechung\\n\\nNehmen Sie teil auf Ihrem Computer oder auf der mobilen App\\nKlicken Sie hier\\, um an der Besprechung teilzunehmen<https://url>\\n\\nWeitere Infos<https://aka.ms/JoinTeamsMeeting> | Besprechungsoptionen<url>\\n\\n________________________________________________________________________________\\n",
                     ),
                 },
                 ContentLine {
                     name: "RRULE",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "FREQ=DAILY;UNTIL=20201126T100000Z;INTERVAL=2",
                     ),
                 },
                 ContentLine {
                     name: "UID",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "040000C08200E00074C5B7101A89E00800000000EEB3773267BEA60100000000000000001000000023B1CC4F9EF21B4BBA06F5F3B4E42720",
                     ),
                 },
                 ContentLine {
                     name: "SUMMARY",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         " Testmeeting ➡ ignore it!",
                     ),
                 },
                 ContentLine {
                     name: "DTSTART",
-                    params: [
-                        (
-                            "TZID",
-                            [
-                                "W. Europe Standard Time",
-                            ],
-                        ),
-                    ],
+                    params: ContentLineParams(
+                        [
+                            (
+                                "TZID",
+                                [
+                                    "W. Europe Standard Time",
+                                ],
+                            ),
+                        ],
+                    ),
                     value: Some(
                         "20201124T110000",
                     ),
                 },
                 ContentLine {
                     name: "DTEND",
-                    params: [
-                        (
-                            "TZID",
-                            [
-                                "W. Europe Standard Time",
-                            ],
-                        ),
-                    ],
+                    params: ContentLineParams(
+                        [
+                            (
+                                "TZID",
+                                [
+                                    "W. Europe Standard Time",
+                                ],
+                            ),
+                        ],
+                    ),
                     value: Some(
                         "20201124T113000",
                     ),
                 },
                 ContentLine {
                     name: "CLASS",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "PUBLIC",
                     ),
                 },
                 ContentLine {
                     name: "PRIORITY",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "5",
                     ),
                 },
                 ContentLine {
                     name: "DTSTAMP",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "20201119T112915Z",
                     ),
                 },
                 ContentLine {
                     name: "TRANSP",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "OPAQUE",
                     ),
                 },
                 ContentLine {
                     name: "STATUS",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "CONFIRMED",
                     ),
                 },
                 ContentLine {
                     name: "SEQUENCE",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "0",
                     ),
                 },
                 ContentLine {
                     name: "LOCATION",
-                    params: [
-                        (
-                            "LANGUAGE",
-                            [
-                                "en-US",
-                            ],
-                        ),
-                    ],
+                    params: ContentLineParams(
+                        [
+                            (
+                                "LANGUAGE",
+                                [
+                                    "en-US",
+                                ],
+                            ),
+                        ],
+                    ),
                     value: None,
                 },
                 ContentLine {
                     name: "X-MICROSOFT-CDO-APPT-SEQUENCE",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "0",
                     ),
                 },
                 ContentLine {
                     name: "X-MICROSOFT-CDO-OWNERAPPTID",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "2118883566",
                     ),
                 },
                 ContentLine {
                     name: "X-MICROSOFT-CDO-BUSYSTATUS",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "TENTATIVE",
                     ),
                 },
                 ContentLine {
                     name: "X-MICROSOFT-CDO-INTENDEDSTATUS",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "BUSY",
                     ),
                 },
                 ContentLine {
                     name: "X-MICROSOFT-CDO-ALLDAYEVENT",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "FALSE",
                     ),
                 },
                 ContentLine {
                     name: "X-MICROSOFT-CDO-IMPORTANCE",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "1",
                     ),
                 },
                 ContentLine {
                     name: "X-MICROSOFT-CDO-INSTTYPE",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "1",
                     ),
                 },
                 ContentLine {
                     name: "X-MICROSOFT-SKYPETEAMSMEETINGURL",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "https://teams.microsoft.com/l/meetup-join/19%3afe1f00c87d7044e3a73231bb01b1d749%40thread.tacv2/1605785353833?context=%7b%12Tid%22%3a%22a905caa5-9cd7-4178-a749-bf6ca32f8ddf%24%2c%22Oid%22%3a%2241a5d0ce-9934-4103-85e3-d13eeeb0fc6f%22%7d",
                     ),
                 },
                 ContentLine {
                     name: "X-MICROSOFT-SCHEDULINGSERVICEUPDATEURL",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "https://scheduler.teams.microsoft.com/teams/9e85c5a5-9cd7-4178-a749-bf6c632a8ddf/44a5d0ce-9934-4603-8583-d1ceeef0f16f/19_fe1fdec8701044e1a732311b0111d749@thread.tacv2/160578131313e",
                     ),
                 },
                 ContentLine {
                     name: "X-MICROSOFT-SKYPETEAMSPROPERTIES",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "{\"cid\":\"19:fe1fdec87d7144e3173201bb01b0d749@thread.tacv2\"\\,\"rid\":1147200853833\\,\"mid\":1603785113033\\,\"uid\":\"8:orgid:04a5d0ce-9934-4603-8583-d1ceeef0fc6f\"\\,\"private\":false\\,\"type\":0}",
                     ),
                 },
                 ContentLine {
                     name: "X-MICROSOFT-ONLINEMEETINGCONFLINK",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "conf:sip:Annonym.Usernames@email.com\\;gruu\\;opaque=app:conf:focus:id:teams:2:1605785351803!10:fe1fdec87d0044e3a73231bb01b1d749-thread.tacv2!414a5dce990446038580d1ce0e20fc6f!9e85c3a59cd74178a749bf6c632a8ddf",
                     ),
                 },
                 ContentLine {
                     name: "X-MICROSOFT-ONLINEMEETINGINFORMATION",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "{\"OnlineMeetingChannelId\":null\\,\"OnlineMeetingProvider\":3}",
                     ),
                 },
                 ContentLine {
                     name: "X-MICROSOFT-DONOTFORWARDMEETING",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "FALSE",
                     ),
                 },
                 ContentLine {
                     name: "X-MICROSOFT-DISALLOW-COUNTER",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "FALSE",
                     ),
                 },
                 ContentLine {
                     name: "X-MICROSOFT-LOCATIONS",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "[]",
                     ),
@@ -323,28 +474,34 @@ IcalCalendar {
                     properties: [
                         ContentLine {
                             name: "DESCRIPTION",
-                            params: [],
+                            params: ContentLineParams(
+                                [],
+                            ),
                             value: Some(
                                 "REMINDER",
                             ),
                         },
                         ContentLine {
                             name: "TRIGGER",
-                            params: [
-                                (
-                                    "RELATED",
-                                    [
-                                        "START",
-                                    ],
-                                ),
-                            ],
+                            params: ContentLineParams(
+                                [
+                                    (
+                                        "RELATED",
+                                        [
+                                            "START",
+                                        ],
+                                    ),
+                                ],
+                            ),
                             value: Some(
                                 "-PT15M",
                             ),
                         },
                         ContentLine {
                             name: "ACTION",
-                            params: [],
+                            params: ContentLineParams(
+                                [],
+                            ),
                             value: Some(
                                 "DISPLAY",
                             ),
@@ -363,7 +520,9 @@ IcalCalendar {
             properties: [
                 ContentLine {
                     name: "TZID",
-                    params: [],
+                    params: ContentLineParams(
+                        [],
+                    ),
                     value: Some(
                         "W. Europe Standard Time",
                     ),
@@ -375,28 +534,36 @@ IcalCalendar {
                     properties: [
                         ContentLine {
                             name: "DTSTART",
-                            params: [],
+                            params: ContentLineParams(
+                                [],
+                            ),
                             value: Some(
                                 "16010101T030000",
                             ),
                         },
                         ContentLine {
                             name: "TZOFFSETFROM",
-                            params: [],
+                            params: ContentLineParams(
+                                [],
+                            ),
                             value: Some(
                                 "+0200",
                             ),
                         },
                         ContentLine {
                             name: "TZOFFSETTO",
-                            params: [],
+                            params: ContentLineParams(
+                                [],
+                            ),
                             value: Some(
                                 "+0100",
                             ),
                         },
                         ContentLine {
                             name: "RRULE",
-                            params: [],
+                            params: ContentLineParams(
+                                [],
+                            ),
                             value: Some(
                                 "FREQ=YEARLY;INTERVAL=1;BYDAY=-1SU;BYMONTH=10",
                             ),
@@ -408,28 +575,36 @@ IcalCalendar {
                     properties: [
                         ContentLine {
                             name: "DTSTART",
-                            params: [],
+                            params: ContentLineParams(
+                                [],
+                            ),
                             value: Some(
                                 "16010101T020000",
                             ),
                         },
                         ContentLine {
                             name: "TZOFFSETFROM",
-                            params: [],
+                            params: ContentLineParams(
+                                [],
+                            ),
                             value: Some(
                                 "+0100",
                             ),
                         },
                         ContentLine {
                             name: "TZOFFSETTO",
-                            params: [],
+                            params: ContentLineParams(
+                                [],
+                            ),
                             value: Some(
                                 "+0200",
                             ),
                         },
                         ContentLine {
                             name: "RRULE",
-                            params: [],
+                            params: ContentLineParams(
+                                [],
+                            ),
                             value: Some(
                                 "FREQ=YEARLY;INTERVAL=1;BYDAY=-1SU;BYMONTH=3",
                             ),

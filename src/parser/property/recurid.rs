@@ -60,7 +60,7 @@ impl From<IcalRECURIDProperty> for crate::property::ContentLine {
         }
         Self {
             name: IcalRECURIDProperty::NAME.to_owned(),
-            params,
+            params: params.into(),
             value: Some(value.0.format()),
         }
     }

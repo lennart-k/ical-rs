@@ -76,8 +76,8 @@ impl ComponentMut for VcardContactBuilder {
         timezones: &HashMap<String, Option<chrono_tz::Tz>>,
     ) -> Result<Self::Verified, ParserError> {
         let uid = self
-            .safe_get_optional::<IcalUIDProperty>(timezones)?
-            .map(Into::into);
+            .safe_get_optional(timezones)?
+            .map(|IcalUIDProperty(uid, _)| uid);
 
         let verified = VcardContact {
             uid,

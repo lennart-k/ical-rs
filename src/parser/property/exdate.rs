@@ -1,6 +1,21 @@
 use crate::types::CalDateOrDateTime;
+super::property!(
+    "EXDATE",
+    "DATE-TIME",
+    IcalEXDATEProperty,
+    Vec<CalDateOrDateTime>
+);
 
-super::property!("EXDATE", "DATE-TIME", IcalEXDATEProperty, CalDateOrDateTime);
+impl IcalEXDATEProperty {
+    pub fn utc_or_local(self) -> Self {
+        let Self(dts, mut params) = self;
+        params.remove("TZID");
+        Self(
+            dts.into_iter().map(|dt| dt.utc_or_local()).collect(),
+            params,
+        )
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -13,10 +28,8 @@ mod tests {
     #[case("EXDATE:19960402T010000Z,19960403T010000Z,19960404T010000Z\r\n")]
     #[case("EXDATE:19970714T123000Z\r\n")]
     #[case("EXDATE;TZID=America/New_York:19970714T083000\r\n")]
-    #[case("EXDATE;VALUE=PERIOD:19960403T020000Z/19960403T040000Z,\r\n")]
-    #[case("19960404T010000Z/PT3H\r\n")]
     #[case(
-        "EXDATE;VALUE=DATE:19970101,19970120,19970217,19970421,19970526,19970704,19970901,19971014,19971128,19971129,19971225\r\n"
+        "EXDATE;VALUE=DATE:19970101,19970120,19970217,19970421,19970526,19970704,199\r\n 70901,19971014,19971128,19971129,19971225\r\n"
     )]
     fn roundtrip(#[case] input: &str) {
         let content_line = crate::PropertyParser::from_reader(input.as_bytes())

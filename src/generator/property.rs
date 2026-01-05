@@ -1,5 +1,5 @@
 use crate::generator::Emitter;
-use crate::property::ContentLine;
+use crate::property::{ContentLine, ContentLineParams};
 use crate::{PARAM_DELIMITER, PARAM_VALUE_DELIMITER, VALUE_DELIMITER};
 use itertools::Itertools;
 
@@ -180,8 +180,9 @@ mod should {
     }
 }
 
-fn get_params(params: &[(String, Vec<String>)]) -> String {
+fn get_params(params: &ContentLineParams) -> String {
     params
+        .0
         .iter()
         .map(|(name, values)| {
             let value: String = values
