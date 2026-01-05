@@ -48,13 +48,13 @@ mod helper {
     ///         );
     /// let debug_output = "ContentLine { \
     ///     name: \"NAME\", \
-    ///     params: [\
+    ///     params: ContentLineParams([\
     ///         (\"param2\", [\"pvalue1\", \"pvalue2\"]), \
     ///         (\"param3\", [\"pvalue3\"])\
-    ///     ], \
+    ///     ]), \
     ///     value: Some(\"value\") \
     /// }";
-    /// assert_eq!(debug_output, format!("{:?}", prop));
+    /// similar_asserts::assert_eq!(debug_output, format!("{:?}", prop));
     /// ```
     #[macro_export]
     macro_rules! ical_property {
@@ -62,14 +62,14 @@ mod helper {
             ContentLine {
                 name: String::from($name),
                 value: Some($value.into()),
-                params: vec![],
+                params: vec![].into(),
             }
         };
         ($name:literal, $value:expr, $($params:expr),+) => {
             ContentLine {
                 name: String::from($name),
                 value: Some(String::from($value)),
-                params: vec![$($params,)+],
+                params: vec![$($params,)+].into(),
             }
         };
     }
