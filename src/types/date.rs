@@ -182,8 +182,11 @@ mod tests {
         let a = CalDate::parse("20121212", None).unwrap();
         let b = CalDate::parse("20121213", None).unwrap();
         let c = CalDate::parse("20121213", Some(chrono_tz::Europe::Berlin)).unwrap();
-        assert_eq!(b, b.clone().utc_or_local());
-        assert_eq!(b, c.clone().utc_or_local());
+        let d = CalDate::parse("20121213", Some(chrono_tz::Europe::Kyiv)).unwrap();
+        // Floating time and fixed time => different results
+        assert_ne!(b.clone().utc_or_local(), c.clone().utc_or_local());
+        // fixed timezones resolve to UTC
+        assert_eq!(c.clone().utc_or_local(), d.utc_or_local());
         assert_eq!((a.clone() + Duration::days(1)).0, b.as_datetime());
         assert!(b > a);
         assert!(b >= a);
