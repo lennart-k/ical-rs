@@ -126,15 +126,6 @@ impl CalDate {
     pub fn succ_opt(&self) -> Option<Self> {
         Some(Self(self.0.succ_opt()?, self.1.clone()))
     }
-
-    pub fn utc_or_local(&self) -> Self {
-        let tz = if self.1.is_local() {
-            Timezone::Local
-        } else {
-            Timezone::utc()
-        };
-        Self(self.0, tz)
-    }
 }
 
 #[cfg(not(tarpaulin_include))]
@@ -196,6 +187,15 @@ impl Value for CalDate {
     }
     fn value(&self) -> String {
         self.format()
+    }
+
+    fn utc_or_local(self) -> Self {
+        let tz = if self.1.is_local() {
+            Timezone::Local
+        } else {
+            Timezone::utc()
+        };
+        Self(self.0, tz)
     }
 }
 
