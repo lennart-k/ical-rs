@@ -61,6 +61,7 @@ impl TimeZone for Timezone {
         }
     }
 
+    #[cfg(not(tarpaulin_include))] // Only used by deprecated chrono::Date type
     fn offset_from_local_date(&self, local: &NaiveDate) -> chrono::MappedLocalTime<Self::Offset> {
         match self {
             Self::Local => MappedLocalTime::Single(CalTimezoneOffset::Local),
@@ -89,6 +90,7 @@ impl TimeZone for Timezone {
         }
     }
 
+    #[cfg(not(tarpaulin_include))] // Only used by deprecated chrono::Date type
     fn offset_from_utc_date(&self, utc: &NaiveDate) -> Self::Offset {
         match self {
             Self::Local => CalTimezoneOffset::Local,
