@@ -48,7 +48,7 @@ use std::iter::{Iterator, Peekable};
 ///
 /// Its inner is only a raw line from the file. No parsing or checking have
 /// been made yet.
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct Line {
     inner: String,
     number: usize,
@@ -126,5 +126,24 @@ impl<B: BufRead> Iterator for LineReader<B> {
         } else {
             Some(Line::new(new_line, line_number))
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{Line, LineReader};
+    use itertools::Itertools;
+    use rstest::rstest;
+
+    #[rstest]
+    #[case("", vec![])]
+    #[case("asd", vec![Line{inner: "asd".to_owned(), number: 1}])]
+    #[case("asd\r\n  ok", vec![Line{inner: "asd ok".to_owned(), number: 1}])]
+    #[case("asd with linebreak\r\n \r\n  ok", vec![Line{inner: "asd with linebreak ok".to_owned(), number: 1}])]
+    #[case("weird with linebreak\r\n\r\n  ok", vec![Line{inner: "weird with linebreak ok".to_owned(), number: 1}])]
+    #[case("line1\r\n\r\nline2", vec![Line{inner: "line1".to_owned(), number: 1}, Line{inner: "line2".to_owned(), number: 3}])]
+    fn test_line_reader(#[case] input: &str, #[case] lines: Vec<Line>) {
+        let parsed_lines = LineReader::new(input.as_bytes()).collect_vec();
+        assert_eq!(parsed_lines, lines);
     }
 }
