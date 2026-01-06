@@ -2,10 +2,8 @@ use crate::types::{CalDateTimeError, Timezone, Value};
 use crate::{property::ContentLine, types::CalDateTime};
 use chrono::{DateTime, Datelike, Duration, NaiveDate, NaiveTime};
 use chrono_tz::Tz;
-use std::{collections::HashMap, ops::Add, sync::LazyLock};
+use std::{collections::HashMap, ops::Add};
 
-static RE_VCARD_DATE_MM_DD: LazyLock<regex::Regex> =
-    LazyLock::new(|| regex::Regex::new(r"^--(?<m>\d{2})(?<d>\d{2})$").unwrap());
 pub const LOCAL_DATE: &str = "%Y%m%d";
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -88,31 +86,6 @@ impl CalDate {
         let timezone = timezone.map_or(Timezone::Local, Timezone::Olson);
         if let Ok(date) = NaiveDate::parse_from_str(value, LOCAL_DATE) {
             return Ok(Self(date, timezone));
-        }
-        Err(CalDateTimeError::InvalidDatetimeFormat(value.to_string()))
-    }
-
-    // Also returns whether the date contains a year
-    pub fn parse_vcard(value: &str) -> Result<(Self, bool), CalDateTimeError> {
-        if let Ok(datetime) = Self::parse(value, None) {
-            return Ok((datetime, true));
-        }
-
-        if let Some(captures) = RE_VCARD_DATE_MM_DD.captures(value) {
-            // Because 1972 is a leap year
-            let year = 1972;
-            // Cannot fail because of the regex
-            let month = captures.name("m").unwrap().as_str().parse().ok().unwrap();
-            let day = captures.name("d").unwrap().as_str().parse().ok().unwrap();
-
-            return Ok((
-                Self(
-                    NaiveDate::from_ymd_opt(year, month, day)
-                        .ok_or_else(|| CalDateTimeError::ParseError(value.to_string()))?,
-                    Timezone::Local,
-                ),
-                false,
-            ));
         }
         Err(CalDateTimeError::InvalidDatetimeFormat(value.to_string()))
     }
@@ -201,14 +174,16 @@ impl Value for CalDate {
 
 #[cfg(test)]
 mod tests {
+    use crate::types::{CalDate, Value};
     use chrono::Duration;
-
-    use crate::types::CalDate;
 
     #[test]
     fn test_date() {
         let a = CalDate::parse("20121212", None).unwrap();
         let b = CalDate::parse("20121213", None).unwrap();
+        let c = CalDate::parse("20121213", Some(chrono_tz::Europe::Berlin)).unwrap();
+        assert_eq!(b, b.clone().utc_or_local());
+        assert_eq!(b, c.clone().utc_or_local());
         assert_eq!((a.clone() + Duration::days(1)).0, b.as_datetime());
         assert!(b > a);
         assert!(b >= a);
