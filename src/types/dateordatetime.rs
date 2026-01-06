@@ -63,13 +63,6 @@ impl CalDateOrDateTime {
         }
     }
 
-    pub fn utc_or_local(&self) -> Self {
-        match self {
-            Self::DateTime(datetime) => Self::DateTime(datetime.utc_or_local()),
-            Self::Date(date) => Self::Date(date.utc_or_local()),
-        }
-    }
-
     pub fn format(&self) -> String {
         match self {
             Self::DateTime(datetime) => datetime.format(),
@@ -139,6 +132,13 @@ impl Value for CalDateOrDateTime {
         match self {
             CalDateOrDateTime::DateTime(datetime) => datetime.value(),
             CalDateOrDateTime::Date(date) => date.value(),
+        }
+    }
+
+    fn utc_or_local(self) -> Self {
+        match self {
+            Self::DateTime(datetime) => Self::DateTime(datetime.utc_or_local()),
+            Self::Date(date) => Self::Date(date.utc_or_local()),
         }
     }
 }

@@ -30,6 +30,10 @@ impl ICalProperty for IcalRECURIDProperty {
         };
         Ok(Self(dt, range))
     }
+
+    fn utc_or_local(self) -> Self {
+        self
+    }
 }
 impl IcalRECURIDProperty {
     pub fn validate_dtstart(&self, dtstart: &CalDateOrDateTime) -> Result<(), ParserError> {

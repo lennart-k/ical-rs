@@ -20,16 +20,16 @@ impl DateTimeOrDuration {
         }
         Ok(Self::Duration(parse_duration(value).unwrap()))
     }
-
-    pub fn utc_or_local(&self) -> Self {
-        match self {
-            Self::DateTime(datetime) => Self::DateTime(datetime.utc_or_local()),
-            Self::Duration(duration) => Self::Duration(duration.to_owned()),
-        }
-    }
 }
 
 impl Value for DateTimeOrDuration {
+    fn utc_or_local(self) -> Self {
+        match self {
+            Self::DateTime(datetime) => Self::DateTime(datetime.utc_or_local()),
+            Self::Duration(duration) => Self::Duration(duration),
+        }
+    }
+
     fn value_type(&self) -> Option<&'static str> {
         match self {
             Self::DateTime(dt) => dt.value_type(),
@@ -85,7 +85,7 @@ impl Period {
         Ok(Self(start, end))
     }
 
-    pub fn utc_or_local(&self) -> Self {
+    pub fn utc_or_local(self) -> Self {
         Self(self.0.utc_or_local(), self.1.utc_or_local())
     }
 }
@@ -133,7 +133,7 @@ impl DateOrDateTimeOrPeriod {
         }
     }
 
-    pub fn utc_or_local(&self) -> Self {
+    pub fn utc_or_local(self) -> Self {
         match self {
             Self::DateOrDateTime(dodt) => Self::DateOrDateTime(dodt.utc_or_local()),
             Self::Period(period) => Self::Period(period.utc_or_local()),

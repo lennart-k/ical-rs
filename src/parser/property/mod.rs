@@ -31,6 +31,8 @@ pub trait ICalProperty: Sized {
         prop: &ContentLine,
         timezones: &HashMap<String, Option<chrono_tz::Tz>>,
     ) -> Result<Self, ParserError>;
+
+    fn utc_or_local(self) -> Self;
 }
 
 pub trait GetProperty: Component {
@@ -174,6 +176,12 @@ macro_rules! property {
                     crate::parser::ParseProp::parse_prop(prop, timezones, $default_type)?,
                     prop.params.clone(),
                 ))
+            }
+
+            fn utc_or_local(self) -> Self {
+                let Self(dt, mut params) = self;
+                params.remove("TZID");
+                Self(crate::types::Value::utc_or_local(dt), params)
             }
         }
     };

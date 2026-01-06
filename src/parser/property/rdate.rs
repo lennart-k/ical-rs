@@ -7,14 +7,6 @@ super::property!(
     Vec<DateOrDateTimeOrPeriod>
 );
 
-impl IcalRDATEProperty {
-    pub fn utc_or_local(self) -> Self {
-        let Self(inner, mut params) = self;
-        params.remove("TZID");
-        Self(inner.iter().map(|dt| dt.utc_or_local()).collect(), params)
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::IcalRDATEProperty;

@@ -35,7 +35,11 @@ pub enum CalDateTimeError {
     InvalidPeriodFormat(String),
 }
 
-pub trait Value {
+pub trait Value: Sized {
+    fn utc_or_local(self) -> Self {
+        self
+    }
+
     fn value_type(&self) -> Option<&'static str>;
 
     fn value(&self) -> String;
@@ -68,5 +72,9 @@ impl<V: Value> Value for Vec<V> {
 
     fn value(&self) -> String {
         self.iter().map(Value::value).join(",")
+    }
+
+    fn utc_or_local(self) -> Self {
+        self.into_iter().map(Value::utc_or_local).collect()
     }
 }

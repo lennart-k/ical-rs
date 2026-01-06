@@ -6,17 +6,6 @@ super::property!(
     Vec<CalDateOrDateTime>
 );
 
-impl IcalEXDATEProperty {
-    pub fn utc_or_local(self) -> Self {
-        let Self(dts, mut params) = self;
-        params.remove("TZID");
-        Self(
-            dts.into_iter().map(|dt| dt.utc_or_local()).collect(),
-            params,
-        )
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::IcalEXDATEProperty;

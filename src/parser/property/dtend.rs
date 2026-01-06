@@ -2,14 +2,6 @@ use crate::types::CalDateOrDateTime;
 
 super::property!("DTEND", "DATE-TIME", IcalDTENDProperty, CalDateOrDateTime);
 
-impl IcalDTENDProperty {
-    pub fn utc_or_local(self) -> Self {
-        let Self(dt, mut params) = self;
-        params.remove("TZID");
-        Self(dt.utc_or_local(), params)
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::IcalDTENDProperty;

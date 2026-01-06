@@ -118,14 +118,6 @@ impl CalDateTime {
     }
 
     #[must_use]
-    pub fn utc_or_local(&self) -> Self {
-        match self.timezone() {
-            Timezone::Local => self.clone(),
-            Timezone::Olson(_) => Self(self.0.with_timezone(&Timezone::utc())),
-        }
-    }
-
-    #[must_use]
     pub fn timezone(&self) -> Timezone {
         self.0.timezone()
     }
@@ -206,5 +198,12 @@ impl Value for CalDateTime {
     }
     fn value(&self) -> String {
         self.format()
+    }
+
+    fn utc_or_local(self) -> Self {
+        match self.timezone() {
+            Timezone::Local => self.clone(),
+            Timezone::Olson(_) => Self(self.0.with_timezone(&Timezone::utc())),
+        }
     }
 }
