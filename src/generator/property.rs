@@ -7,17 +7,13 @@ pub(crate) fn split_line(line: String) -> String {
     let break_estimate = line.len().div_ceil(74);
     let mut output = String::with_capacity(line.len() + 3 * break_estimate + 2);
 
-    let mut chars = line
-        .char_indices()
-        .map(|(offset, _)| offset)
-        .skip(1)
-        .peekable();
+    let mut chars = line.char_indices().map(|(offset, _)| offset).peekable();
     let mut first_char_idx = 0;
     // Iterate over lines
     loop {
         // Find start of next line and find out if it was the last one
         let (line_boundary, last_line) = {
-            let mut line_len = 0;
+            let mut line_len = if first_char_idx == 0 { 0 } else { 1 };
             loop {
                 let Some(_) = chars.next() else {
                     // We are at the end, the boundary is given bv the line length (since we don't
@@ -26,16 +22,16 @@ pub(crate) fn split_line(line: String) -> String {
                 };
                 line_len += 1;
 
-                if line_len == 74 {
+                // A line should SHOULD NOT be longer than 75 characters
+                if line_len == 75 {
                     // We've reached our desired length.
                     // We peek for the line boundary
-                    let boundary = if let Some(&c) = chars.peek() {
-                        c
-                    } else {
-                        line.len()
-                    };
                     // char_idx currently is the start of the last character
-                    break (boundary, false);
+                    if let Some(&boundary) = chars.peek() {
+                        break (boundary, false);
+                    } else {
+                        break (line.len(), true);
+                    };
                 }
             }
         };
@@ -108,6 +104,13 @@ pub(crate) fn protect_param(param: &str) -> String {
 #[allow(unused)]
 mod should {
     use super::{protect_param, split_line};
+
+    #[test]
+    fn split_line_75() {
+        let text = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa75";
+        let input = text.to_owned().replace("\r\n ", "");
+        assert_eq!(text.to_owned() + "\r\n", split_line(input));
+    }
 
     #[test]
     fn split_line_multibyte() {
