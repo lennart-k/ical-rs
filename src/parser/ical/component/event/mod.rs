@@ -3,7 +3,7 @@ use crate::{
     parser::{
         Component, ICalProperty, IcalDTENDProperty, IcalDTSTAMPProperty, IcalDTSTARTProperty,
         IcalDURATIONProperty, IcalEXDATEProperty, IcalRDATEProperty, IcalRECURIDProperty,
-        RecurIdRange,
+        IcalSUMMARYProperty, RecurIdRange,
     },
     property::ContentLine,
     types::{CalDate, CalDateOrDateTime, CalDateTime, Timezone},
@@ -27,6 +27,7 @@ pub struct IcalEvent {
     exdates: Vec<IcalEXDATEProperty>,
     exrules: Vec<RRule>,
     recurid: Option<IcalRECURIDProperty>,
+    summary: Option<IcalSUMMARYProperty>,
     pub(crate) properties: Vec<ContentLine>,
     pub(crate) alarms: Vec<IcalAlarm>,
 }
@@ -88,6 +89,7 @@ impl IcalEvent {
             rdates,
             exrules: self.exrules,
             exdates,
+            summary: self.summary,
             recurid: self.recurid,
             properties: self.properties,
             alarms: self.alarms,
@@ -212,6 +214,7 @@ impl IcalEvent {
             let mut ev = IcalEvent {
                 uid: template.uid.clone(),
                 dtstamp: template.dtstamp.clone(),
+                summary: template.summary.clone(),
                 dtstart: IcalDTSTARTProperty(recurid.clone(), Default::default()),
                 recurid: Some(IcalRECURIDProperty(recurid.clone(), RecurIdRange::This)),
                 dtend: template.get_duration().map(|duration| {

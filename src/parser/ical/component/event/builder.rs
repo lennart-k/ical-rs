@@ -4,7 +4,8 @@ use crate::{
     parser::{
         Component, ComponentMut, GetProperty, IcalDTENDProperty, IcalDTSTARTProperty,
         IcalDURATIONProperty, IcalEXDATEProperty, IcalEXRULEProperty, IcalMETHODProperty,
-        IcalRDATEProperty, IcalRECURIDProperty, IcalRRULEProperty, IcalUIDProperty, ParserError,
+        IcalRDATEProperty, IcalRECURIDProperty, IcalRRULEProperty, IcalSUMMARYProperty,
+        IcalUIDProperty, ParserError,
     },
     property::ContentLine,
 };
@@ -78,6 +79,7 @@ impl ComponentMut for IcalEventBuilder {
         let dtstart: IcalDTSTARTProperty = self.safe_get_required(timezones)?;
 
         // OPTIONAL, but NOT MORE THAN ONCE: class / created / description / geo / last-mod / location / organizer / priority / seq / status / summary / transp / url / recurid / rrule
+        let summary = self.safe_get_optional::<IcalSUMMARYProperty>(timezones)?;
         let recurid = self.safe_get_optional::<IcalRECURIDProperty>(timezones)?;
         if let Some(recurid) = &recurid {
             recurid.validate_dtstart(&dtstart.0)?;
@@ -118,6 +120,7 @@ impl ComponentMut for IcalEventBuilder {
             exdates,
             exrules,
             recurid,
+            summary,
             properties: self.properties,
             alarms: self
                 .alarms

@@ -217,6 +217,8 @@ impl From<String> for IcalUIDProperty {
     }
 }
 
+property!("SUMMARY", "TEXT", IcalSUMMARYProperty, String);
+
 property!(
     "RRULE",
     "RECUR",
