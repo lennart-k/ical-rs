@@ -137,6 +137,7 @@ mod tests {
 
     #[rstest]
     #[case("", vec![])]
+    #[case("\n", vec![])]
     #[case("asd", vec![Line{inner: "asd".to_owned(), number: 1}])]
     #[case("asd\r\n  ok", vec![Line{inner: "asd ok".to_owned(), number: 1}])]
     #[case("asd with linebreak\r\n \r\n  ok", vec![Line{inner: "asd with linebreak ok".to_owned(), number: 1}])]
