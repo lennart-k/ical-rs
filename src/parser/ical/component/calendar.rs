@@ -159,7 +159,7 @@ impl ComponentMut for IcalCalendarBuilder {
         let timezones = HashMap::from_iter(
             vtimezones
                 .iter()
-                .map(|tz| (tz.get_tzid().to_owned(), tz.try_into().ok())),
+                .map(|tz| (tz.get_tzid().to_owned(), tz.into())),
         );
 
         Ok(IcalCalendar {

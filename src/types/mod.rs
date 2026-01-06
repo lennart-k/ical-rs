@@ -12,6 +12,8 @@ pub use datetime::*;
 mod dateordatetime;
 pub use dateordatetime::*;
 pub use period::*;
+mod guess_timezone;
+pub use guess_timezone::*;
 
 #[derive(Debug, thiserror::Error, PartialEq, Eq)]
 pub enum CalDateTimeError {

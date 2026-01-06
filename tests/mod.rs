@@ -282,8 +282,7 @@ pub mod chrono_tz {
     extern crate ical;
     use self::ical::parser::ical::component::IcalTimeZone;
     use ical::parser::ComponentParser;
-    use std::convert::TryInto;
-
+    use rstest::rstest;
     const VTIMEZONE_DIFFERENT_TZID_BERLIN: &str = r#"
 BEGIN:VTIMEZONE
 TZID:HELLO_Europe/Berlin
@@ -328,18 +327,37 @@ END:STANDARD
 END:VTIMEZONE
     "#;
 
-    #[test]
-    fn try_from_icaldatetime() {
-        for input in [VTIMEZONE_BERLIN, VTIMEZONE_DIFFERENT_TZID_BERLIN] {
-            let vtimezone: IcalTimeZone = ComponentParser::<_, IcalTimeZone>::new(input.as_bytes())
-                .next()
-                .unwrap()
-                .unwrap();
+    const VTIMEZONE_PROPRIETARY: &str = r#"
+BEGIN:VTIMEZONE
+TZID:W. Europe Standard Time
+LAST-MODIFIED:20250723T154628Z
+BEGIN:DAYLIGHT
+TZNAME:CEST
+TZOFFSETFROM:+0100
+TZOFFSETTO:+0200
+DTSTART:19700329T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU
+END:DAYLIGHT
+BEGIN:STANDARD
+TZNAME:CET
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0100
+DTSTART:19701025T030000
+RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
+END:STANDARD
+END:VTIMEZONE
+    "#;
 
-            assert_eq!(
-                chrono_tz::Tz::Europe__Berlin,
-                (&vtimezone).try_into().unwrap()
-            );
-        }
+    #[rstest]
+    #[case(VTIMEZONE_BERLIN, chrono_tz::Europe::Berlin)]
+    #[case(VTIMEZONE_DIFFERENT_TZID_BERLIN, chrono_tz::Europe::Berlin)]
+    #[case(VTIMEZONE_PROPRIETARY, chrono_tz::Europe::Berlin)]
+    fn try_from_icaldatetime(#[case] input: &str, #[case] tz: chrono_tz::Tz) {
+        let vtimezone: IcalTimeZone = ComponentParser::<_, IcalTimeZone>::new(input.as_bytes())
+            .next()
+            .unwrap()
+            .unwrap();
+        let extracted_tz: Option<chrono_tz::Tz> = (&vtimezone).into();
+        assert_eq!(tz, extracted_tz.unwrap());
     }
 }

@@ -273,7 +273,7 @@ impl ComponentMut for IcalCalendarObjectBuilder {
         let timezones = HashMap::from_iter(
             vtimezones
                 .iter()
-                .map(|(name, value)| (name.clone(), value.try_into().ok())),
+                .map(|(name, value)| (name.clone(), value.into())),
         );
 
         Ok(IcalCalendarObject {

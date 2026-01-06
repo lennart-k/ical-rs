@@ -26,17 +26,25 @@ impl IcalTimeZone {
 }
 
 #[cfg(feature = "chrono-tz")]
-impl TryFrom<&IcalTimeZone> for chrono_tz::Tz {
-    type Error = chrono_tz::ParseError;
-
-    fn try_from(value: &IcalTimeZone) -> Result<Self, Self::Error> {
+impl From<&IcalTimeZone> for Option<chrono_tz::Tz> {
+    fn from(value: &IcalTimeZone) -> Self {
+        use crate::types::get_proprietary_tzid;
         use std::str::FromStr;
 
-        if let Some(loc) = value.get_lic_location() {
-            return chrono_tz::Tz::from_str(loc);
-        }
+        // Try X-LIC-LOCATION
+        if let Some(loc) = value.get_lic_location()
+            && let Ok(tz) = chrono_tz::Tz::from_str(loc)
+        {
+            return Some(tz);
+        };
 
-        chrono_tz::Tz::from_str(value.get_tzid())
+        // Try using TZID in Olson DB
+        let tzid = value.get_tzid();
+        if let Ok(tz) = chrono_tz::Tz::from_str(tzid) {
+            return Some(tz);
+        }
+        // Try map of proprietary timezone IDs (mostly for Microsoft products)
+        get_proprietary_tzid(tzid)
     }
 }
 
