@@ -327,6 +327,27 @@ END:STANDARD
 END:VTIMEZONE
     "#;
 
+    const VTIMEZONE_LOWERCASE: &str = r#"
+BEGIN:VTIMEZONE
+tzid:W. Europe Standard Time
+LAST-MODIFIED:20250723T154628Z
+BEGIN:DAYLIGHT
+TZNAME:CEST
+TZOFFSETFROM:+0100
+TZOFFSETTO:+0200
+DTSTART:19700329T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU
+END:DAYLIGHT
+BEGIN:STANDARD
+TZNAME:CET
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0100
+DTSTART:19701025T030000
+RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
+END:STANDARD
+END:VTIMEZONE
+    "#;
+
     const VTIMEZONE_PROPRIETARY: &str = r#"
 BEGIN:VTIMEZONE
 TZID:W. Europe Standard Time
@@ -351,6 +372,7 @@ END:VTIMEZONE
     #[rstest]
     #[case(VTIMEZONE_BERLIN, chrono_tz::Europe::Berlin)]
     #[case(VTIMEZONE_DIFFERENT_TZID_BERLIN, chrono_tz::Europe::Berlin)]
+    #[case(VTIMEZONE_LOWERCASE, chrono_tz::Europe::Berlin)]
     #[case(VTIMEZONE_PROPRIETARY, chrono_tz::Europe::Berlin)]
     fn try_from_icaldatetime(#[case] input: &str, #[case] tz: chrono_tz::Tz) {
         let vtimezone: IcalTimeZone = ComponentParser::<_, IcalTimeZone>::new(input.as_bytes())

@@ -6,7 +6,7 @@ VcardContact {
     uid: None,
     properties: [
         ContentLine {
-            name: "version",
+            name: "VERSION",
             params: ContentLineParams(
                 [],
             ),
@@ -15,7 +15,7 @@ VcardContact {
             ),
         },
         ContentLine {
-            name: "fn",
+            name: "FN",
             params: ContentLineParams(
                 [],
             ),
@@ -24,7 +24,7 @@ VcardContact {
             ),
         },
         ContentLine {
-            name: "n",
+            name: "N",
             params: ContentLineParams(
                 [],
             ),
@@ -33,7 +33,7 @@ VcardContact {
             ),
         },
         ContentLine {
-            name: "email",
+            name: "EMAIL",
             params: ContentLineParams(
                 [
                     (

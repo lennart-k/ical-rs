@@ -110,17 +110,6 @@ pub struct ContentLine {
     pub value: Option<String>,
 }
 
-impl ContentLine {
-    /// Return a new `Property` object.
-    pub fn new() -> ContentLine {
-        ContentLine {
-            name: String::new(),
-            params: ContentLineParams::default(),
-            value: None,
-        }
-    }
-}
-
 impl fmt::Display for ContentLine {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
@@ -223,7 +212,7 @@ impl<B: BufRead> PropertyParser<B> {
         }
         to_parse = to_parse.split_at(1).1;
         Ok(ContentLine {
-            name: prop_name.to_string(),
+            name: prop_name.to_uppercase(),
             params: params.into(),
             value: (!to_parse.is_empty()).then_some(to_parse.to_string()),
         })

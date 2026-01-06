@@ -4,6 +4,8 @@ NAME;ARG="dquote no closed
 Value without name
 Name;ARG=
 NAME;ARG
+NAME;ARG:Hello
 Name;
+Name
 Name;ASD=":"
 Name;="yeet":ok wow
