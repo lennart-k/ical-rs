@@ -81,23 +81,9 @@ pub trait ComponentMut: Component + Default {
 
     fn get_properties_mut(&mut self) -> &mut Vec<ContentLine>;
 
-    /// Add the givent property.
-    fn add_property(&mut self, property: ContentLine) {
+    /// Add the given property.
+    fn add_content_line(&mut self, property: ContentLine) {
         self.get_properties_mut().push(property);
-    }
-
-    fn get_property_mut<'c>(&'c mut self, name: &str) -> Option<&'c mut ContentLine> {
-        self.get_properties_mut()
-            .iter_mut()
-            .find(|p| p.name == name)
-    }
-
-    fn remove_property(&mut self, name: &str) {
-        self.get_properties_mut().retain(|prop| prop.name != name);
-    }
-    fn set_property(&mut self, prop: ContentLine) {
-        self.remove_property(&prop.name);
-        self.add_property(prop);
     }
 
     fn build(
@@ -113,14 +99,14 @@ pub trait ComponentMut: Component + Default {
         loop {
             let line = line_parser.next().ok_or(ParserError::NotComplete)??;
 
-            match line.name.to_uppercase().as_str() {
+            match line.name.as_ref() {
                 "END" => break,
                 "BEGIN" => match line.value {
                     Some(v) => self.add_sub_component(v.as_str(), line_parser)?,
                     None => return Err(ParserError::NotComplete),
                 },
 
-                _ => self.add_property(line),
+                _ => self.add_content_line(line),
             };
         }
         Ok(())
