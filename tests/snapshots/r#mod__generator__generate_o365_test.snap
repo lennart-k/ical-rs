@@ -50,7 +50,9 @@ IcalCalendar {
             dtstart: IcalDTSTARTProperty(
                 DateTime(
                     CalDateTime(
-                        2020-11-24T11:00:00Local,
+                        2020-11-24T11:00:00Olson(
+                            CET,
+                        ),
                     ),
                 ),
                 ContentLineParams(
@@ -68,7 +70,9 @@ IcalCalendar {
                 IcalDTENDProperty(
                     DateTime(
                         CalDateTime(
-                            2020-11-24T11:30:00Local,
+                            2020-11-24T11:30:00Olson(
+                                CET,
+                            ),
                         ),
                     ),
                     ContentLineParams(
@@ -102,7 +106,7 @@ IcalCalendar {
                     by_week_no: [],
                     by_weekday: [],
                     by_hour: [
-                        11,
+                        10,
                     ],
                     by_minute: [
                         0,
