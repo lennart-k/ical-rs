@@ -41,20 +41,6 @@ pub type IcalCalendarBuilder = IcalCalendar<
     IcalTodoBuilder,
 >;
 
-impl IcalCalendar<false> {
-    pub fn new() -> Self {
-        Self {
-            properties: Vec::new(),
-            events: Vec::new(),
-            alarms: Vec::new(),
-            todos: Vec::new(),
-            journals: Vec::new(),
-            free_busys: Vec::new(),
-            vtimezones: Vec::new(),
-        }
-    }
-}
-
 impl Component for IcalCalendar {
     const NAMES: &[&str] = &["VCALENDAR"];
     type Unverified = IcalCalendarBuilder;

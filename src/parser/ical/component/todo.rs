@@ -8,8 +8,10 @@ use crate::{
     },
     property::ContentLine,
 };
-use itertools::Itertools;
-use std::{collections::HashMap, io::BufRead};
+use std::{
+    collections::{HashMap, HashSet},
+    io::BufRead,
+};
 
 #[derive(Debug, Clone)]
 pub struct IcalTodo {
@@ -131,11 +133,11 @@ impl ComponentMut for IcalTodoBuilder {
 }
 
 impl IcalTodo {
-    pub fn get_tzids(&self) -> Vec<&str> {
+    pub fn get_tzids(&self) -> HashSet<&str> {
         self.properties
             .iter()
             .filter_map(|prop| prop.params.get_tzid())
-            .unique()
+            .chain(self.alarms.iter().flat_map(IcalAlarm::get_tzids))
             .collect()
     }
 }

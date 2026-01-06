@@ -1,5 +1,3 @@
-use chrono::{DateTime, Utc};
-
 use crate::{
     PropertyParser,
     component::{IcalEventBuilder, IcalJournalBuilder, IcalTodoBuilder},
@@ -10,7 +8,11 @@ use crate::{
     },
     property::ContentLine,
 };
-use std::{collections::HashMap, io::BufRead};
+use chrono::{DateTime, Utc};
+use std::{
+    collections::{HashMap, HashSet},
+    io::BufRead,
+};
 
 #[derive(Debug, Clone)]
 pub enum CalendarInnerData<E = IcalEvent, T = IcalTodo, J = IcalJournal> {
@@ -44,6 +46,26 @@ impl CalendarInnerData<IcalEvent, IcalTodo, IcalJournal> {
                 journal.mutable(),
                 overrides.into_iter().map(Component::mutable).collect(),
             ),
+        }
+    }
+
+    pub fn get_tzids(&self) -> HashSet<&str> {
+        match self {
+            Self::Event(main, overrides) => main
+                .get_tzids()
+                .into_iter()
+                .chain(overrides.iter().flat_map(|e| e.get_tzids()))
+                .collect(),
+            Self::Todo(main, overrides) => main
+                .get_tzids()
+                .into_iter()
+                .chain(overrides.iter().flat_map(|e| e.get_tzids()))
+                .collect(),
+            Self::Journal(main, overrides) => main
+                .get_tzids()
+                .into_iter()
+                .chain(overrides.iter().flat_map(|e| e.get_tzids()))
+                .collect(),
         }
     }
 }
@@ -123,6 +145,10 @@ impl IcalCalendarObject {
             }
             _ => self,
         }
+    }
+
+    pub fn get_tzids(&self) -> HashSet<&str> {
+        self.inner.get_tzids()
     }
 }
 

@@ -6,8 +6,10 @@ use crate::{
     },
     property::ContentLine,
 };
-use itertools::Itertools;
-use std::{collections::HashMap, io::BufRead};
+use std::{
+    collections::{HashMap, HashSet},
+    io::BufRead,
+};
 
 #[derive(Debug, Clone, Default)]
 pub struct IcalJournalBuilder {
@@ -106,11 +108,10 @@ impl ComponentMut for IcalJournalBuilder {
 }
 
 impl IcalJournal {
-    pub fn get_tzids(&self) -> Vec<&str> {
+    pub fn get_tzids(&self) -> HashSet<&str> {
         self.properties
             .iter()
             .filter_map(|prop| prop.params.get_tzid())
-            .unique()
             .collect()
     }
 }

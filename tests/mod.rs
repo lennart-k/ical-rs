@@ -63,17 +63,18 @@ pub mod line {
 pub mod calendar_object {
     extern crate ical;
     use ical::generator::Emitter;
+    use itertools::Itertools;
 
     #[rstest::rstest]
-    #[case(0, include_str!("./resources/ical_example_1.ics"))]
-    #[case(1, include_str!("./resources/ical_example_2.ics"))]
-    #[case(2, include_str!("./resources/ical_example_rrule.ics"))]
-    #[case(3, include_str!("./resources/ical_events.ics"))]
-    #[case(4, include_str!("./resources/ical_special_symbols.ics"))]
-    #[case(5, include_str!("./resources/ical_todos.ics"))]
-    #[case(6, include_str!("./resources/ical_journals.ics"))]
-    #[case(7, include_str!("./resources/recurring_wholeday.ics"))]
-    fn valid_objects(#[case] case: usize, #[case] input: &str) {
+    #[case(0, include_str!("./resources/ical_example_1.ics"), "W. Europe Standard Time")]
+    #[case(1, include_str!("./resources/ical_example_2.ics"), "W. Europe Standard Time")]
+    #[case(2, include_str!("./resources/ical_example_rrule.ics"), "Europe/Berlin")]
+    #[case(3, include_str!("./resources/ical_events.ics"), "")]
+    #[case(4, include_str!("./resources/ical_special_symbols.ics"), "")]
+    #[case(5, include_str!("./resources/ical_todos.ics"), "")]
+    #[case(6, include_str!("./resources/ical_journals.ics"), "")]
+    #[case(7, include_str!("./resources/recurring_wholeday.ics"), "")]
+    fn valid_objects(#[case] case: usize, #[case] input: &str, #[case] tzids: &str) {
         set_snapshot_suffix!("{case}");
         let generic_reader = ical::IcalParser::new(input.as_bytes());
         let reader = ical::IcalObjectParser::new(input.as_bytes());
@@ -81,6 +82,7 @@ pub mod calendar_object {
             let g_cal = g_res.unwrap();
             let cal = res.unwrap();
             similar_asserts::assert_eq!(g_cal.generate(), cal.generate());
+            similar_asserts::assert_eq!(cal.get_tzids().iter().sorted().join(","), tzids);
         }
     }
 

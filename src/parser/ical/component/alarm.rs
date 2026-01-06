@@ -1,11 +1,12 @@
-use itertools::Itertools;
-
 use crate::{
     PropertyParser,
     parser::{Component, ComponentMut, ParserError},
     property::ContentLine,
 };
-use std::{collections::HashMap, io::BufRead};
+use std::{
+    collections::{HashMap, HashSet},
+    io::BufRead,
+};
 
 #[derive(Debug, Clone, Default)]
 pub struct IcalAlarmBuilder {
@@ -80,11 +81,10 @@ impl ComponentMut for IcalAlarmBuilder {
 }
 
 impl IcalAlarm {
-    pub fn get_tzids(&self) -> Vec<&str> {
+    pub fn get_tzids(&self) -> HashSet<&str> {
         self.properties
             .iter()
             .filter_map(|prop| prop.params.get_tzid())
-            .unique()
             .collect()
     }
 }
