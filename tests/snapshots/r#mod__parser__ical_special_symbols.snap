@@ -91,6 +91,21 @@ IcalCalendar {
             exdates: [],
             exrules: [],
             recurid: None,
+            summary: Some(
+                IcalSUMMARYProperty(
+                    "sönderzaichän :))",
+                    ContentLineParams(
+                        [
+                            (
+                                "X-ASD",
+                                [
+                                    "ähm",
+                                ],
+                            ),
+                        ],
+                    ),
+                ),
+            ),
             properties: [
                 ContentLine {
                     name: "UID",

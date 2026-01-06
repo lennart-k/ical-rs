@@ -121,6 +121,14 @@ IcalCalendar {
             exdates: [],
             exrules: [],
             recurid: None,
+            summary: Some(
+                IcalSUMMARYProperty(
+                    " Testmeeting ➡ ignore it!",
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
             properties: [
                 ContentLine {
                     name: "ATTENDEE",

@@ -60,6 +60,14 @@ Event(
                 This,
             ),
         ),
+        summary: Some(
+            IcalSUMMARYProperty(
+                "Recurring at 10am\\, last a 11am",
+                ContentLineParams(
+                    [],
+                ),
+            ),
+        ),
         properties: [
             ContentLine {
                 name: "UID",
@@ -219,6 +227,14 @@ Event(
                         ),
                     ),
                     This,
+                ),
+            ),
+            summary: Some(
+                IcalSUMMARYProperty(
+                    "Recurring at 10am\\, last a 11am",
+                    ContentLineParams(
+                        [],
+                    ),
                 ),
             ),
             properties: [
@@ -381,6 +397,14 @@ Event(
                     This,
                 ),
             ),
+            summary: Some(
+                IcalSUMMARYProperty(
+                    "Recurring at 10am\\, last a 11am",
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
             properties: [
                 ContentLine {
                     name: "UID",
@@ -539,6 +563,14 @@ Event(
                         ),
                     ),
                     This,
+                ),
+            ),
+            summary: Some(
+                IcalSUMMARYProperty(
+                    "Recurring at 10am\\, last a 11am",
+                    ContentLineParams(
+                        [],
+                    ),
                 ),
             ),
             properties: [

@@ -136,6 +136,14 @@ IcalCalendar {
             exdates: [],
             exrules: [],
             recurid: None,
+            summary: Some(
+                IcalSUMMARYProperty(
+                    "Geschenke einpacken",
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
             properties: [
                 ContentLine {
                     name: "CREATED",
@@ -334,6 +342,14 @@ IcalCalendar {
             exdates: [],
             exrules: [],
             recurid: None,
+            summary: Some(
+                IcalSUMMARYProperty(
+                    "Risiko spielen",
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
             properties: [
                 ContentLine {
                     name: "CREATED",
@@ -484,6 +500,14 @@ IcalCalendar {
             exdates: [],
             exrules: [],
             recurid: None,
+            summary: Some(
+                IcalSUMMARYProperty(
+                    "Weihnachten vorbereiten",
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
             properties: [
                 ContentLine {
                     name: "CREATED",

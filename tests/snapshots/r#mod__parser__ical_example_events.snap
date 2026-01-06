@@ -91,6 +91,14 @@ IcalCalendar {
             exdates: [],
             exrules: [],
             recurid: None,
+            summary: Some(
+                IcalSUMMARYProperty(
+                    "all day event",
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
             properties: [
                 ContentLine {
                     name: "UID",

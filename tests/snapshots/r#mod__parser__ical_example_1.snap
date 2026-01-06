@@ -102,6 +102,21 @@ IcalCalendar {
             exdates: [],
             exrules: [],
             recurid: None,
+            summary: Some(
+                IcalSUMMARYProperty(
+                    "Software-QS-Cast Application Performance Monitoring",
+                    ContentLineParams(
+                        [
+                            (
+                                "LANGUAGE",
+                                [
+                                    "de",
+                                ],
+                            ),
+                        ],
+                    ),
+                ),
+            ),
             properties: [
                 ContentLine {
                     name: "CLASS",

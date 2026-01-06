@@ -93,6 +93,14 @@ IcalCalendar {
             exdates: [],
             exrules: [],
             recurid: None,
+            summary: Some(
+                IcalSUMMARYProperty(
+                    "something with rrule",
+                    ContentLineParams(
+                        [],
+                    ),
+                ),
+            ),
             properties: [
                 ContentLine {
                     name: "UID",
