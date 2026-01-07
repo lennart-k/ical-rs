@@ -37,6 +37,26 @@ IcalCalendar {
     todos: [
         IcalTodo {
             uid: "89b13d12c2142cc66192932e1e560ed344dfb174",
+            dtstart: Some(
+                IcalDTSTARTProperty(
+                    Date(
+                        CalDate(
+                            2025-08-04,
+                            Local,
+                        ),
+                    ),
+                    ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
+                ),
+            ),
             dtstamp: IcalDTSTAMPProperty(
                 DateTime(
                     CalDateTime(

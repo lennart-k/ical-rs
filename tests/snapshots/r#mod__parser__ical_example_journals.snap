@@ -50,6 +50,26 @@ IcalCalendar {
                     [],
                 ),
             ),
+            dtstart: Some(
+                IcalDTSTARTProperty(
+                    Date(
+                        CalDate(
+                            2025-07-05,
+                            Local,
+                        ),
+                    ),
+                    ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
+                ),
+            ),
             properties: [
                 ContentLine {
                     name: "UID",
