@@ -7,6 +7,7 @@ use crate::{
         ical::component::{IcalEvent, IcalJournal, IcalTimeZone, IcalTodo},
     },
     property::ContentLine,
+    types::CalDateTime,
 };
 use chrono::{DateTime, Utc};
 use std::{
@@ -32,6 +33,7 @@ impl CalendarInnerData<IcalEvent, IcalTodo, IcalJournal> {
             Self::Todo(main, _) => main.get_uid(),
         }
     }
+
     pub fn mutable(self) -> CalendarInnerDataBuilder {
         match self {
             Self::Event(event, overrides) => CalendarInnerData::Event(
@@ -67,6 +69,34 @@ impl CalendarInnerData<IcalEvent, IcalTodo, IcalJournal> {
                 .chain(overrides.iter().flat_map(|e| e.get_tzids()))
                 .collect(),
         }
+    }
+
+    pub fn get_first_occurence(&self) -> Option<CalDateTime> {
+        match self {
+            Self::Event(main, overrides) => std::iter::once(&main.dtstart.0)
+                .chain(overrides.iter().map(|over| &over.dtstart.0))
+                .min(),
+            Self::Todo(main, overrides) => std::iter::once(main.dtstart.as_ref().map(|dt| &dt.0))
+                .chain(
+                    overrides
+                        .iter()
+                        .map(|over| over.dtstart.as_ref().map(|dt| &dt.0)),
+                )
+                .flatten()
+                .min(),
+            Self::Journal(main, overrides) => {
+                std::iter::once(main.dtstart.as_ref().map(|dt| &dt.0))
+                    .chain(
+                        overrides
+                            .iter()
+                            .map(|over| over.dtstart.as_ref().map(|dt| &dt.0)),
+                    )
+                    .flatten()
+                    .min()
+            }
+        }
+        .cloned()
+        .map(Into::into)
     }
 }
 
