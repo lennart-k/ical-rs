@@ -19,7 +19,7 @@ mod builder;
 pub struct IcalEvent {
     uid: String,
     dtstamp: IcalDTSTAMPProperty,
-    dtstart: IcalDTSTARTProperty,
+    pub dtstart: IcalDTSTARTProperty,
     dtend: Option<IcalDTENDProperty>,
     duration: Option<IcalDURATIONProperty>,
     rdates: Vec<IcalRDATEProperty>,
