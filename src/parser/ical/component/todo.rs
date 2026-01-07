@@ -16,6 +16,7 @@ use std::{
 #[derive(Debug, Clone)]
 pub struct IcalTodo {
     uid: String,
+    pub dtstart: Option<IcalDTSTARTProperty>,
     pub dtstamp: IcalDTSTAMPProperty,
     pub properties: Vec<ContentLine>,
     pub alarms: Vec<IcalAlarm>,
@@ -120,6 +121,7 @@ impl ComponentMut for IcalTodoBuilder {
         let verified = IcalTodo {
             uid,
             dtstamp,
+            dtstart,
             properties: self.properties,
             alarms: self
                 .alarms

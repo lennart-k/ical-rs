@@ -20,6 +20,7 @@ pub struct IcalJournalBuilder {
 pub struct IcalJournal {
     uid: String,
     pub dtstamp: IcalDTSTAMPProperty,
+    pub dtstart: Option<IcalDTSTARTProperty>,
     pub properties: Vec<ContentLine>,
 }
 
@@ -101,6 +102,7 @@ impl ComponentMut for IcalJournalBuilder {
         let verified = IcalJournal {
             uid,
             dtstamp,
+            dtstart,
             properties: self.properties,
         };
         Ok(verified)
