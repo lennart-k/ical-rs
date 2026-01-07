@@ -163,6 +163,13 @@ impl<const VERIFIED: bool> Component for IcalTimeZoneTransition<VERIFIED> {
     const NAMES: &[&str] = &["STANDARD", "DAYLIGHT"];
     type Unverified = IcalTimeZoneTransition<false>;
 
+    fn get_comp_name(&self) -> &'static str {
+        match self.transition {
+            IcalTimeZoneTransitionType::STANDARD => "STANDARD",
+            IcalTimeZoneTransitionType::DAYLIGHT => "DAYLIGHT",
+        }
+    }
+
     fn get_properties(&self) -> &Vec<ContentLine> {
         &self.properties
     }

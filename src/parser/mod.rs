@@ -48,6 +48,15 @@ pub enum ParserError {
 pub trait Component: Clone {
     const NAMES: &[&str];
 
+    fn get_comp_name(&self) -> &'static str {
+        assert_eq!(
+            Self::NAMES.len(),
+            1,
+            "Default implementation only applicable for fixed component name"
+        );
+        Self::NAMES[0]
+    }
+
     type Unverified: ComponentMut;
 
     fn get_properties(&self) -> &Vec<ContentLine>;
