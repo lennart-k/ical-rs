@@ -154,10 +154,10 @@ impl IcalEvent {
     }
 
     pub fn expand_recurrence(
-        self,
+        &self,
         start: Option<DateTime<Utc>>,
         end: Option<DateTime<Utc>>,
-        overrides: Vec<Self>,
+        overrides: &[Self],
     ) -> Vec<Self> {
         let main = self.clone().to_utc_or_local();
         let mut overrides: Vec<Self> = overrides

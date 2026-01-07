@@ -11,6 +11,7 @@ use crate::{
 };
 use chrono::{DateTime, Utc};
 use std::{
+    borrow::Cow,
     collections::{HashMap, HashSet},
     io::BufRead,
 };
@@ -158,22 +159,22 @@ impl IcalCalendarObject {
     }
 
     pub fn expand_recurrence(
-        self,
+        &self,
         start: Option<DateTime<Utc>>,
         end: Option<DateTime<Utc>>,
-    ) -> Self {
-        match self.inner {
+    ) -> Cow<'_, Self> {
+        match &self.inner {
             CalendarInnerData::Event(main, overrides) => {
                 let mut events = main.expand_recurrence(start, end, overrides);
                 let first = events.remove(0);
-                Self {
-                    properties: self.properties,
+                Cow::Owned(Self {
+                    properties: self.properties.clone(),
                     inner: CalendarInnerData::Event(first, events),
                     timezones: HashMap::new(),
                     vtimezones: HashMap::new(),
-                }
+                })
             }
-            _ => self,
+            _ => Cow::Borrowed(self),
         }
     }
 
