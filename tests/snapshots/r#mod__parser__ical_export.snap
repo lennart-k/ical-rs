@@ -3,6 +3,8 @@ source: tests/mod.rs
 expression: export.generate()
 ---
 BEGIN:VCALENDAR
+VERSION:2.0
+CALSCALE:GREGORIAN
 BEGIN:VTIMEZONE
 TZID:Europe/Berlin
 X-LIC-LOCATION:Europe/Berlin

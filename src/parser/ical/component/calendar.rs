@@ -173,16 +173,31 @@ impl ComponentMut for IcalCalendarBuilder {
 }
 
 impl IcalCalendar {
-    pub fn from_objects(objects: Vec<IcalCalendarObject>) -> Self {
+    pub fn from_objects(
+        objects: Vec<IcalCalendarObject>,
+        additional_properties: Vec<ContentLine>,
+    ) -> Self {
         let mut cal = IcalCalendar {
             events: vec![],
             todos: vec![],
             journals: vec![],
             alarms: vec![],
             free_busys: vec![],
-            properties: vec![],
+            properties: vec![
+                ContentLine {
+                    name: "VERSION".to_owned(),
+                    value: Some("2.0".to_owned()),
+                    params: Default::default(),
+                },
+                ContentLine {
+                    name: "CALSCALE".to_owned(),
+                    value: Some("GREGORIAN".to_owned()),
+                    params: Default::default(),
+                },
+            ],
             vtimezones: HashMap::new(),
         };
+        cal.properties.extend_from_slice(&additional_properties);
         for object in objects {
             object.add_to_calendar(&mut cal);
         }

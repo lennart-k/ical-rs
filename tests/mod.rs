@@ -235,7 +235,7 @@ pub mod parser {
         let cal3 = ical::IcalObjectParser::new(input3.as_bytes())
             .expect_one()
             .unwrap();
-        let export = IcalCalendar::from_objects(vec![cal1, cal2, cal3]);
+        let export = IcalCalendar::from_objects(vec![cal1, cal2, cal3], vec![]);
         insta::assert_snapshot!(export.generate());
     }
 
