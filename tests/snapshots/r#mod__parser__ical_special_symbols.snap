@@ -242,5 +242,5 @@ IcalCalendar {
     todos: [],
     journals: [],
     free_busys: [],
-    vtimezones: [],
+    vtimezones: {},
 }

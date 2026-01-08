@@ -1,8 +1,8 @@
 use crate::{
     PropertyParser,
     component::{
-        IcalAlarmBuilder, IcalEventBuilder, IcalFreeBusyBuilder, IcalJournalBuilder,
-        IcalTodoBuilder,
+        IcalAlarmBuilder, IcalCalendarObject, IcalEventBuilder, IcalFreeBusyBuilder,
+        IcalJournalBuilder, IcalTodoBuilder,
     },
     parser::{
         Component, ComponentMut, ParserError,
@@ -30,7 +30,7 @@ pub struct IcalCalendar<
     pub todos: Vec<T>,
     pub journals: Vec<J>,
     pub free_busys: Vec<F>,
-    pub vtimezones: Vec<IcalTimeZone<VERIFIED>>,
+    pub vtimezones: HashMap<String, IcalTimeZone>,
 }
 pub type IcalCalendarBuilder = IcalCalendar<
     false,
@@ -61,11 +61,7 @@ impl Component for IcalCalendar {
                 .into_iter()
                 .map(Component::mutable)
                 .collect(),
-            vtimezones: self
-                .vtimezones
-                .into_iter()
-                .map(Component::mutable)
-                .collect(),
+            vtimezones: self.vtimezones,
         }
     }
 }
@@ -124,7 +120,9 @@ impl ComponentMut for IcalCalendarBuilder {
             "VTIMEZONE" => {
                 let mut timezone = IcalTimeZone::new();
                 timezone.parse(line_parser)?;
-                self.vtimezones.push(timezone);
+                let timezone = timezone.build(&HashMap::new())?;
+                self.vtimezones
+                    .insert(timezone.get_tzid().to_owned(), timezone);
             }
             _ => return Err(ParserError::InvalidComponent(value.to_owned())),
         };
@@ -136,16 +134,10 @@ impl ComponentMut for IcalCalendarBuilder {
         self,
         _timezones: &HashMap<String, Option<chrono_tz::Tz>>,
     ) -> Result<Self::Verified, ParserError> {
-        let vtimezones: Vec<IcalTimeZone> = self
-            .vtimezones
-            .into_iter()
-            .map(|builder| builder.build(&HashMap::default()))
-            .collect::<Result<_, _>>()?;
-
         let timezones = HashMap::from_iter(
-            vtimezones
+            self.vtimezones
                 .iter()
-                .map(|tz| (tz.get_tzid().to_owned(), tz.into())),
+                .map(|(tzid, tz)| (tzid.to_owned(), tz.into())),
         );
 
         Ok(IcalCalendar {
@@ -175,7 +167,25 @@ impl ComponentMut for IcalCalendarBuilder {
                 .into_iter()
                 .map(|builder| builder.build(&timezones))
                 .collect::<Result<_, _>>()?,
-            vtimezones,
+            vtimezones: self.vtimezones,
         })
+    }
+}
+
+impl IcalCalendar {
+    pub fn from_objects(objects: Vec<IcalCalendarObject>) -> Self {
+        let mut cal = IcalCalendar {
+            events: vec![],
+            todos: vec![],
+            journals: vec![],
+            alarms: vec![],
+            free_busys: vec![],
+            properties: vec![],
+            vtimezones: HashMap::new(),
+        };
+        for object in objects {
+            object.add_to_calendar(&mut cal);
+        }
+        cal
     }
 }

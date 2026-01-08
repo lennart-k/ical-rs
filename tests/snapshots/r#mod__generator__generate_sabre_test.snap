@@ -630,8 +630,8 @@ IcalCalendar {
     todos: [],
     journals: [],
     free_busys: [],
-    vtimezones: [
-        IcalTimeZone {
+    vtimezones: {
+        "Europe/Berlin": IcalTimeZone {
             properties: [
                 ContentLine {
                     name: "TZID",
@@ -746,5 +746,5 @@ IcalCalendar {
                 },
             ],
         },
-    ],
+    },
 }

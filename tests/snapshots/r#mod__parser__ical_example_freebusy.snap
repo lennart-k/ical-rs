@@ -127,5 +127,5 @@ IcalCalendar {
             ],
         },
     ],
-    vtimezones: [],
+    vtimezones: {},
 }

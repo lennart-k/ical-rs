@@ -172,5 +172,5 @@ IcalCalendar {
         },
     ],
     free_busys: [],
-    vtimezones: [],
+    vtimezones: {},
 }

@@ -323,8 +323,8 @@ IcalCalendar {
     todos: [],
     journals: [],
     free_busys: [],
-    vtimezones: [
-        IcalTimeZone {
+    vtimezones: {
+        "W. Europe Standard Time": IcalTimeZone {
             properties: [
                 ContentLine {
                     name: "TZID",
@@ -421,5 +421,5 @@ IcalCalendar {
                 },
             ],
         },
-    ],
+    },
 }

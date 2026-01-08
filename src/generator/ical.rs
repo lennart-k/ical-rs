@@ -27,15 +27,8 @@ macro_rules! generate_emitter {
         impl Emitter for $struct {
             fn generate(&self) -> String {
                 let mut text = format!("BEGIN:{key}\r\n", key = $key);
-                text += &crate::parser::Component::get_properties(self)
-                    .iter()
-                    .map(Emitter::generate)
-                    .collect::<String>();
-                $(text += &self.$prop
-                    .iter()
-                    .map(Emitter::generate)
-                    .collect::<String>();
-                )*
+                text += &crate::parser::Component::get_properties(self).generate();
+                $(text += &self.$prop.generate();)*
                 text + "END:" + $key + "\r\n"
             }
         }

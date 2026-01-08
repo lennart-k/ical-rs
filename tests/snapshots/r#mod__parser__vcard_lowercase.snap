@@ -4,6 +4,22 @@ expression: card
 ---
 VcardContact {
     uid: None,
+    full_name: [
+        VcardFNProperty(
+            "Alice Foobar",
+            ContentLineParams(
+                [],
+            ),
+        ),
+    ],
+    name: Some(
+        VcardNProperty(
+            "Foobar;Alice",
+            ContentLineParams(
+                [],
+            ),
+        ),
+    ),
     properties: [
         ContentLine {
             name: "VERSION",

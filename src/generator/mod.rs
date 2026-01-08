@@ -1,6 +1,8 @@
 mod ical;
 mod property;
 
+use std::collections::HashMap;
+
 pub use crate::parser::ical::component::{IcalCalendar, IcalEvent};
 pub use crate::parser::vcard::component::VcardContact;
 pub use crate::property::ContentLine;
@@ -12,6 +14,18 @@ pub trait Emitter {
     /// creates a textual-representation of this object and all it's properties
     /// in ical-format.
     fn generate(&self) -> String;
+}
+
+impl<K, T: Emitter> Emitter for HashMap<K, T> {
+    fn generate(&self) -> String {
+        self.values().map(Emitter::generate).collect()
+    }
+}
+
+impl<T: Emitter> Emitter for Vec<T> {
+    fn generate(&self) -> String {
+        self.iter().map(Emitter::generate).collect()
+    }
 }
 
 mod helper {
