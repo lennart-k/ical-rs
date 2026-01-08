@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use crate::{
     component::IcalAlarm,
     parser::{
@@ -26,7 +28,7 @@ pub struct IcalEvent {
     rrules: Vec<RRule>,
     exdates: Vec<IcalEXDATEProperty>,
     exrules: Vec<RRule>,
-    recurid: Option<IcalRECURIDProperty>,
+    pub(crate) recurid: Option<IcalRECURIDProperty>,
     summary: Option<IcalSUMMARYProperty>,
     pub(crate) properties: Vec<ContentLine>,
     pub(crate) alarms: Vec<IcalAlarm>,
@@ -55,7 +57,7 @@ impl Component for IcalEvent {
 }
 
 impl IcalEvent {
-    pub fn get_tzids(&self) -> Vec<&str> {
+    pub fn get_tzids(&self) -> HashSet<&str> {
         self.properties
             .iter()
             .filter_map(|prop| prop.params.get_tzid())
@@ -111,12 +113,15 @@ impl IcalEvent {
             .map(|IcalDURATIONProperty(duration, _)| duration.to_owned())
     }
 
+    pub fn has_rruleset(&self) -> bool {
+        !self.rrules.is_empty()
+            || !self.rdates.is_empty()
+            || !self.exrules.is_empty()
+            || !self.exdates.is_empty()
+    }
+
     pub fn get_rruleset(&self, dtstart: DateTime<rrule::Tz>) -> Option<RRuleSet> {
-        if self.rrules.is_empty()
-            && self.rdates.is_empty()
-            && self.exrules.is_empty()
-            && self.exdates.is_empty()
-        {
+        if !self.has_rruleset() {
             return None;
         }
         Some(

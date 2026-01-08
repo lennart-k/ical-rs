@@ -235,14 +235,29 @@ pub mod parser {
         let cal3 = ical::IcalObjectParser::new(input3.as_bytes())
             .expect_one()
             .unwrap();
-        let export =
-            IcalCalendar::from_objects("ical-rs test".to_owned(), vec![cal1, cal2, cal3], vec![])
-                .generate();
+        let export = IcalCalendar::from_objects(
+            "ical-rs test".to_owned(),
+            vec![cal1.to_owned(), cal2.to_owned(), cal3.to_owned()],
+            vec![],
+        )
+        .generate();
         insta::assert_snapshot!(export);
         // Ensure that exported calendar is valid
-        let _roundtrip_cal = ical::IcalParser::new(export.as_bytes())
+        let roundtrip_cal = ical::IcalParser::new(export.as_bytes())
             .expect_one()
             .unwrap();
+
+        let mut reference = vec![cal1, cal2, cal3];
+        let mut reimported = roundtrip_cal.into_objects().unwrap();
+        reference.sort_by_key(|o| o.get_uid().to_owned());
+        reimported.sort_by_key(|o| o.get_uid().to_owned());
+        assert_eq!(reimported.len(), reference.len());
+        for (mut reference, mut reimported) in reference.into_iter().zip(reimported) {
+            // PRODID gets overwritten
+            reference.properties = vec![];
+            reimported.properties = vec![];
+            similar_asserts::assert_eq!(reference.generate(), reimported.generate());
+        }
     }
 
     #[test]

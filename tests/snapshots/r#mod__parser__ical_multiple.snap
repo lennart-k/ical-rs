@@ -147,4 +147,5 @@ IcalCalendar {
     journals: [],
     free_busys: [],
     vtimezones: {},
+    timezones: {},
 }

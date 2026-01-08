@@ -747,4 +747,9 @@ IcalCalendar {
             ],
         },
     },
+    timezones: {
+        "Europe/Berlin": Some(
+            Europe/Berlin,
+        ),
+    },
 }

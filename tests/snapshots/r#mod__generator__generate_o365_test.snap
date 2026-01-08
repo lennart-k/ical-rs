@@ -622,4 +622,9 @@ IcalCalendar {
             ],
         },
     },
+    timezones: {
+        "W. Europe Standard Time": Some(
+            Europe/Berlin,
+        ),
+    },
 }

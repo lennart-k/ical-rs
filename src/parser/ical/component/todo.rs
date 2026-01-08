@@ -1,9 +1,12 @@
+use rrule::RRule;
+
 use crate::{
     PropertyParser,
     component::IcalAlarmBuilder,
     parser::{
         Component, ComponentMut, GetProperty, IcalDTSTAMPProperty, IcalDTSTARTProperty,
-        IcalDUEProperty, IcalDURATIONProperty, IcalRECURIDProperty, IcalUIDProperty, ParserError,
+        IcalDUEProperty, IcalDURATIONProperty, IcalEXDATEProperty, IcalEXRULEProperty,
+        IcalRDATEProperty, IcalRECURIDProperty, IcalRRULEProperty, IcalUIDProperty, ParserError,
         ical::component::IcalAlarm,
     },
     property::ContentLine,
@@ -20,6 +23,11 @@ pub struct IcalTodo {
     pub dtstamp: IcalDTSTAMPProperty,
     pub properties: Vec<ContentLine>,
     pub alarms: Vec<IcalAlarm>,
+    rdates: Vec<IcalRDATEProperty>,
+    rrules: Vec<RRule>,
+    exdates: Vec<IcalEXDATEProperty>,
+    exrules: Vec<RRule>,
+    pub(crate) recurid: Option<IcalRECURIDProperty>,
 }
 
 #[derive(Debug, Clone, Default)]
@@ -31,6 +39,13 @@ pub struct IcalTodoBuilder {
 impl IcalTodo {
     pub fn get_uid(&self) -> &str {
         &self.uid
+    }
+
+    pub fn has_rruleset(&self) -> bool {
+        !self.rrules.is_empty()
+            || !self.rdates.is_empty()
+            || !self.exrules.is_empty()
+            || !self.exdates.is_empty()
     }
 }
 
@@ -117,11 +132,34 @@ impl ComponentMut for IcalTodoBuilder {
         let _due = self.safe_get_optional::<IcalDUEProperty>(timezones)?;
 
         // OPTIONAL, MULTIPLE ALLOWED: attach / attendee / categories / comment / contact / exdate / rstatus / related / resources / rdate / x-prop / iana-prop
+        let rdates = self.safe_get_all::<IcalRDATEProperty>(timezones)?;
+        let exdates = self.safe_get_all::<IcalEXDATEProperty>(timezones)?;
+        let (rrules, exrules) = if let Some(dtstart) = dtstart.as_ref() {
+            let rrule_dtstart = dtstart.0.utc().with_timezone(&rrule::Tz::UTC);
+            let rrules = self
+                .safe_get_all::<IcalRRULEProperty>(timezones)?
+                .into_iter()
+                .map(|rrule| rrule.0.validate(rrule_dtstart))
+                .collect::<Result<Vec<_>, _>>()?;
+            let exrules = self
+                .safe_get_all::<IcalEXRULEProperty>(timezones)?
+                .into_iter()
+                .map(|rrule| rrule.0.validate(rrule_dtstart))
+                .collect::<Result<Vec<_>, _>>()?;
+            (rrules, exrules)
+        } else {
+            (vec![], vec![])
+        };
 
         let verified = IcalTodo {
             uid,
             dtstamp,
             dtstart,
+            rdates,
+            rrules,
+            exdates,
+            exrules,
+            recurid,
             properties: self.properties,
             alarms: self
                 .alarms

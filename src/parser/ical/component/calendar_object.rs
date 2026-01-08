@@ -4,7 +4,7 @@ use crate::{
     generator::Emitter,
     parser::{
         Component, ComponentMut, GetProperty, IcalCALSCALEProperty, IcalPRODIDProperty,
-        IcalUIDProperty, IcalVERSIONProperty, ParserError,
+        IcalVERSIONProperty, ParserError,
         ical::component::{IcalEvent, IcalJournal, IcalTimeZone, IcalTodo},
     },
     property::ContentLine,
@@ -18,16 +18,20 @@ use std::{
 };
 
 #[derive(Debug, Clone)]
-pub enum CalendarInnerData<E = IcalEvent, T = IcalTodo, J = IcalJournal> {
-    Event(E, Vec<E>),
-    Todo(T, Vec<T>),
-    Journal(J, Vec<J>),
+pub enum CalendarInnerData {
+    Event(IcalEvent, Vec<IcalEvent>),
+    Todo(IcalTodo, Vec<IcalTodo>),
+    Journal(IcalJournal, Vec<IcalJournal>),
 }
 
-type CalendarInnerDataBuilder =
-    CalendarInnerData<IcalEventBuilder, IcalTodoBuilder, IcalJournalBuilder>;
+#[derive(Debug, Clone)]
+pub enum CalendarInnerDataBuilder {
+    Event(Vec<IcalEventBuilder>),
+    Todo(Vec<IcalTodoBuilder>),
+    Journal(Vec<IcalJournalBuilder>),
+}
 
-impl CalendarInnerData<IcalEvent, IcalTodo, IcalJournal> {
+impl CalendarInnerData {
     pub fn get_uid(&self) -> &str {
         match self {
             Self::Event(main, _) => main.get_uid(),
@@ -38,17 +42,20 @@ impl CalendarInnerData<IcalEvent, IcalTodo, IcalJournal> {
 
     pub fn mutable(self) -> CalendarInnerDataBuilder {
         match self {
-            Self::Event(event, overrides) => CalendarInnerData::Event(
-                event.mutable(),
-                overrides.into_iter().map(Component::mutable).collect(),
+            Self::Event(main, overrides) => CalendarInnerDataBuilder::Event(
+                std::iter::once(main.mutable())
+                    .chain(overrides.into_iter().map(Component::mutable))
+                    .collect(),
             ),
-            Self::Todo(todo, overrides) => CalendarInnerData::Todo(
-                todo.mutable(),
-                overrides.into_iter().map(Component::mutable).collect(),
+            Self::Todo(main, overrides) => CalendarInnerDataBuilder::Todo(
+                std::iter::once(main.mutable())
+                    .chain(overrides.into_iter().map(Component::mutable))
+                    .collect(),
             ),
-            Self::Journal(journal, overrides) => CalendarInnerData::Journal(
-                journal.mutable(),
-                overrides.into_iter().map(Component::mutable).collect(),
+            Self::Journal(main, overrides) => CalendarInnerDataBuilder::Journal(
+                std::iter::once(main.mutable())
+                    .chain(overrides.into_iter().map(Component::mutable))
+                    .collect(),
             ),
         }
     }
@@ -100,6 +107,72 @@ impl CalendarInnerData<IcalEvent, IcalTodo, IcalJournal> {
         .cloned()
         .map(Into::into)
     }
+
+    pub fn from_events(mut events: Vec<IcalEvent>) -> Result<Self, ParserError> {
+        let main_idx = events
+            .iter()
+            .position(IcalEvent::has_rruleset)
+            .unwrap_or_default();
+        let main = events.remove(main_idx);
+        if events.iter().any(|o| o.get_uid() != main.get_uid()) {
+            panic!("Differing UIDs")
+        }
+        if events.iter().any(IcalEvent::has_rruleset) {
+            panic!("Multiple main events not allowed");
+        }
+        let overrides = events;
+        if overrides.iter().any(|e| e.recurid.is_none()) {
+            panic!("Event overrides MUST have a RECURRENCE-ID");
+        }
+        if overrides.iter().any(|e| e.get_uid() != main.get_uid()) {
+            panic!("Overrides MUST have the same UID as the main object");
+        }
+        Ok(Self::Event(main, overrides))
+    }
+
+    pub fn from_todos(mut todos: Vec<IcalTodo>) -> Result<Self, ParserError> {
+        let main_idx = todos
+            .iter()
+            .position(IcalTodo::has_rruleset)
+            .unwrap_or_default();
+        let main = todos.remove(main_idx);
+        if todos.iter().any(|o| o.get_uid() != main.get_uid()) {
+            panic!("Differing UIDs")
+        }
+        if todos.iter().any(IcalTodo::has_rruleset) {
+            panic!("Multiple main events not allowed");
+        }
+        let overrides = todos;
+        if overrides.iter().any(|t| t.recurid.is_none()) {
+            panic!("Event overrides MUST have a RECURRENCE-ID");
+        }
+        if overrides.iter().any(|e| e.get_uid() != main.get_uid()) {
+            panic!("Overrides MUST have the same UID as the main object");
+        }
+        Ok(Self::Todo(main, overrides))
+    }
+
+    pub fn from_journals(mut journals: Vec<IcalJournal>) -> Result<Self, ParserError> {
+        let main_idx = journals
+            .iter()
+            .position(IcalJournal::has_rruleset)
+            .unwrap_or_default();
+        let main = journals.remove(main_idx);
+        if journals.iter().any(|o| o.get_uid() != main.get_uid()) {
+            panic!("Differing UIDs")
+        }
+        if journals.iter().any(IcalJournal::has_rruleset) {
+            panic!("Multiple main events not allowed");
+        }
+        let overrides = journals;
+        if overrides.iter().any(|j| j.recurid.is_none()) {
+            panic!("Event overrides MUST have a RECURRENCE-ID");
+        }
+        if overrides.iter().any(|e| e.get_uid() != main.get_uid()) {
+            panic!("Overrides MUST have the same UID as the main object");
+        }
+        Ok(Self::Journal(main, overrides))
+    }
 }
 
 impl CalendarInnerDataBuilder {
@@ -107,39 +180,39 @@ impl CalendarInnerDataBuilder {
         self,
         timezones: &HashMap<String, Option<chrono_tz::Tz>>,
     ) -> Result<CalendarInnerData, ParserError> {
-        Ok(match self {
-            Self::Event(event, overrides) => CalendarInnerData::Event(
-                event.build(timezones)?,
-                overrides
+        match self {
+            Self::Event(events) => {
+                let events = events
                     .into_iter()
                     .map(|builder| builder.build(timezones))
-                    .collect::<Result<_, _>>()?,
-            ),
-            Self::Todo(todo, overrides) => CalendarInnerData::Todo(
-                todo.build(timezones)?,
-                overrides
+                    .collect::<Result<Vec<_>, _>>()?;
+                CalendarInnerData::from_events(events)
+            }
+            Self::Todo(todos) => {
+                let todos = todos
                     .into_iter()
                     .map(|builder| builder.build(timezones))
-                    .collect::<Result<_, _>>()?,
-            ),
-            Self::Journal(journal, overrides) => CalendarInnerData::Journal(
-                journal.build(timezones)?,
-                overrides
+                    .collect::<Result<Vec<_>, _>>()?;
+                CalendarInnerData::from_todos(todos)
+            }
+            Self::Journal(journals) => {
+                let journals = journals
                     .into_iter()
                     .map(|builder| builder.build(timezones))
-                    .collect::<Result<_, _>>()?,
-            ),
-        })
+                    .collect::<Result<Vec<_>, _>>()?;
+                CalendarInnerData::from_journals(journals)
+            }
+        }
     }
 }
 
 #[derive(Debug, Clone)]
 /// An ICAL calendar object.
 pub struct IcalCalendarObject {
-    pub(crate) properties: Vec<ContentLine>,
+    pub properties: Vec<ContentLine>,
     pub(crate) inner: CalendarInnerData,
     pub(crate) vtimezones: BTreeMap<String, IcalTimeZone>,
-    timezones: HashMap<String, Option<chrono_tz::Tz>>,
+    pub(crate) timezones: HashMap<String, Option<chrono_tz::Tz>>,
 }
 
 impl IcalCalendarObject {
@@ -199,6 +272,7 @@ impl IcalCalendarObject {
             }
         }
         cal.vtimezones.extend(self.vtimezones);
+        cal.timezones.extend(self.timezones);
     }
 }
 
@@ -270,17 +344,11 @@ impl ComponentMut for IcalCalendarObjectBuilder {
             "VEVENT" => {
                 let event = IcalEventBuilder::from_parser(line_parser)?;
                 match &mut self.inner {
-                    // TODO: The main event is not necessarily the first component
-                    Some(CalendarInnerData::Event(main, overrides)) => {
-                        if event.safe_get_required::<IcalUIDProperty>(&HashMap::default())?
-                            != main.safe_get_required::<IcalUIDProperty>(&HashMap::default())?
-                        {
-                            return Err(ParserError::InvalidComponent(value.to_owned()));
-                        }
-                        overrides.push(event);
+                    Some(CalendarInnerDataBuilder::Event(events)) => {
+                        events.push(event);
                     }
                     None => {
-                        self.inner = Some(CalendarInnerData::Event(event, vec![]));
+                        self.inner = Some(CalendarInnerDataBuilder::Event(vec![event]));
                     }
                     _ => return Err(ParserError::InvalidComponent(value.to_owned())),
                 };
@@ -288,16 +356,11 @@ impl ComponentMut for IcalCalendarObjectBuilder {
             "VTODO" => {
                 let todo = IcalTodoBuilder::from_parser(line_parser)?;
                 match &mut self.inner {
-                    Some(CalendarInnerData::Todo(main, overrides)) => {
-                        if todo.safe_get_required::<IcalUIDProperty>(&HashMap::default())?
-                            != main.safe_get_required::<IcalUIDProperty>(&HashMap::default())?
-                        {
-                            return Err(ParserError::InvalidComponent(value.to_owned()));
-                        }
-                        overrides.push(todo);
+                    Some(CalendarInnerDataBuilder::Todo(todos)) => {
+                        todos.push(todo);
                     }
                     None => {
-                        self.inner = Some(CalendarInnerData::Todo(todo, vec![]));
+                        self.inner = Some(CalendarInnerDataBuilder::Todo(vec![todo]));
                     }
                     _ => return Err(ParserError::InvalidComponent(value.to_owned())),
                 };
@@ -305,16 +368,11 @@ impl ComponentMut for IcalCalendarObjectBuilder {
             "VJOURNAL" => {
                 let journal = IcalJournalBuilder::from_parser(line_parser)?;
                 match &mut self.inner {
-                    Some(CalendarInnerData::Journal(main, overrides)) => {
-                        if journal.safe_get_required::<IcalUIDProperty>(&HashMap::default())?
-                            != main.safe_get_required::<IcalUIDProperty>(&HashMap::default())?
-                        {
-                            return Err(ParserError::InvalidComponent(value.to_owned()));
-                        }
-                        overrides.push(journal);
+                    Some(CalendarInnerDataBuilder::Journal(journals)) => {
+                        journals.push(journal);
                     }
                     None => {
-                        self.inner = Some(CalendarInnerData::Journal(journal, vec![]));
+                        self.inner = Some(CalendarInnerDataBuilder::Journal(vec![journal]));
                     }
                     _ => return Err(ParserError::InvalidComponent(value.to_owned())),
                 };
