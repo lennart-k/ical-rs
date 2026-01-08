@@ -21,6 +21,10 @@ pub use property::*;
 
 #[derive(Debug, thiserror::Error, PartialEq, Eq)]
 pub enum ParserError {
+    #[error("empty input")]
+    EmptyInput,
+    #[error("too many components in input, expected one")]
+    TooManyComponents,
     #[error("invalid component: {0}")]
     InvalidComponent(String),
     #[error("incomplete object")]
@@ -162,6 +166,14 @@ impl<B: BufRead, T: Component> ComponentParser<B, T> {
         }
 
         Ok(Some(()))
+    }
+
+    pub fn expect_one(mut self) -> Result<<T::Unverified as ComponentMut>::Verified, ParserError> {
+        let item = self.next().ok_or(ParserError::EmptyInput)??;
+        if self.next().is_some() {
+            return Err(ParserError::TooManyComponents);
+        }
+        Ok(item)
     }
 }
 

@@ -1,5 +1,3 @@
-
-
 BEGIN:VCARD
 VERSION:4.0
 ADR;TYPE=work:pobox;apt;street;city;state;zipcode;country
@@ -21,7 +19,6 @@ KEY:http://www.example.com/keys/jdoe.cer
 KIND:individual
 LANG;PREF=1:fr
 LOGO:http://www.example.com/pub/logos/abccorp.jpg
-
 
 
 MEMBER:urn:uuid:03a0e51f-d1aa-4385-8a53-e29025acd8af
