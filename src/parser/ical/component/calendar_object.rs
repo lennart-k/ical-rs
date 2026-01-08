@@ -1,6 +1,6 @@
 use crate::{
     PropertyParser,
-    component::{IcalEventBuilder, IcalJournalBuilder, IcalTodoBuilder},
+    component::{IcalCalendar, IcalEventBuilder, IcalJournalBuilder, IcalTodoBuilder},
     generator::Emitter,
     parser::{
         Component, ComponentMut, GetProperty, IcalUIDProperty, ParserError,
@@ -180,6 +180,24 @@ impl IcalCalendarObject {
 
     pub fn get_tzids(&self) -> HashSet<&str> {
         self.inner.get_tzids()
+    }
+
+    pub fn add_to_calendar(self, cal: &mut IcalCalendar) {
+        match self.inner {
+            CalendarInnerData::Event(main, overrides) => {
+                cal.events.push(main);
+                cal.events.extend_from_slice(&overrides);
+            }
+            CalendarInnerData::Journal(main, overrides) => {
+                cal.journals.push(main);
+                cal.journals.extend_from_slice(&overrides);
+            }
+            CalendarInnerData::Todo(main, overrides) => {
+                cal.todos.push(main);
+                cal.todos.extend_from_slice(&overrides);
+            }
+        }
+        cal.vtimezones.extend(self.vtimezones);
     }
 }
 
