@@ -94,6 +94,10 @@ pub trait ComponentMut: Component + Default {
 
     fn get_properties_mut(&mut self) -> &mut Vec<ContentLine>;
 
+    fn remove_property(&mut self, name: &str) {
+        self.get_properties_mut().retain(|prop| prop.name != name);
+    }
+
     /// Add the given property.
     fn add_content_line(&mut self, property: ContentLine) {
         self.get_properties_mut().push(property);
