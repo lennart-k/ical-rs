@@ -232,3 +232,7 @@ property!(
     rrule::RRule<rrule::Unvalidated>
 );
 property!("METHOD", "TEXT", IcalMETHODProperty, String);
+
+property!("FN", "TEXT", VcardFNProperty, String);
+property!("N", "TEXT", VcardNProperty, String);
+property!("NICKNAME", "TEXT", VcardNICKNAMEProperty, String);

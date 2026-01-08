@@ -1,4 +1,7 @@
-use crate::parser::{Component, ComponentMut, GetProperty, IcalUIDProperty, ParserError};
+use crate::parser::{
+    Component, ComponentMut, GetProperty, IcalUIDProperty, ParserError, VcardFNProperty,
+    VcardNProperty,
+};
 use crate::property::{ContentLine, PropertyParser};
 use std::collections::HashMap;
 use std::io::BufRead;
@@ -6,6 +9,8 @@ use std::io::BufRead;
 #[derive(Debug, Clone)]
 pub struct VcardContact {
     pub uid: Option<String>,
+    pub full_name: Vec<VcardFNProperty>,
+    pub name: Option<VcardNProperty>,
     pub properties: Vec<ContentLine>,
 }
 
@@ -71,8 +76,13 @@ impl ComponentMut for VcardContactBuilder {
             .safe_get_optional(timezones)?
             .map(|IcalUIDProperty(uid, _)| uid);
 
+        let name = self.safe_get_optional(timezones)?;
+        let full_name = self.safe_get_all(timezones)?;
+
         let verified = VcardContact {
             uid,
+            name,
+            full_name,
             properties: self.properties,
         };
 
