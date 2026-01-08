@@ -1,9 +1,10 @@
 ---
 source: tests/mod.rs
-expression: export.generate()
+expression: export
 ---
 BEGIN:VCALENDAR
 VERSION:2.0
+PRODID:ical-rs test
 CALSCALE:GREGORIAN
 BEGIN:VTIMEZONE
 TZID:Europe/Berlin

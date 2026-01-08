@@ -1,12 +1,12 @@
 use crate::{
     PropertyParser,
     component::{
-        IcalAlarmBuilder, IcalCalendarObject, IcalEventBuilder, IcalFreeBusyBuilder,
-        IcalJournalBuilder, IcalTodoBuilder,
+        IcalAlarmBuilder, IcalCalendarObject, IcalCalendarObjectBuilder, IcalEventBuilder,
+        IcalFreeBusyBuilder, IcalJournalBuilder, IcalTodoBuilder,
     },
     parser::{
-        Component, ComponentMut, GetProperty, IcalCALSCALEProperty, IcalPRODIDProperty,
-        IcalVERSIONProperty, ParserError,
+        Calscale, Component, ComponentMut, GetProperty, IcalCALSCALEProperty, IcalPRODIDProperty,
+        IcalVERSIONProperty, IcalVersion, ParserError,
         ical::component::{
             IcalAlarm, IcalEvent, IcalFreeBusy, IcalJournal, IcalTimeZone, IcalTodo,
         },
@@ -141,6 +141,7 @@ impl ComponentMut for IcalCalendarBuilder {
         let _version: IcalVERSIONProperty = self.safe_get_required(&HashMap::new())?;
         let _prodid: IcalPRODIDProperty = self.safe_get_required(&HashMap::new())?;
         let _calscale: Option<IcalCALSCALEProperty> = self.safe_get_optional(&HashMap::new())?;
+
         let timezones = HashMap::from_iter(
             self.vtimezones
                 .iter()
@@ -181,6 +182,7 @@ impl ComponentMut for IcalCalendarBuilder {
 
 impl IcalCalendar {
     pub fn from_objects(
+        prodid: String,
         objects: Vec<IcalCalendarObject>,
         additional_properties: Vec<ContentLine>,
     ) -> Self {
@@ -191,16 +193,13 @@ impl IcalCalendar {
             alarms: vec![],
             free_busys: vec![],
             properties: vec![
+                IcalVERSIONProperty(IcalVersion::Version2_0, vec![].into()).into(),
                 ContentLine {
-                    name: "VERSION".to_owned(),
-                    value: Some("2.0".to_owned()),
+                    name: "PRODID".to_owned(),
+                    value: Some(prodid),
                     params: Default::default(),
                 },
-                ContentLine {
-                    name: "CALSCALE".to_owned(),
-                    value: Some("GREGORIAN".to_owned()),
-                    params: Default::default(),
-                },
+                IcalCALSCALEProperty(Calscale::Gregorian, vec![].into()).into(),
             ],
             vtimezones: BTreeMap::new(),
         };
@@ -210,4 +209,12 @@ impl IcalCalendar {
         }
         cal
     }
+
+    // pub fn into_objects(self) -> Vec<IcalCalendarObject> {
+    //     for event in self.events {
+    //         let builder = IcalCalendarObjectBuilder::new();
+    //
+    //         IcalCalendarObject::from
+    //     }
+    // }
 }

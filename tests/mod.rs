@@ -235,8 +235,14 @@ pub mod parser {
         let cal3 = ical::IcalObjectParser::new(input3.as_bytes())
             .expect_one()
             .unwrap();
-        let export = IcalCalendar::from_objects(vec![cal1, cal2, cal3], vec![]);
-        insta::assert_snapshot!(export.generate());
+        let export =
+            IcalCalendar::from_objects("ical-rs test".to_owned(), vec![cal1, cal2, cal3], vec![])
+                .generate();
+        insta::assert_snapshot!(export);
+        // Ensure that exported calendar is valid
+        let _roundtrip_cal = ical::IcalParser::new(export.as_bytes())
+            .expect_one()
+            .unwrap();
     }
 
     #[test]
