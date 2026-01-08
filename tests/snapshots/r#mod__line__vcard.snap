@@ -2,37 +2,37 @@
 source: tests/mod.rs
 expression: lines
 ---
-Line 3: BEGIN:VCARD
-Line 4: VERSION:4.0
-Line 5: ADR;TYPE=work:pobox;apt;street;city;state;zipcode;country
-Line 6: ANNIVERSARY:19960415
-Line 7: BDAY:--0203
-Line 8: CALADRURI:http://example.com/calendar/jdoe
-Line 9: CALURI;MEDIATYPE=text/calendar:ftp://ftp.example.com/calA.ics
-Line 10: CLIENTPIDMAP:1;urn:uuid:3df403f4-5924-4bb7-b077-3c711d9eb34b
-Line 11: EMAIL;TYPE=work:jqpublic@xyz.example.com
-Line 12: FBURL;MEDIATYPE=text/calendar:ftp://example.com/busy/project-a.ifb
-Line 14: FN:J. Doe
-Line 15: GENDER:M;Fellow
-Line 16: GEO:geo:37.386013\,-122.082932
-Line 19: IMPP;PREF=1:xmpp:alice@example.com
-Line 20: KEY:http://www.example.com/keys/jdoe.cer
-Line 21: KIND:individual
-Line 22: LANG;PREF=1:fr
-Line 23: LOGO:http://www.example.com/pub/logos/abccorp.jpg
-Line 27: MEMBER:urn:uuid:03a0e51f-d1aa-4385-8a53-e29025acd8af
-Line 28: N:Stevenson;John;Philip,Paul;Dr.;Jr.,M.D.,A.C.P.
-Line 29: NICKNAME;TYPE=work:Boss
-Line 30: NOTE:This fax number is operational 0800 to 1715 EST\, Mon-Fri
-Line 31: ORG:ABC\, Inc.;North American Division;Marketing
-Line 32: PHOTO:http://www.example.com/pub/photos/jqpublic.gif
-Line 33: RELATED;TYPE=friend:urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6
-Line 34: REV:19951031T222710Z
-Line 35: ROLE:Project Leader
-Line 36: SOUND:CID:JOHNQPUBLIC.part8.19960229T080000.xyzMail@example.com
-Line 37: SOURCE:ldap://ldap.example.com/cn=Babs%20Jensen\,%20o=Babsco\,%20c=US
-Line 38: TEL;VALUE=uri;TYPE=home:tel:+33-01-23-45-67
-Line 39: TITLE:Research Scientist
-Line 40: TZ;VALUE=utc-offset:-0500
-Line 41: XML:<html xmlns="http://www.w3.org/1999/xhtml"></html>
-Line 42: END:VCARD
+Line 1: BEGIN:VCARD
+Line 2: VERSION:4.0
+Line 3: ADR;TYPE=work:pobox;apt;street;city;state;zipcode;country
+Line 4: ANNIVERSARY:19960415
+Line 5: BDAY:--0203
+Line 6: CALADRURI:http://example.com/calendar/jdoe
+Line 7: CALURI;MEDIATYPE=text/calendar:ftp://ftp.example.com/calA.ics
+Line 8: CLIENTPIDMAP:1;urn:uuid:3df403f4-5924-4bb7-b077-3c711d9eb34b
+Line 9: EMAIL;TYPE=work:jqpublic@xyz.example.com
+Line 10: FBURL;MEDIATYPE=text/calendar:ftp://example.com/busy/project-a.ifb
+Line 12: FN:J. Doe
+Line 13: GENDER:M;Fellow
+Line 14: GEO:geo:37.386013\,-122.082932
+Line 17: IMPP;PREF=1:xmpp:alice@example.com
+Line 18: KEY:http://www.example.com/keys/jdoe.cer
+Line 19: KIND:individual
+Line 20: LANG;PREF=1:fr
+Line 21: LOGO:http://www.example.com/pub/logos/abccorp.jpg
+Line 24: MEMBER:urn:uuid:03a0e51f-d1aa-4385-8a53-e29025acd8af
+Line 25: N:Stevenson;John;Philip,Paul;Dr.;Jr.,M.D.,A.C.P.
+Line 26: NICKNAME;TYPE=work:Boss
+Line 27: NOTE:This fax number is operational 0800 to 1715 EST\, Mon-Fri
+Line 28: ORG:ABC\, Inc.;North American Division;Marketing
+Line 29: PHOTO:http://www.example.com/pub/photos/jqpublic.gif
+Line 30: RELATED;TYPE=friend:urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6
+Line 31: REV:19951031T222710Z
+Line 32: ROLE:Project Leader
+Line 33: SOUND:CID:JOHNQPUBLIC.part8.19960229T080000.xyzMail@example.com
+Line 34: SOURCE:ldap://ldap.example.com/cn=Babs%20Jensen\,%20o=Babsco\,%20c=US
+Line 35: TEL;VALUE=uri;TYPE=home:tel:+33-01-23-45-67
+Line 36: TITLE:Research Scientist
+Line 37: TZ;VALUE=utc-offset:-0500
+Line 38: XML:<html xmlns="http://www.w3.org/1999/xhtml"></html>
+Line 39: END:VCARD
