@@ -135,9 +135,9 @@ impl CalendarInnerDataBuilder {
 #[derive(Debug, Clone)]
 /// An ICAL calendar object.
 pub struct IcalCalendarObject {
-    properties: Vec<ContentLine>,
-    inner: CalendarInnerData,
-    vtimezones: HashMap<String, IcalTimeZone>,
+    pub(crate) properties: Vec<ContentLine>,
+    pub(crate) inner: CalendarInnerData,
+    pub(crate) vtimezones: HashMap<String, IcalTimeZone>,
     timezones: HashMap<String, Option<chrono_tz::Tz>>,
 }
 
@@ -376,24 +376,5 @@ impl Emitter for CalendarInnerData {
                 main.generate() + &overrides.iter().map(Emitter::generate).collect::<String>()
             }
         }
-    }
-}
-
-impl Emitter for IcalCalendarObject {
-    fn generate(&self) -> String {
-        format!(
-            "BEGIN:VCALENDAR\r\n{props}{timezones}{inner}END:VCALENDAR\r\n",
-            timezones = &self
-                .vtimezones
-                .values()
-                .map(Emitter::generate)
-                .collect::<String>(),
-            props = &self
-                .properties
-                .iter()
-                .map(Emitter::generate)
-                .collect::<String>(),
-            inner = self.inner.generate()
-        )
     }
 }

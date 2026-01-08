@@ -1,3 +1,4 @@
+use crate::component::IcalCalendarObject;
 use crate::generator::Emitter;
 use crate::parser::ical::component::{
     IcalAlarm, IcalCalendar, IcalEvent, IcalFreeBusy, IcalJournal, IcalTimeZone,
@@ -54,3 +55,4 @@ generate_emitter!(
     journals,
     free_busys
 );
+generate_emitter!(IcalCalendarObject, "VCALENDAR", vtimezones, inner);
