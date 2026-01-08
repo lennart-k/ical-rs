@@ -22,6 +22,10 @@ mod dtstamp;
 pub use dtstamp::*;
 mod dtend;
 pub use dtend::*;
+mod calscale;
+pub use calscale::*;
+mod version;
+pub use version::*;
 
 pub trait ICalProperty: Sized {
     const NAME: &'static str;
@@ -231,6 +235,8 @@ property!(
     IcalEXRULEProperty,
     rrule::RRule<rrule::Unvalidated>
 );
+property!("PRODID", "TEXT", IcalPRODIDProperty, String);
+
 property!("METHOD", "TEXT", IcalMETHODProperty, String);
 
 property!("FN", "TEXT", VcardFNProperty, String);

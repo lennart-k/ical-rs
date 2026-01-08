@@ -17,28 +17,30 @@ Line 14: END:VALARM
 Line 15: END:VEVENT
 Line 16: END:VCALENDAR
 Line 19: BEGIN:VCALENDAR
-Line 20: ATTENDEE;DELEGATED-TO="mailto:foo7@bar","mailto:foo8@bar";CN="Foo, Bar":mailto:foo1@bar
-Line 22: ATTENDEE;DELEGATED-TO="mailto:foo7@bar","mailto:foo8@bar";CN="Foo; Bar":mailto:foo2@bar
-Line 24: ATTENDEE;CN="Foo, Bar":mailto:foo3@bar
-Line 25: ATTENDEE;CN="Foo; Bar":mailto:foo4@bar
-Line 26: ATTENDEE;DELEGATED-TO="mailto:foo7@bar";CN="Foo, Bar":mailto:foo5@bar
-Line 27: ATTENDEE;DELEGATED-TO="mailto:foo7@bar";CN="Foo; Bar":mailto:foo6@bar
-Line 28: ATTENDEE;ROLE="REQ-PARTICIPANT;foo";DELEGATED-FROM="mailto:bar@baz.com";PARTSTAT=ACCEPTED;RSVP=TRUE:mailto:foo@bar.com
-Line 30: X-FOO;PARAM1=VAL1:FOO;BAR
-Line 31: X-FOO2;PARAM1=VAL1;PARAM2=VAL2:FOO;BAR
-Line 32: X-BAR;PARAM1="VAL1:FOO":BAZ;BAR
-Line 33: X-BAZ;PARAM1="VAL1:FOO";PARAM2=VAL2:BAZ;BAR
-Line 34: X-BAZ2;PARAM1=VAL1;PARAM2="VAL2:FOO":BAZ;BAR
-Line 35: END:VCALENDAR
-Line 38: BEGIN:VCALENDAR
-Line 39: CALSCALE:GREGORIAN
-Line 40: PRODID:-//Example Inc.//Example Calendar//EN
-Line 41: VERSION:2.0
-Line 42: BEGIN:VEVENT
-Line 43: DTSTAMP:20080205T191224Z
-Line 44: DTSTART;VALUE=DATE:20081006
-Line 45: SUMMARY:Missing description value, but includes header
-Line 46: DESCRIPTION:
-Line 47: UID:4088E990AD89CB3DBB484909
-Line 48: END:VEVENT
-Line 49: END:VCALENDAR
+Line 20: PRODID:-//Example Inc.//Example Calendar//EN
+Line 21: VERSION:2.0
+Line 22: ATTENDEE;DELEGATED-TO="mailto:foo7@bar","mailto:foo8@bar";CN="Foo, Bar":mailto:foo1@bar
+Line 24: ATTENDEE;DELEGATED-TO="mailto:foo7@bar","mailto:foo8@bar";CN="Foo; Bar":mailto:foo2@bar
+Line 26: ATTENDEE;CN="Foo, Bar":mailto:foo3@bar
+Line 27: ATTENDEE;CN="Foo; Bar":mailto:foo4@bar
+Line 28: ATTENDEE;DELEGATED-TO="mailto:foo7@bar";CN="Foo, Bar":mailto:foo5@bar
+Line 29: ATTENDEE;DELEGATED-TO="mailto:foo7@bar";CN="Foo; Bar":mailto:foo6@bar
+Line 30: ATTENDEE;ROLE="REQ-PARTICIPANT;foo";DELEGATED-FROM="mailto:bar@baz.com";PARTSTAT=ACCEPTED;RSVP=TRUE:mailto:foo@bar.com
+Line 32: X-FOO;PARAM1=VAL1:FOO;BAR
+Line 33: X-FOO2;PARAM1=VAL1;PARAM2=VAL2:FOO;BAR
+Line 34: X-BAR;PARAM1="VAL1:FOO":BAZ;BAR
+Line 35: X-BAZ;PARAM1="VAL1:FOO";PARAM2=VAL2:BAZ;BAR
+Line 36: X-BAZ2;PARAM1=VAL1;PARAM2="VAL2:FOO":BAZ;BAR
+Line 37: END:VCALENDAR
+Line 40: BEGIN:VCALENDAR
+Line 41: CALSCALE:GREGORIAN
+Line 42: PRODID:-//Example Inc.//Example Calendar//EN
+Line 43: VERSION:2.0
+Line 44: BEGIN:VEVENT
+Line 45: DTSTAMP:20080205T191224Z
+Line 46: DTSTART;VALUE=DATE:20081006
+Line 47: SUMMARY:Missing description value, but includes header
+Line 48: DESCRIPTION:
+Line 49: UID:4088E990AD89CB3DBB484909
+Line 50: END:VEVENT
+Line 51: END:VCALENDAR

@@ -17,6 +17,8 @@ END:VCALENDAR
 
 
 BEGIN:VCALENDAR
+PRODID:-//Example Inc.//Example Calendar//EN
+VERSION:2.0
 ATTENDEE;DELEGATED-TO="mailto:foo7@bar","mailto:foo8@bar";CN="Foo, Bar":mai
  lto:foo1@bar
 ATTENDEE;DELEGATED-TO="mailto:foo7@bar","mailto:foo8@bar";CN="Foo; Bar":mai

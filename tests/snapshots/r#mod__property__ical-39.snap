@@ -2,6 +2,6 @@
 source: tests/mod.rs
 expression: prop
 ---
-name: END
+name: DESCRIPTION
 params: ContentLineParams([])
-value: Some("VEVENT")
+value: None

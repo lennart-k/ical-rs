@@ -3,7 +3,8 @@ use crate::{
     component::{IcalCalendar, IcalEventBuilder, IcalJournalBuilder, IcalTodoBuilder},
     generator::Emitter,
     parser::{
-        Component, ComponentMut, GetProperty, IcalUIDProperty, ParserError,
+        Component, ComponentMut, GetProperty, IcalCALSCALEProperty, IcalPRODIDProperty,
+        IcalUIDProperty, IcalVERSIONProperty, ParserError,
         ical::component::{IcalEvent, IcalJournal, IcalTimeZone, IcalTodo},
     },
     property::ContentLine,
@@ -339,6 +340,10 @@ impl ComponentMut for IcalCalendarObjectBuilder {
         self,
         _timezones: &HashMap<String, Option<chrono_tz::Tz>>,
     ) -> Result<Self::Verified, ParserError> {
+        let _version: IcalVERSIONProperty = self.safe_get_required(&HashMap::new())?;
+        let _prodid: IcalPRODIDProperty = self.safe_get_required(&HashMap::new())?;
+        let _calscale: Option<IcalCALSCALEProperty> = self.safe_get_optional(&HashMap::new())?;
+
         let vtimezones: BTreeMap<String, IcalTimeZone> = self
             .vtimezones
             .into_iter()

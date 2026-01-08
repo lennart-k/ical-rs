@@ -2,6 +2,6 @@
 source: tests/mod.rs
 expression: prop
 ---
-name: X-BAZ
-params: ContentLineParams([("PARAM1", ["VAL1:FOO"]), ("PARAM2", ["VAL2"])])
-value: Some("BAZ;BAR")
+name: X-FOO2
+params: ContentLineParams([("PARAM1", ["VAL1"]), ("PARAM2", ["VAL2"])])
+value: Some("FOO;BAR")

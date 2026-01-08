@@ -45,6 +45,10 @@ pub enum ParserError {
     RRule(#[from] rrule::RRuleError),
     #[error(transparent)]
     DateTime(#[from] CalDateTimeError),
+    #[error("Invalid CALSCALE: Only GREGORIAN supported")]
+    InvalidCalscale,
+    #[error("Invalid VERSION: MUST be 1.0 or 2.0")]
+    InvalidVersion,
 }
 
 /// An immutable interface for an Ical/Vcard component.

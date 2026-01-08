@@ -5,6 +5,24 @@ expression: cal
 IcalCalendar {
     properties: [
         ContentLine {
+            name: "PRODID",
+            params: ContentLineParams(
+                [],
+            ),
+            value: Some(
+                "-//Example Inc.//Example Calendar//EN",
+            ),
+        },
+        ContentLine {
+            name: "VERSION",
+            params: ContentLineParams(
+                [],
+            ),
+            value: Some(
+                "2.0",
+            ),
+        },
+        ContentLine {
             name: "ATTENDEE",
             params: ContentLineParams(
                 [

@@ -2,6 +2,6 @@
 source: tests/mod.rs
 expression: prop
 ---
-name: DESCRIPTION
-params: ContentLineParams([])
-value: None
+name: DTSTART
+params: ContentLineParams([("VALUE", ["DATE"])])
+value: Some("20081006")

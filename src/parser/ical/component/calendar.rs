@@ -5,7 +5,8 @@ use crate::{
         IcalJournalBuilder, IcalTodoBuilder,
     },
     parser::{
-        Component, ComponentMut, ParserError,
+        Component, ComponentMut, GetProperty, IcalCALSCALEProperty, IcalPRODIDProperty,
+        IcalVERSIONProperty, ParserError,
         ical::component::{
             IcalAlarm, IcalEvent, IcalFreeBusy, IcalJournal, IcalTimeZone, IcalTodo,
         },
@@ -137,6 +138,9 @@ impl ComponentMut for IcalCalendarBuilder {
         self,
         _timezones: &HashMap<String, Option<chrono_tz::Tz>>,
     ) -> Result<Self::Verified, ParserError> {
+        let _version: IcalVERSIONProperty = self.safe_get_required(&HashMap::new())?;
+        let _prodid: IcalPRODIDProperty = self.safe_get_required(&HashMap::new())?;
+        let _calscale: Option<IcalCALSCALEProperty> = self.safe_get_optional(&HashMap::new())?;
         let timezones = HashMap::from_iter(
             self.vtimezones
                 .iter()
