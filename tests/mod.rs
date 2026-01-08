@@ -113,7 +113,7 @@ pub mod calendar_object {
 
 pub mod parser {
     extern crate ical;
-    use ical::generator::Emitter;
+    use ical::{component::IcalCalendar, generator::Emitter};
 
     #[test]
     fn ical_multiple() {
@@ -220,6 +220,24 @@ pub mod parser {
     //         insta::assert_debug_snapshot!(cal.expand_calendar());
     //     }
     // }
+
+    #[test]
+    fn ical_export() {
+        let input1 = include_str!("./resources/ical_events.ics");
+        let input2 = include_str!("./resources/ical_example_1.ics");
+        let input3 = include_str!("./resources/ical_example_rrule.ics");
+        let cal1 = ical::IcalObjectParser::new(input1.as_bytes())
+            .expect_one()
+            .unwrap();
+        let cal2 = ical::IcalObjectParser::new(input2.as_bytes())
+            .expect_one()
+            .unwrap();
+        let cal3 = ical::IcalObjectParser::new(input3.as_bytes())
+            .expect_one()
+            .unwrap();
+        let export = IcalCalendar::from_objects(vec![cal1, cal2, cal3]);
+        insta::assert_snapshot!(export.generate());
+    }
 
     #[test]
     fn vcard() {
