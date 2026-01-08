@@ -12,7 +12,7 @@ use crate::{
 use chrono::{DateTime, Utc};
 use std::{
     borrow::Cow,
-    collections::{HashMap, HashSet},
+    collections::{BTreeMap, HashMap, HashSet},
     io::BufRead,
 };
 
@@ -137,7 +137,7 @@ impl CalendarInnerDataBuilder {
 pub struct IcalCalendarObject {
     pub(crate) properties: Vec<ContentLine>,
     pub(crate) inner: CalendarInnerData,
-    pub(crate) vtimezones: HashMap<String, IcalTimeZone>,
+    pub(crate) vtimezones: BTreeMap<String, IcalTimeZone>,
     timezones: HashMap<String, Option<chrono_tz::Tz>>,
 }
 
@@ -150,7 +150,7 @@ impl IcalCalendarObject {
         self.inner.get_uid()
     }
 
-    pub const fn get_vtimezones(&self) -> &HashMap<String, IcalTimeZone> {
+    pub const fn get_vtimezones(&self) -> &BTreeMap<String, IcalTimeZone> {
         &self.vtimezones
     }
 
@@ -171,7 +171,7 @@ impl IcalCalendarObject {
                     properties: self.properties.clone(),
                     inner: CalendarInnerData::Event(first, events),
                     timezones: HashMap::new(),
-                    vtimezones: HashMap::new(),
+                    vtimezones: BTreeMap::new(),
                 })
             }
             _ => Cow::Borrowed(self),
@@ -339,7 +339,7 @@ impl ComponentMut for IcalCalendarObjectBuilder {
         self,
         _timezones: &HashMap<String, Option<chrono_tz::Tz>>,
     ) -> Result<Self::Verified, ParserError> {
-        let vtimezones: HashMap<String, IcalTimeZone> = self
+        let vtimezones: BTreeMap<String, IcalTimeZone> = self
             .vtimezones
             .into_iter()
             .map(|(tzid, tz)| tz.build(&HashMap::default()).map(|tz| (tzid, tz)))

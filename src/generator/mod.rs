@@ -1,7 +1,6 @@
 mod ical;
 mod property;
-
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 pub use crate::parser::ical::component::{IcalCalendar, IcalEvent};
 pub use crate::parser::vcard::component::VcardContact;
@@ -16,7 +15,7 @@ pub trait Emitter {
     fn generate(&self) -> String;
 }
 
-impl<K, T: Emitter> Emitter for HashMap<K, T> {
+impl<K, T: Emitter> Emitter for BTreeMap<K, T> {
     fn generate(&self) -> String {
         self.values().map(Emitter::generate).collect()
     }

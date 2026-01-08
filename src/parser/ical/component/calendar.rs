@@ -12,7 +12,10 @@ use crate::{
     },
     property::ContentLine,
 };
-use std::{collections::HashMap, io::BufRead};
+use std::{
+    collections::{BTreeMap, HashMap},
+    io::BufRead,
+};
 
 #[derive(Debug, Clone, Default)]
 /// An ICAL calendar.
@@ -30,7 +33,7 @@ pub struct IcalCalendar<
     pub todos: Vec<T>,
     pub journals: Vec<J>,
     pub free_busys: Vec<F>,
-    pub vtimezones: HashMap<String, IcalTimeZone>,
+    pub vtimezones: BTreeMap<String, IcalTimeZone>,
 }
 pub type IcalCalendarBuilder = IcalCalendar<
     false,
@@ -195,7 +198,7 @@ impl IcalCalendar {
                     params: Default::default(),
                 },
             ],
-            vtimezones: HashMap::new(),
+            vtimezones: BTreeMap::new(),
         };
         cal.properties.extend_from_slice(&additional_properties);
         for object in objects {
