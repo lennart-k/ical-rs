@@ -22,7 +22,7 @@ pub struct IcalEvent {
     uid: String,
     dtstamp: IcalDTSTAMPProperty,
     pub dtstart: IcalDTSTARTProperty,
-    dtend: Option<IcalDTENDProperty>,
+    pub dtend: Option<IcalDTENDProperty>,
     duration: Option<IcalDURATIONProperty>,
     rdates: Vec<IcalRDATEProperty>,
     rrules: Vec<RRule>,

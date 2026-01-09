@@ -108,6 +108,34 @@ impl CalendarInnerData {
         .map(Into::into)
     }
 
+    pub fn get_last_occurence(&self) -> Option<CalDateTime> {
+        match self {
+            Self::Event(main, overrides) => {
+                if main.has_rruleset() {
+                    return None;
+                }
+                std::iter::once(&main.dtend)
+                    .chain(overrides.iter().map(|over| &over.dtend))
+                    .flat_map(|x| x.as_ref().map(|dt| &dt.0))
+                    .max()
+                    .cloned()
+                    .map(Into::into)
+            }
+            Self::Todo(main, overrides) => {
+                if main.has_rruleset() {
+                    return None;
+                }
+                std::iter::once(&main.due)
+                    .chain(overrides.iter().map(|over| &over.due))
+                    .flat_map(|x| x.as_ref().map(|dt| &dt.0))
+                    .max()
+                    .cloned()
+                    .map(Into::into)
+            }
+            Self::Journal(_main, _overrides) => None,
+        }
+    }
+
     pub fn from_events(mut events: Vec<IcalEvent>) -> Result<Self, ParserError> {
         let main_idx = events
             .iter()

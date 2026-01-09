@@ -20,6 +20,7 @@ use std::{
 pub struct IcalTodo {
     uid: String,
     pub dtstart: Option<IcalDTSTARTProperty>,
+    pub due: Option<IcalDUEProperty>,
     pub dtstamp: IcalDTSTAMPProperty,
     pub properties: Vec<ContentLine>,
     pub alarms: Vec<IcalAlarm>,
@@ -129,7 +130,7 @@ impl ComponentMut for IcalTodoBuilder {
             ));
         }
         let _duration = self.safe_get_optional::<IcalDURATIONProperty>(timezones)?;
-        let _due = self.safe_get_optional::<IcalDUEProperty>(timezones)?;
+        let due = self.safe_get_optional::<IcalDUEProperty>(timezones)?;
 
         // OPTIONAL, MULTIPLE ALLOWED: attach / attendee / categories / comment / contact / exdate / rstatus / related / resources / rdate / x-prop / iana-prop
         let rdates = self.safe_get_all::<IcalRDATEProperty>(timezones)?;
@@ -155,6 +156,7 @@ impl ComponentMut for IcalTodoBuilder {
             uid,
             dtstamp,
             dtstart,
+            due,
             rdates,
             rrules,
             exdates,

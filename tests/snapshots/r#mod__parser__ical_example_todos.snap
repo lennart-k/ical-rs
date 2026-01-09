@@ -57,6 +57,26 @@ IcalCalendar {
                     ),
                 ),
             ),
+            due: Some(
+                IcalDUEProperty(
+                    Date(
+                        CalDate(
+                            2025-08-19,
+                            Local,
+                        ),
+                    ),
+                    ContentLineParams(
+                        [
+                            (
+                                "VALUE",
+                                [
+                                    "DATE",
+                                ],
+                            ),
+                        ],
+                    ),
+                ),
+            ),
             dtstamp: IcalDTSTAMPProperty(
                 DateTime(
                     CalDateTime(
