@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use crate::{
+    generator::Emitter,
     parser::{ICalProperty, ParseProp, ParserError},
     property::ContentLine,
     types::CalDateOrDateTime,
@@ -26,7 +27,7 @@ impl ICalProperty for IcalRECURIDProperty {
         let range = match prop.params.get_param("RANGE") {
             Some("THISANDFUTURE") => RecurIdRange::ThisAndFuture,
             None => RecurIdRange::This,
-            _ => panic!("Invalid range parameter"),
+            _ => return Err(ParserError::InvalidPropertyType(prop.generate())),
         };
         Ok(Self(dt, range))
     }

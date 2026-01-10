@@ -3,6 +3,8 @@ use chrono_tz::Tz;
 use std::collections::HashMap;
 
 use crate::{
+    generator::Emitter,
+    parser::ParserError,
     property::ContentLine,
     types::{CalDateOrDateTime, CalDateTime, CalDateTimeError, Value, parse_duration},
 };
@@ -115,14 +117,14 @@ impl DateOrDateTimeOrPeriod {
         prop: &ContentLine,
         timezones: &HashMap<String, Option<chrono_tz::Tz>>,
         default_type: &str,
-    ) -> Result<Self, CalDateTimeError> {
+    ) -> Result<Self, ParserError> {
         let value_type = prop.params.get_value_type().unwrap_or(default_type);
         match value_type {
             "DATE" | "DATE-TIME" => Ok(Self::DateOrDateTime(CalDateOrDateTime::parse_prop(
                 prop, timezones, value_type,
             )?)),
             "PERIOD" => Ok(Self::Period(Period::parse_prop(prop, timezones)?)),
-            _ => panic!(),
+            _ => Err(ParserError::InvalidPropertyType(prop.generate())),
         }
     }
 

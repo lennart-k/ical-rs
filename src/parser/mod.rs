@@ -41,6 +41,10 @@ pub enum ParserError {
     PropertyConflict(&'static str),
     #[error(transparent)]
     InvalidDuration(#[from] InvalidDuration),
+    #[error("invalid property value: {0}")]
+    InvalidPropertyValue(String),
+    #[error("invalid property value type for: {0}")]
+    InvalidPropertyType(String),
     #[error(transparent)]
     RRule(#[from] rrule::RRuleError),
     #[error(transparent)]
@@ -49,6 +53,12 @@ pub enum ParserError {
     InvalidCalscale,
     #[error("Invalid VERSION: MUST be 1.0 or 2.0")]
     InvalidVersion,
+    #[error("Multiple main events are not allowed in a calendar object")]
+    MultipleMainObjects,
+    #[error("Differing UIDs inside a calendar object")]
+    DifferingUIDs,
+    #[error("Override without RECURRENCE-ID")]
+    MissingRecurId,
 }
 
 /// An immutable interface for an Ical/Vcard component.

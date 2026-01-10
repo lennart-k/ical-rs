@@ -143,17 +143,17 @@ impl CalendarInnerData {
             .unwrap_or_default();
         let main = events.remove(main_idx);
         if events.iter().any(|o| o.get_uid() != main.get_uid()) {
-            panic!("Differing UIDs")
+            return Err(ParserError::DifferingUIDs);
         }
         if events.iter().any(IcalEvent::has_rruleset) {
-            panic!("Multiple main events not allowed");
+            return Err(ParserError::MultipleMainObjects);
         }
         let overrides = events;
         if overrides.iter().any(|e| e.recurid.is_none()) {
-            panic!("Event overrides MUST have a RECURRENCE-ID");
+            return Err(ParserError::MissingRecurId);
         }
         if overrides.iter().any(|e| e.get_uid() != main.get_uid()) {
-            panic!("Overrides MUST have the same UID as the main object");
+            return Err(ParserError::DifferingUIDs);
         }
         Ok(Self::Event(main, overrides))
     }
@@ -165,17 +165,17 @@ impl CalendarInnerData {
             .unwrap_or_default();
         let main = todos.remove(main_idx);
         if todos.iter().any(|o| o.get_uid() != main.get_uid()) {
-            panic!("Differing UIDs")
+            return Err(ParserError::DifferingUIDs);
         }
         if todos.iter().any(IcalTodo::has_rruleset) {
-            panic!("Multiple main events not allowed");
+            return Err(ParserError::MultipleMainObjects);
         }
         let overrides = todos;
         if overrides.iter().any(|t| t.recurid.is_none()) {
-            panic!("Event overrides MUST have a RECURRENCE-ID");
+            return Err(ParserError::MissingRecurId);
         }
         if overrides.iter().any(|e| e.get_uid() != main.get_uid()) {
-            panic!("Overrides MUST have the same UID as the main object");
+            return Err(ParserError::DifferingUIDs);
         }
         Ok(Self::Todo(main, overrides))
     }
@@ -187,17 +187,17 @@ impl CalendarInnerData {
             .unwrap_or_default();
         let main = journals.remove(main_idx);
         if journals.iter().any(|o| o.get_uid() != main.get_uid()) {
-            panic!("Differing UIDs")
+            return Err(ParserError::DifferingUIDs);
         }
         if journals.iter().any(IcalJournal::has_rruleset) {
-            panic!("Multiple main events not allowed");
+            return Err(ParserError::MultipleMainObjects);
         }
         let overrides = journals;
         if overrides.iter().any(|j| j.recurid.is_none()) {
-            panic!("Event overrides MUST have a RECURRENCE-ID");
+            return Err(ParserError::MissingRecurId);
         }
         if overrides.iter().any(|e| e.get_uid() != main.get_uid()) {
-            panic!("Overrides MUST have the same UID as the main object");
+            return Err(ParserError::DifferingUIDs);
         }
         Ok(Self::Journal(main, overrides))
     }

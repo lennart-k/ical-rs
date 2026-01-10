@@ -6,8 +6,10 @@ use std::{
 use chrono::{DateTime, Duration, NaiveDate, NaiveTime, Utc};
 
 use crate::{
+    generator::Emitter,
+    parser::ParserError,
     property::ContentLine,
-    types::{CalDate, CalDateTime, CalDateTimeError, Timezone, Value},
+    types::{CalDate, CalDateTime, Timezone, Value},
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
@@ -21,13 +23,11 @@ impl CalDateOrDateTime {
         prop: &ContentLine,
         timezones: &HashMap<String, Option<chrono_tz::Tz>>,
         default_type: &str,
-    ) -> Result<Self, CalDateTimeError> {
+    ) -> Result<Self, ParserError> {
         Ok(match prop.params.get_value_type().unwrap_or(default_type) {
             "DATE" => Self::Date(CalDate::parse_prop(prop, timezones)?),
             "DATE-TIME" => Self::DateTime(CalDateTime::parse_prop(prop, timezones)?),
-            _ => {
-                panic!()
-            }
+            _ => return Err(ParserError::InvalidPropertyType(prop.generate())),
         })
     }
 
