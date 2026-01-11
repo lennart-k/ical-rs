@@ -20,6 +20,8 @@ VcardContact {
             ),
         ),
     ),
+    birthday: None,
+    anniversary: None,
     properties: [
         ContentLine {
             name: "VERSION",

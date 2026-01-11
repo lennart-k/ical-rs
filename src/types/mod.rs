@@ -15,6 +15,9 @@ pub use period::*;
 mod guess_timezone;
 pub use guess_timezone::*;
 
+mod vcard;
+pub use vcard::*;
+
 #[derive(Debug, thiserror::Error, PartialEq, Eq)]
 pub enum CalDateTimeError {
     #[error(

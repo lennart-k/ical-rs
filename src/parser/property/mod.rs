@@ -1,7 +1,7 @@
 use crate::{
     parser::{Component, ParserError},
     property::ContentLine,
-    types::{CalDateOrDateTime, DateOrDateTimeOrPeriod, parse_duration},
+    types::{CalDateOrDateTime, DateOrDateTimeOrPeriod, PartialDateAndOrTime, parse_duration},
 };
 use std::collections::HashMap;
 use std::str::FromStr;
@@ -242,3 +242,15 @@ property!("METHOD", "TEXT", IcalMETHODProperty, String);
 property!("FN", "TEXT", VcardFNProperty, String);
 property!("N", "TEXT", VcardNProperty, String);
 property!("NICKNAME", "TEXT", VcardNICKNAMEProperty, String);
+property!(
+    "BDAY",
+    "DATE-AND-OR-TIME",
+    VcardBDAYProperty,
+    PartialDateAndOrTime
+);
+property!(
+    "ANNIVERSARY",
+    "DATE-AND-OR-TIME",
+    VcardANNIVERSARYProperty,
+    PartialDateAndOrTime
+);

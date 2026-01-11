@@ -192,8 +192,6 @@ impl IcalEvent {
                 CalDateOrDateTime::DateTime(CalDateTime::from(instance))
             };
 
-            dbg!(&recurid);
-
             for over in &overrides {
                 let IcalRECURIDProperty(override_recurid, range) = over.recurid.as_ref().unwrap();
                 if override_recurid != &recurid {

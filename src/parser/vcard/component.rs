@@ -1,6 +1,6 @@
 use crate::parser::{
-    Component, ComponentMut, GetProperty, IcalUIDProperty, ParserError, VcardFNProperty,
-    VcardNProperty,
+    Component, ComponentMut, GetProperty, IcalUIDProperty, ParserError, VcardANNIVERSARYProperty,
+    VcardBDAYProperty, VcardFNProperty, VcardNProperty,
 };
 use crate::property::{ContentLine, PropertyParser};
 use std::collections::HashMap;
@@ -11,6 +11,8 @@ pub struct VcardContact {
     pub uid: Option<String>,
     pub full_name: Vec<VcardFNProperty>,
     pub name: Option<VcardNProperty>,
+    pub birthday: Option<VcardBDAYProperty>,
+    pub anniversary: Option<VcardANNIVERSARYProperty>,
     pub properties: Vec<ContentLine>,
 }
 
@@ -78,11 +80,15 @@ impl ComponentMut for VcardContactBuilder {
 
         let name = self.safe_get_optional(timezones)?;
         let full_name = self.safe_get_all(timezones)?;
+        let birthday = self.safe_get_optional(timezones)?;
+        let anniversary = self.safe_get_optional(timezones)?;
 
         let verified = VcardContact {
             uid,
             name,
             full_name,
+            birthday,
+            anniversary,
             properties: self.properties,
         };
 

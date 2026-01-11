@@ -20,6 +20,50 @@ VcardContact {
             ),
         ),
     ),
+    birthday: Some(
+        VcardBDAYProperty(
+            PartialDateAndOrTime {
+                date: Some(
+                    PartialDate {
+                        year: None,
+                        month: Some(
+                            2,
+                        ),
+                        day: Some(
+                            3,
+                        ),
+                    },
+                ),
+                time: None,
+            },
+            ContentLineParams(
+                [],
+            ),
+        ),
+    ),
+    anniversary: Some(
+        VcardANNIVERSARYProperty(
+            PartialDateAndOrTime {
+                date: Some(
+                    PartialDate {
+                        year: Some(
+                            1996,
+                        ),
+                        month: Some(
+                            4,
+                        ),
+                        day: Some(
+                            15,
+                        ),
+                    },
+                ),
+                time: None,
+            },
+            ContentLineParams(
+                [],
+            ),
+        ),
+    ),
     properties: [
         ContentLine {
             name: "VERSION",
