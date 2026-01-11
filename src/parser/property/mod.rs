@@ -105,7 +105,7 @@ impl ParseProp for DateOrDateTimeOrPeriod {
         timezones: &HashMap<String, Option<chrono_tz::Tz>>,
         default_type: &str,
     ) -> Result<Self, ParserError> {
-        Ok(Self::parse_prop(prop, timezones, default_type)?)
+        Self::parse_prop(prop, timezones, default_type)
     }
 }
 
@@ -115,7 +115,7 @@ impl ParseProp for CalDateOrDateTime {
         timezones: &HashMap<String, Option<chrono_tz::Tz>>,
         default_type: &str,
     ) -> Result<Self, ParserError> {
-        Ok(Self::parse_prop(prop, timezones, default_type)?)
+        Self::parse_prop(prop, timezones, default_type)
     }
 }
 
