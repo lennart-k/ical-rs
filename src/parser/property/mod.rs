@@ -171,6 +171,7 @@ macro_rules! property {
             const NAME: &'static str = $name;
             const DEFAULT_TYPE: &'static str = $default_type;
 
+            #[inline]
             fn parse_prop(
                 prop: &crate::property::ContentLine,
                 timezones: Option<&std::collections::HashMap<String, Option<chrono_tz::Tz>>>,
@@ -181,6 +182,7 @@ macro_rules! property {
                 ))
             }
 
+            #[inline]
             fn utc_or_local(self) -> Self {
                 let Self(dt, mut params) = self;
                 params.remove("TZID");

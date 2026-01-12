@@ -1,5 +1,10 @@
 use criterion::{Criterion, criterion_group, criterion_main};
-use ical::generator::{Emitter, IcalCalendar};
+use ical::{
+    generator::{Emitter, IcalCalendar},
+    parser::{ICalProperty, IcalDTSTARTProperty},
+    property::ContentLine,
+    types::{CalDate, CalDateTime},
+};
 
 fn parse_ical() -> IcalCalendar {
     let input = include_str!("../tests/resources/ical_everything.ics");
@@ -8,6 +13,33 @@ fn parse_ical() -> IcalCalendar {
 }
 
 fn benchmark(c: &mut Criterion) {
+    c.bench_function("parse CalDate", |b| {
+        b.iter(|| {
+            CalDate::parse("19700329", None).unwrap();
+        })
+    });
+    c.bench_function("parse CalDateTime UTC", |b| {
+        b.iter(|| {
+            CalDateTime::parse("19700329T020000Z", None).unwrap();
+        })
+    });
+    c.bench_function("parse CalDateTime Local", |b| {
+        b.iter(|| {
+            CalDateTime::parse("19700329T020000", None).unwrap();
+        })
+    });
+
+    c.bench_function("ics parse DTSTART", |b| {
+        b.iter(|| {
+            let content_line = ContentLine {
+                name: "DTSTART".to_owned(),
+                value: Some("19700329T020000Z".to_owned()),
+                params: vec![].into(),
+            };
+            IcalDTSTARTProperty::parse_prop(&content_line, None).unwrap();
+        })
+    });
+
     c.bench_function("line parse ical_everything.ics", |b| {
         b.iter(|| {
             let input = include_str!("../tests/resources/ical_everything.ics");

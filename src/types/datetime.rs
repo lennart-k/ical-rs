@@ -88,7 +88,19 @@ impl CalDateTime {
     }
 
     pub fn parse(value: &str, timezone: Option<Tz>) -> Result<Self, CalDateTimeError> {
-        if let Ok(datetime) = NaiveDateTime::parse_from_str(value, LOCAL_DATE_TIME) {
+        let utc = value.ends_with('Z');
+        // Remove Z suffix
+        // Stripping the suffix manually and only running parse_from_str improves worst-case
+        // performance by around 40%
+        let value = value.rsplit_once('Z').map(|(v, _)| v).unwrap_or(value);
+
+        let Ok(datetime) = NaiveDateTime::parse_from_str(value, LOCAL_DATE_TIME) else {
+            return Err(CalDateTimeError::InvalidDatetimeFormat(value.to_string()));
+        };
+
+        if utc {
+            Ok(datetime.and_utc().into())
+        } else {
             if let Some(timezone) = timezone {
                 return Ok(Self(
                     datetime
@@ -97,19 +109,13 @@ impl CalDateTime {
                         .ok_or(CalDateTimeError::LocalTimeGap)?,
                 ));
             }
-            return Ok(Self(
+            Ok(Self(
                 datetime
                     .and_local_timezone(Timezone::Local)
                     .earliest()
                     .ok_or(CalDateTimeError::LocalTimeGap)?,
-            ));
+            ))
         }
-
-        if let Ok(datetime) = NaiveDateTime::parse_from_str(value, UTC_DATE_TIME) {
-            return Ok(datetime.and_utc().into());
-        }
-
-        Err(CalDateTimeError::InvalidDatetimeFormat(value.to_string()))
     }
 
     #[must_use]
