@@ -119,7 +119,7 @@ pub trait ComponentMut: Component + Default {
 
     fn build(
         self,
-        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<Self::Verified, ParserError>;
 
     /// Parse the content from `line_parser` and fill the component with.
@@ -206,7 +206,7 @@ impl<B: BufRead, T: Component> Iterator for ComponentParser<B, T> {
 
         let mut comp = T::Unverified::default();
         let result = match comp.parse(&mut self.line_parser) {
-            Ok(_) => comp.build(&HashMap::default()),
+            Ok(_) => comp.build(None),
             Err(err) => Err(err),
         };
 
