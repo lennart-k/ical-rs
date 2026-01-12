@@ -83,6 +83,21 @@ impl PartialDate {
         }
         Err(ParserError::InvalidPropertyValue(value.to_owned()))
     }
+
+    #[inline]
+    pub const fn get_year(&self) -> Option<i32> {
+        self.year
+    }
+
+    #[inline]
+    pub const fn get_month(&self) -> Option<u32> {
+        self.month
+    }
+
+    #[inline]
+    pub const fn get_day(&self) -> Option<u32> {
+        self.day
+    }
 }
 
 impl Value for PartialDate {
