@@ -1,7 +1,10 @@
 use crate::{
     parser::{Component, ParserError},
     property::ContentLine,
-    types::{CalDateOrDateTime, DateOrDateTimeOrPeriod, PartialDateAndOrTime, parse_duration},
+    types::{
+        CalDateOrDateTime, CalDateTime, DateOrDateTimeOrPeriod, PartialDateAndOrTime,
+        parse_duration,
+    },
 };
 use std::collections::HashMap;
 use std::str::FromStr;
@@ -115,6 +118,16 @@ impl ParseProp for CalDateOrDateTime {
         default_type: &str,
     ) -> Result<Self, ParserError> {
         Self::parse_prop(prop, timezones, default_type)
+    }
+}
+
+impl ParseProp for CalDateTime {
+    fn parse_prop(
+        prop: &ContentLine,
+        timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
+        _default_type: &str,
+    ) -> Result<Self, ParserError> {
+        Self::parse_prop(prop, timezones)
     }
 }
 

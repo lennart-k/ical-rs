@@ -31,11 +31,9 @@ IcalCalendar {
         IcalFreeBusy {
             uid: "hello",
             dtstamp: IcalDTSTAMPProperty(
-                DateTime(
-                    CalDateTime(
-                        2025-07-26T13:06:53Olson(
-                            UTC,
-                        ),
+                CalDateTime(
+                    2025-07-26T13:06:53Olson(
+                        UTC,
                     ),
                 ),
                 ContentLineParams(

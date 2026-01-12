@@ -1,3 +1,4 @@
+use crate::parser::ParserError;
 use crate::types::{Timezone, Value};
 use crate::{property::ContentLine, types::CalDateTimeError};
 use chrono::{DateTime, Datelike, Duration, Local, NaiveDate, NaiveDateTime, Utc};
@@ -56,7 +57,7 @@ impl CalDateTime {
     pub fn parse_prop(
         prop: &ContentLine,
         timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
-    ) -> Result<Self, CalDateTimeError> {
+    ) -> Result<Self, ParserError> {
         let prop_value = prop
             .value
             .as_ref()
@@ -67,7 +68,7 @@ impl CalDateTime {
                 timezone.to_owned()
             } else {
                 // TZID refers to timezone that does not exist
-                return Err(CalDateTimeError::InvalidTZID(tzid.to_string()));
+                return Err(CalDateTimeError::InvalidTZID(tzid.to_string()).into());
             }
         } else {
             // No explicit timezone specified.
@@ -76,7 +77,7 @@ impl CalDateTime {
             None
         };
 
-        Self::parse(prop_value, timezone)
+        Ok(Self::parse(prop_value, timezone)?)
     }
 
     #[must_use]

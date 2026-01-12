@@ -79,11 +79,9 @@ IcalCalendar {
         IcalEvent {
             uid: "6fb8cdb4-d333-4a4f-99a5-2d32d0c701f9",
             dtstamp: IcalDTSTAMPProperty(
-                DateTime(
-                    CalDateTime(
-                        2020-12-04T08:22:57Olson(
-                            UTC,
-                        ),
+                CalDateTime(
+                    2020-12-04T08:22:57Olson(
+                        UTC,
                     ),
                 ),
                 ContentLineParams(
@@ -285,11 +283,9 @@ IcalCalendar {
         IcalEvent {
             uid: "6bec1263-c5f4-4446-8a0c-10d960a6e06e",
             dtstamp: IcalDTSTAMPProperty(
-                DateTime(
-                    CalDateTime(
-                        2020-12-04T08:21:07Olson(
-                            UTC,
-                        ),
+                CalDateTime(
+                    2020-12-04T08:21:07Olson(
+                        UTC,
                     ),
                 ),
                 ContentLineParams(
@@ -443,11 +439,9 @@ IcalCalendar {
         IcalEvent {
             uid: "e5e8ce2a-4881-402f-9e85-1a35b4fe11d1",
             dtstamp: IcalDTSTAMPProperty(
-                DateTime(
-                    CalDateTime(
-                        2020-12-04T08:23:58Olson(
-                            UTC,
-                        ),
+                CalDateTime(
+                    2020-12-04T08:23:58Olson(
+                        UTC,
                     ),
                 ),
                 ContentLineParams(

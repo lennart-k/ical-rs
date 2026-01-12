@@ -45,11 +45,9 @@ IcalCalendar {
         IcalEvent {
             uid: "040000008200E000*************00800000000*****************00000000000000010000000********************************",
             dtstamp: IcalDTSTAMPProperty(
-                DateTime(
-                    CalDateTime(
-                        2021-05-11T06:38:45Olson(
-                            UTC,
-                        ),
+                CalDateTime(
+                    2021-05-11T06:38:45Olson(
+                        UTC,
                     ),
                 ),
                 ContentLineParams(

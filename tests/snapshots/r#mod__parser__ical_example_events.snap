@@ -36,11 +36,9 @@ IcalCalendar {
         IcalEvent {
             uid: "fa915b604e6e3f36772501ff869439e6a3c5cf67",
             dtstamp: IcalDTSTAMPProperty(
-                DateTime(
-                    CalDateTime(
-                        2025-07-26T11:26:17Olson(
-                            UTC,
-                        ),
+                CalDateTime(
+                    2025-07-26T11:26:17Olson(
+                        UTC,
                     ),
                 ),
                 ContentLineParams(

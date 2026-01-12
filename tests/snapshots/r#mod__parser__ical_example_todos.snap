@@ -78,11 +78,9 @@ IcalCalendar {
                 ),
             ),
             dtstamp: IcalDTSTAMPProperty(
-                DateTime(
-                    CalDateTime(
-                        2025-07-26T11:26:18Olson(
-                            UTC,
-                        ),
+                CalDateTime(
+                    2025-07-26T11:26:18Olson(
+                        UTC,
                     ),
                 ),
                 ContentLineParams(

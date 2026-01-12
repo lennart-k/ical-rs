@@ -39,11 +39,9 @@ IcalCalendar {
         IcalJournal {
             uid: "84f728973b37b1cb9abf7556adde789b780779f7",
             dtstamp: IcalDTSTAMPProperty(
-                DateTime(
-                    CalDateTime(
-                        2025-07-26T13:06:53Olson(
-                            UTC,
-                        ),
+                CalDateTime(
+                    2025-07-26T13:06:53Olson(
+                        UTC,
                     ),
                 ),
                 ContentLineParams(

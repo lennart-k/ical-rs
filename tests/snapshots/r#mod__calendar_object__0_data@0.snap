@@ -6,11 +6,9 @@ Event(
     IcalEvent {
         uid: "459aa1c8ba359d55e03584cbc3ad1e05b2113b79",
         dtstamp: IcalDTSTAMPProperty(
-            DateTime(
-                CalDateTime(
-                    2025-12-28T11:13:27Olson(
-                        UTC,
-                    ),
+            CalDateTime(
+                2025-12-28T11:13:27Olson(
+                    UTC,
                 ),
             ),
             ContentLineParams(
@@ -175,11 +173,9 @@ Event(
         IcalEvent {
             uid: "459aa1c8ba359d55e03584cbc3ad1e05b2113b79",
             dtstamp: IcalDTSTAMPProperty(
-                DateTime(
-                    CalDateTime(
-                        2025-12-28T11:13:27Olson(
-                            UTC,
-                        ),
+                CalDateTime(
+                    2025-12-28T11:13:27Olson(
+                        UTC,
                     ),
                 ),
                 ContentLineParams(
@@ -343,11 +339,9 @@ Event(
         IcalEvent {
             uid: "459aa1c8ba359d55e03584cbc3ad1e05b2113b79",
             dtstamp: IcalDTSTAMPProperty(
-                DateTime(
-                    CalDateTime(
-                        2025-12-28T11:13:27Olson(
-                            UTC,
-                        ),
+                CalDateTime(
+                    2025-12-28T11:13:27Olson(
+                        UTC,
                     ),
                 ),
                 ContentLineParams(
@@ -511,11 +505,9 @@ Event(
         IcalEvent {
             uid: "459aa1c8ba359d55e03584cbc3ad1e05b2113b79",
             dtstamp: IcalDTSTAMPProperty(
-                DateTime(
-                    CalDateTime(
-                        2025-12-28T11:13:27Olson(
-                            UTC,
-                        ),
+                CalDateTime(
+                    2025-12-28T11:13:27Olson(
+                        UTC,
                     ),
                 ),
                 ContentLineParams(

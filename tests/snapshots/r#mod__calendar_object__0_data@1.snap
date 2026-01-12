@@ -6,11 +6,9 @@ Event(
     IcalEvent {
         uid: "wholeday",
         dtstamp: IcalDTSTAMPProperty(
-            DateTime(
-                CalDateTime(
-                    2025-12-28T11:13:27Olson(
-                        UTC,
-                    ),
+            CalDateTime(
+                2025-12-28T11:13:27Olson(
+                    UTC,
                 ),
             ),
             ContentLineParams(
@@ -133,11 +131,9 @@ Event(
         IcalEvent {
             uid: "wholeday",
             dtstamp: IcalDTSTAMPProperty(
-                DateTime(
-                    CalDateTime(
-                        2025-12-28T11:13:27Olson(
-                            UTC,
-                        ),
+                CalDateTime(
+                    2025-12-28T11:13:27Olson(
+                        UTC,
                     ),
                 ),
                 ContentLineParams(
@@ -259,11 +255,9 @@ Event(
         IcalEvent {
             uid: "wholeday",
             dtstamp: IcalDTSTAMPProperty(
-                DateTime(
-                    CalDateTime(
-                        2025-12-28T11:13:27Olson(
-                            UTC,
-                        ),
+                CalDateTime(
+                    2025-12-28T11:13:27Olson(
+                        UTC,
                     ),
                 ),
                 ContentLineParams(
@@ -385,11 +379,9 @@ Event(
         IcalEvent {
             uid: "wholeday",
             dtstamp: IcalDTSTAMPProperty(
-                DateTime(
-                    CalDateTime(
-                        2025-12-28T11:13:27Olson(
-                            UTC,
-                        ),
+                CalDateTime(
+                    2025-12-28T11:13:27Olson(
+                        UTC,
                     ),
                 ),
                 ContentLineParams(
