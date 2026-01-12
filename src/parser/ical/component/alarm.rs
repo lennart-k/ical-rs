@@ -72,7 +72,7 @@ impl ComponentMut for IcalAlarmBuilder {
 
     fn build(
         self,
-        _timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<IcalAlarm, ParserError> {
         Ok(IcalAlarm {
             properties: self.properties,

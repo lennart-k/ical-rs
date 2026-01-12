@@ -55,7 +55,7 @@ impl Add<Duration> for CalDateTime {
 impl CalDateTime {
     pub fn parse_prop(
         prop: &ContentLine,
-        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<Self, CalDateTimeError> {
         let prop_value = prop
             .value
@@ -63,7 +63,7 @@ impl CalDateTime {
             .ok_or_else(|| CalDateTimeError::InvalidDatetimeFormat("empty property".into()))?;
 
         let timezone = if let Some(tzid) = prop.params.get_tzid() {
-            if let Some(timezone) = timezones.get(tzid) {
+            if let Some(timezone) = timezones.and_then(|timezones| timezones.get(tzid)) {
                 timezone.to_owned()
             } else {
                 // TZID refers to timezone that does not exist

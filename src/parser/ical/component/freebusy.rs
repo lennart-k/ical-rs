@@ -77,7 +77,7 @@ impl ComponentMut for IcalFreeBusyBuilder {
 
     fn build(
         self,
-        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<IcalFreeBusy, ParserError> {
         // REQUIRED, but NOT MORE THAN ONCE
         let IcalUIDProperty(uid, _) = self.safe_get_required(timezones)?;

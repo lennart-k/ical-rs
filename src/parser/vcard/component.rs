@@ -72,7 +72,7 @@ impl ComponentMut for VcardContactBuilder {
 
     fn build(
         self,
-        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<Self::Verified, ParserError> {
         let uid = self
             .safe_get_optional(timezones)?

@@ -65,7 +65,7 @@ impl ComponentMut for IcalEventBuilder {
 
     fn build(
         self,
-        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<IcalEvent, ParserError> {
         // The following are REQUIRED, but MUST NOT occur more than once: dtstamp / uid
         let dtstamp = self.safe_get_required(timezones)?;

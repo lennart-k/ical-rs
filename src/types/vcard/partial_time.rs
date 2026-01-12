@@ -2,7 +2,7 @@ use crate::{
     parser::{ParseProp, ParserError},
     types::Value,
 };
-use std::sync::OnceLock;
+use std::{collections::HashMap, sync::OnceLock};
 
 static RE_TIME: OnceLock<[regex::Regex; 2]> = OnceLock::new();
 
@@ -170,7 +170,7 @@ impl Value for PartialTime {
 impl ParseProp for PartialTime {
     fn parse_prop(
         prop: &crate::property::ContentLine,
-        _timezones: &std::collections::HashMap<String, Option<chrono_tz::Tz>>,
+        _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
         _default_type: &str,
     ) -> Result<Self, ParserError> {
         Self::parse(prop.value.as_deref().unwrap_or_default())

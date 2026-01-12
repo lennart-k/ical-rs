@@ -97,7 +97,7 @@ impl ComponentMut for IcalJournalBuilder {
 
     fn build(
         self,
-        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<IcalJournal, ParserError> {
         // REQUIRED, ONLY ONCE
         let IcalUIDProperty(uid, _) = self.safe_get_required(timezones)?;

@@ -126,7 +126,7 @@ impl ComponentMut for IcalCalendarBuilder {
             "VTIMEZONE" => {
                 let mut timezone = IcalTimeZone::new();
                 timezone.parse(line_parser)?;
-                let timezone = timezone.build(&HashMap::new())?;
+                let timezone = timezone.build(None)?;
                 self.vtimezones
                     .insert(timezone.get_tzid().to_owned(), timezone);
             }
@@ -138,11 +138,11 @@ impl ComponentMut for IcalCalendarBuilder {
 
     fn build(
         self,
-        _timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<Self::Verified, ParserError> {
-        let _version: IcalVERSIONProperty = self.safe_get_required(&HashMap::new())?;
-        let _prodid: IcalPRODIDProperty = self.safe_get_required(&HashMap::new())?;
-        let _calscale: Option<IcalCALSCALEProperty> = self.safe_get_optional(&HashMap::new())?;
+        let _version: IcalVERSIONProperty = self.safe_get_required(None)?;
+        let _prodid: IcalPRODIDProperty = self.safe_get_required(None)?;
+        let _calscale: Option<IcalCALSCALEProperty> = self.safe_get_optional(None)?;
 
         let timezones = HashMap::from_iter(
             self.vtimezones
@@ -155,27 +155,27 @@ impl ComponentMut for IcalCalendarBuilder {
             events: self
                 .events
                 .into_iter()
-                .map(|builder| builder.build(&timezones))
+                .map(|builder| builder.build(Some(&timezones)))
                 .collect::<Result<_, _>>()?,
             alarms: self
                 .alarms
                 .into_iter()
-                .map(|builder| builder.build(&timezones))
+                .map(|builder| builder.build(Some(&timezones)))
                 .collect::<Result<_, _>>()?,
             todos: self
                 .todos
                 .into_iter()
-                .map(|builder| builder.build(&timezones))
+                .map(|builder| builder.build(Some(&timezones)))
                 .collect::<Result<_, _>>()?,
             journals: self
                 .journals
                 .into_iter()
-                .map(|builder| builder.build(&timezones))
+                .map(|builder| builder.build(Some(&timezones)))
                 .collect::<Result<_, _>>()?,
             free_busys: self
                 .free_busys
                 .into_iter()
-                .map(|builder| builder.build(&timezones))
+                .map(|builder| builder.build(Some(&timezones)))
                 .collect::<Result<_, _>>()?,
             vtimezones: self.vtimezones,
             timezones,

@@ -21,7 +21,7 @@ pub enum CalDateOrDateTime {
 impl CalDateOrDateTime {
     pub fn parse_prop(
         prop: &ContentLine,
-        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
         default_type: &str,
     ) -> Result<Self, ParserError> {
         Ok(match prop.params.get_value_type().unwrap_or(default_type) {

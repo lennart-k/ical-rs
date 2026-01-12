@@ -21,7 +21,7 @@ impl ICalProperty for IcalRECURIDProperty {
 
     fn parse_prop(
         prop: &ContentLine,
-        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<Self, ParserError> {
         let dt = ParseProp::parse_prop(prop, timezones, Self::DEFAULT_TYPE)?;
         let range = match prop.params.get_param("RANGE") {
@@ -76,7 +76,6 @@ mod tests {
     use super::IcalRECURIDProperty;
     use crate::{generator::Emitter, parser::ICalProperty, property::ContentLine};
     use rstest::rstest;
-    use std::collections::HashMap;
 
     #[rstest]
     #[case("RECURRENCE-ID;VALUE=DATE:19960401\r\n")]
@@ -86,8 +85,7 @@ mod tests {
             .next()
             .unwrap()
             .unwrap();
-        let timezones = HashMap::new();
-        let prop = IcalRECURIDProperty::parse_prop(&content_line, &timezones).unwrap();
+        let prop = IcalRECURIDProperty::parse_prop(&content_line, None).unwrap();
         let roundtrip: ContentLine = prop.into();
         similar_asserts::assert_eq!(roundtrip.generate(), input);
     }

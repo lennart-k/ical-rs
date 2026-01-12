@@ -3,7 +3,7 @@ use crate::{
     types::Value,
 };
 use chrono::{Datelike, NaiveDate};
-use std::sync::OnceLock;
+use std::{collections::HashMap, sync::OnceLock};
 
 static RE_DATE: OnceLock<[regex::Regex; 4]> = OnceLock::new();
 
@@ -113,7 +113,7 @@ impl Value for PartialDate {
 impl ParseProp for PartialDate {
     fn parse_prop(
         prop: &crate::property::ContentLine,
-        _timezones: &std::collections::HashMap<String, Option<chrono_tz::Tz>>,
+        _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
         _default_type: &str,
     ) -> Result<Self, ParserError> {
         Self::parse(prop.value.as_deref().unwrap_or_default())

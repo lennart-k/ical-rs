@@ -109,7 +109,7 @@ impl ComponentMut for IcalTodoBuilder {
 
     fn build(
         self,
-        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<IcalTodo, ParserError> {
         // REQUIRED, but ONLY ONCE
         let IcalUIDProperty(uid, _) = self.safe_get_required(timezones)?;

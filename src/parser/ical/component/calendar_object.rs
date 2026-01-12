@@ -206,7 +206,7 @@ impl CalendarInnerData {
 impl CalendarInnerDataBuilder {
     pub fn build(
         self,
-        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<CalendarInnerData, ParserError> {
         match self {
             Self::Event(events) => {
@@ -408,11 +408,7 @@ impl ComponentMut for IcalCalendarObjectBuilder {
             "VTIMEZONE" => {
                 let timezone = IcalTimeZone::from_parser(line_parser)?;
                 self.vtimezones.insert(
-                    timezone
-                        .clone()
-                        .build(&HashMap::default())?
-                        .get_tzid()
-                        .to_owned(),
+                    timezone.clone().build(None)?.get_tzid().to_owned(),
                     timezone,
                 );
             }
@@ -424,16 +420,16 @@ impl ComponentMut for IcalCalendarObjectBuilder {
 
     fn build(
         self,
-        _timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<Self::Verified, ParserError> {
-        let _version: IcalVERSIONProperty = self.safe_get_required(&HashMap::new())?;
-        let _prodid: IcalPRODIDProperty = self.safe_get_required(&HashMap::new())?;
-        let _calscale: Option<IcalCALSCALEProperty> = self.safe_get_optional(&HashMap::new())?;
+        let _version: IcalVERSIONProperty = self.safe_get_required(None)?;
+        let _prodid: IcalPRODIDProperty = self.safe_get_required(None)?;
+        let _calscale: Option<IcalCALSCALEProperty> = self.safe_get_optional(None)?;
 
         let vtimezones: BTreeMap<String, IcalTimeZone> = self
             .vtimezones
             .into_iter()
-            .map(|(tzid, tz)| tz.build(&HashMap::default()).map(|tz| (tzid, tz)))
+            .map(|(tzid, tz)| tz.build(None).map(|tz| (tzid, tz)))
             .collect::<Result<_, _>>()?;
 
         let timezones = HashMap::from_iter(
@@ -448,7 +444,7 @@ impl ComponentMut for IcalCalendarObjectBuilder {
             inner: self
                 .inner
                 .ok_or(ParserError::NotComplete)?
-                .build(&timezones)?,
+                .build(Some(&timezones))?,
             timezones,
         })
     }

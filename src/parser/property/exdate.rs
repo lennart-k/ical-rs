@@ -27,7 +27,7 @@ mod tests {
             .unwrap();
         let mut timezones = HashMap::new();
         timezones.insert("America/New_York".to_owned(), None);
-        let prop = IcalEXDATEProperty::parse_prop(&content_line, &timezones).unwrap();
+        let prop = IcalEXDATEProperty::parse_prop(&content_line, Some(&timezones)).unwrap();
         let roundtrip: ContentLine = prop.into();
         similar_asserts::assert_eq!(roundtrip.generate(), input);
     }

@@ -53,7 +53,7 @@ pub struct Period(CalDateTime, DateTimeOrDuration);
 impl Period {
     pub fn parse_prop(
         prop: &ContentLine,
-        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<Self, CalDateTimeError> {
         let prop_value = prop
             .value
@@ -61,7 +61,7 @@ impl Period {
             .ok_or_else(|| CalDateTimeError::InvalidDatetimeFormat("empty property".into()))?;
 
         let timezone = if let Some(tzid) = prop.params.get_tzid() {
-            if let Some(timezone) = timezones.get(tzid) {
+            if let Some(timezone) = timezones.and_then(|timezones| timezones.get(tzid)) {
                 timezone.to_owned()
             } else {
                 // TZID refers to timezone that does not exist
@@ -115,7 +115,7 @@ pub enum DateOrDateTimeOrPeriod {
 impl DateOrDateTimeOrPeriod {
     pub fn parse_prop(
         prop: &ContentLine,
-        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
         default_type: &str,
     ) -> Result<Self, ParserError> {
         let value_type = prop.params.get_value_type().unwrap_or(default_type);

@@ -91,14 +91,12 @@ impl ComponentMut for IcalTimeZone<false> {
             "STANDARD" => {
                 let mut transition = IcalTimeZoneTransition::new(STANDARD);
                 transition.parse(line_parser)?;
-                self.transitions
-                    .push(transition.build(&HashMap::default())?);
+                self.transitions.push(transition.build(None)?);
             }
             "DAYLIGHT" => {
                 let mut transition = IcalTimeZoneTransition::new(DAYLIGHT);
                 transition.parse(line_parser)?;
-                self.transitions
-                    .push(transition.build(&HashMap::default())?);
+                self.transitions.push(transition.build(None)?);
             }
             _ => return Err(ParserError::InvalidComponent(value.to_owned())),
         };
@@ -108,7 +106,7 @@ impl ComponentMut for IcalTimeZone<false> {
 
     fn build(
         self,
-        _timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<IcalTimeZone<true>, ParserError> {
         if !matches!(
             self.get_property("TZID"),
@@ -200,7 +198,7 @@ impl ComponentMut for IcalTimeZoneTransition<false> {
 
     fn build(
         self,
-        _timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<IcalTimeZoneTransition<true>, ParserError> {
         Ok(IcalTimeZoneTransition {
             transition: self.transition,

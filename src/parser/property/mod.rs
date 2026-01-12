@@ -33,7 +33,7 @@ pub trait ICalProperty: Sized {
 
     fn parse_prop(
         prop: &ContentLine,
-        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<Self, ParserError>;
 
     fn utc_or_local(self) -> Self;
@@ -42,7 +42,7 @@ pub trait ICalProperty: Sized {
 pub trait GetProperty: Component {
     fn safe_get_all<T: ICalProperty>(
         &self,
-        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<Vec<T>, ParserError> {
         self.get_named_properties(T::NAME)
             .into_iter()
@@ -52,7 +52,7 @@ pub trait GetProperty: Component {
 
     fn safe_get_optional<T: ICalProperty>(
         &self,
-        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<Option<T>, ParserError> {
         let mut props = self.get_named_properties(T::NAME).into_iter();
         let Some(prop) = props.next() else {
@@ -68,7 +68,7 @@ pub trait GetProperty: Component {
 
     fn safe_get_required<T: ICalProperty>(
         &self,
-        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<T, ParserError> {
         self.safe_get_optional(timezones)?
             .ok_or(ParserError::MissingProperty(T::NAME))
@@ -84,7 +84,7 @@ impl<C: Component> GetProperty for C {}
 pub trait ParseProp: Sized {
     fn parse_prop(
         prop: &ContentLine,
-        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
         default_type: &str,
     ) -> Result<Self, ParserError>;
 }
@@ -92,7 +92,7 @@ pub trait ParseProp: Sized {
 impl ParseProp for String {
     fn parse_prop(
         prop: &ContentLine,
-        _timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
         _default_type: &str,
     ) -> Result<Self, ParserError> {
         Ok(prop.value.to_owned().unwrap_or_default())
@@ -102,7 +102,7 @@ impl ParseProp for String {
 impl ParseProp for DateOrDateTimeOrPeriod {
     fn parse_prop(
         prop: &ContentLine,
-        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
         default_type: &str,
     ) -> Result<Self, ParserError> {
         Self::parse_prop(prop, timezones, default_type)
@@ -112,7 +112,7 @@ impl ParseProp for DateOrDateTimeOrPeriod {
 impl ParseProp for CalDateOrDateTime {
     fn parse_prop(
         prop: &ContentLine,
-        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
         default_type: &str,
     ) -> Result<Self, ParserError> {
         Self::parse_prop(prop, timezones, default_type)
@@ -122,7 +122,7 @@ impl ParseProp for CalDateOrDateTime {
 impl ParseProp for chrono::Duration {
     fn parse_prop(
         prop: &ContentLine,
-        _timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
         _default_type: &str,
     ) -> Result<Self, ParserError> {
         Ok(parse_duration(prop.value.as_deref().unwrap_or_default())?)
@@ -132,7 +132,7 @@ impl ParseProp for chrono::Duration {
 impl ParseProp for rrule::RRule<rrule::Unvalidated> {
     fn parse_prop(
         prop: &ContentLine,
-        _timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
         _default_type: &str,
     ) -> Result<Self, ParserError> {
         Ok(rrule::RRule::from_str(
@@ -144,7 +144,7 @@ impl ParseProp for rrule::RRule<rrule::Unvalidated> {
 impl<T: ParseProp> ParseProp for Vec<T> {
     fn parse_prop(
         prop: &ContentLine,
-        timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
         default_type: &str,
     ) -> Result<Self, ParserError> {
         let mut out = vec![];
@@ -174,7 +174,7 @@ macro_rules! property {
 
             fn parse_prop(
                 prop: &crate::property::ContentLine,
-                timezones: &std::collections::HashMap<String, Option<chrono_tz::Tz>>,
+                timezones: Option<&std::collections::HashMap<String, Option<chrono_tz::Tz>>>,
             ) -> Result<Self, crate::parser::ParserError> {
                 Ok(Self(
                     crate::parser::ParseProp::parse_prop(prop, timezones, $default_type)?,

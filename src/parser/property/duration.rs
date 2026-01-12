@@ -7,7 +7,6 @@ mod tests {
     use super::IcalDURATIONProperty;
     use crate::{generator::Emitter, parser::ICalProperty, property::ContentLine};
     use rstest::rstest;
-    use std::collections::HashMap;
 
     #[rstest]
     // #[case("DURATION:PT1H0M0S\r\n")]
@@ -18,8 +17,7 @@ mod tests {
             .next()
             .unwrap()
             .unwrap();
-        let timezones = HashMap::new();
-        let prop = IcalDURATIONProperty::parse_prop(&content_line, &timezones).unwrap();
+        let prop = IcalDURATIONProperty::parse_prop(&content_line, None).unwrap();
         let roundtrip: ContentLine = prop.into();
         similar_asserts::assert_eq!(roundtrip.generate(), input);
     }

@@ -27,7 +27,7 @@ impl Value for IcalVersion {
 impl ParseProp for IcalVersion {
     fn parse_prop(
         prop: &ContentLine,
-        _timezones: &HashMap<String, Option<chrono_tz::Tz>>,
+        _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
         _default_type: &str,
     ) -> Result<Self, ParserError> {
         match prop

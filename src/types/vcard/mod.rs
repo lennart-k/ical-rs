@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::{
     parser::{ParseProp, ParserError},
     types::Value,
@@ -56,7 +58,7 @@ impl PartialDateAndOrTime {
 impl ParseProp for PartialDateAndOrTime {
     fn parse_prop(
         prop: &crate::property::ContentLine,
-        _timezones: &std::collections::HashMap<String, Option<chrono_tz::Tz>>,
+        _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
         _default_type: &str,
     ) -> Result<Self, ParserError> {
         Self::parse(prop.value.as_deref().unwrap_or_default())
@@ -89,7 +91,7 @@ impl Value for PartialDateTime {
 impl ParseProp for PartialDateTime {
     fn parse_prop(
         prop: &crate::property::ContentLine,
-        _timezones: &std::collections::HashMap<String, Option<chrono_tz::Tz>>,
+        _timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
         _default_type: &str,
     ) -> Result<Self, ParserError> {
         Self::parse(prop.value.as_deref().unwrap_or_default())
