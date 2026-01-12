@@ -1,0 +1,11 @@
+BEGIN:VCARD
+VERSION:2.1
+N:Contact;Test;;;
+FN:Test Contact
+ORG:Okay wow
+X-ANDROID-CUSTOM:vnd.android.cursor.item/contact_event;2026-01-04;1;;;;;;;;;;;;;
+X-ANDROID-CUSTOM:vnd.android.cursor.item/contact_event;--01-04;2;;;;;;;;;;;;;
+X-ANDROID-CUSTOM:vnd.android.cursor.item/contact_event;--01-11;0;Alternative significant date;;;;;;;;;;;;
+BDAY:2026-01-10
+ANNIVERSARY:--01-10
+END:VCARD

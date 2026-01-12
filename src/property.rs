@@ -67,6 +67,7 @@ pub enum PropertyError {
 pub struct ContentLineParams(pub(crate) Vec<(String, Vec<String>)>);
 
 impl ContentLineParams {
+    #[inline]
     pub fn get_param(&self, name: &str) -> Option<&str> {
         self.0
             .iter()
@@ -74,10 +75,12 @@ impl ContentLineParams {
             .and_then(|(_, value)| value.iter().map(String::as_str).next())
     }
 
+    #[inline]
     pub fn get_tzid(&self) -> Option<&str> {
         self.get_param("TZID")
     }
 
+    #[inline]
     pub fn get_value_type(&self) -> Option<&str> {
         self.get_param("VALUE")
     }
@@ -90,10 +93,12 @@ impl ContentLineParams {
         }
     }
 
+    #[inline]
     pub fn remove(&mut self, name: &str) {
         self.0.retain(|(n, _)| n != name);
     }
 
+    #[inline]
     pub fn is_empty(&self) -> bool {
         self.0.is_empty()
     }

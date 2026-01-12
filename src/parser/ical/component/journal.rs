@@ -87,6 +87,7 @@ impl ComponentMut for IcalJournalBuilder {
         &mut self.properties
     }
 
+    #[inline]
     fn add_sub_component<B: BufRead>(
         &mut self,
         value: &str,

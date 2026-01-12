@@ -67,6 +67,7 @@ impl ComponentMut for IcalFreeBusyBuilder {
     }
 
     #[cfg(not(tarpaulin_include))]
+    #[inline]
     fn add_sub_component<B: BufRead>(
         &mut self,
         value: &str,

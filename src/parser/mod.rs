@@ -59,6 +59,8 @@ pub enum ParserError {
     DifferingUIDs,
     #[error("Override without RECURRENCE-ID")]
     MissingRecurId,
+    #[error("DTSTART and RECURRENCE-ID must have the same value type and timezone")]
+    DtstartNotMatchingRecurId,
 }
 
 /// An immutable interface for an Ical/Vcard component.
@@ -84,11 +86,8 @@ pub trait Component: Clone {
         self.get_properties().iter().find(|p| p.name == name)
     }
 
-    fn get_named_properties<'c>(&'c self, name: &str) -> Vec<&'c ContentLine> {
-        self.get_properties()
-            .iter()
-            .filter(|p| p.name == name)
-            .collect()
+    fn get_named_properties<'c>(&'c self, name: &'c str) -> impl Iterator<Item = &'c ContentLine> {
+        self.get_properties().iter().filter(move |p| p.name == name)
     }
 }
 
@@ -113,6 +112,7 @@ pub trait ComponentMut: Component + Default {
     }
 
     /// Add the given property.
+    #[inline]
     fn add_content_line(&mut self, property: ContentLine) {
         self.get_properties_mut().push(property);
     }
@@ -169,13 +169,14 @@ impl<B: BufRead, T: Component> ComponentParser<B, T> {
     }
 
     /// Read the next line and check if it's a valid VCALENDAR start.
+    #[inline]
     fn check_header(&mut self) -> Result<Option<()>, ParserError> {
         let line = match self.line_parser.next() {
             Some(val) => val.map_err(ParserError::PropertyError)?,
             None => return Ok(None),
         };
 
-        if line.name.to_uppercase() != "BEGIN"
+        if line.name != "BEGIN"
             || line.value.is_none()
             || !T::NAMES.contains(&line.value.as_ref().unwrap().to_uppercase().as_str())
             || !line.params.is_empty()
@@ -210,7 +211,7 @@ impl<B: BufRead, T: Component> Iterator for ComponentParser<B, T> {
             Err(err) => Err(err),
         };
 
-        #[cfg(feature = "test")]
+        #[cfg(all(feature = "test", not(feature = "bench")))]
         {
             // Run this for more test coverage
             if let Ok(comp) = result.as_ref() {

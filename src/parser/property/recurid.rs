@@ -38,17 +38,11 @@ impl ICalProperty for IcalRECURIDProperty {
 }
 impl IcalRECURIDProperty {
     pub fn validate_dtstart(&self, dtstart: &CalDateOrDateTime) -> Result<(), ParserError> {
-        assert_eq!(
-            self.0.is_date(),
-            dtstart.is_date(),
-            "DTSTART and RECURRENCE-ID have different value types"
-        );
-        assert_eq!(
-            self.0.timezone().is_local(),
-            dtstart.timezone().is_local(),
-            "DTSTART and RECURRENCE-ID have different timezone types"
-        );
-
+        if (self.0.is_date() != dtstart.is_date())
+            || (self.0.timezone().is_local() != dtstart.timezone().is_local())
+        {
+            return Err(ParserError::DtstartNotMatchingRecurId);
+        }
         Ok(())
     }
 }

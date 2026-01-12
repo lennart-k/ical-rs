@@ -46,6 +46,7 @@ default = ["chrono-tz"]
 chrono-tz = ["dep:chrono-tz"]
 test = []
 rkyv = ["dep:rkyv"]
+bench = []
 
 [lib]
 doc = true

@@ -116,6 +116,14 @@ pub mod parser {
     use ical::{component::IcalCalendar, generator::Emitter};
 
     #[test]
+    fn ical_parse_everything() {
+        let input = include_str!("./resources/ical_everything.ics");
+        let reader = ical::IcalParser::new(input.as_bytes());
+        let cal = reader.expect_one();
+        cal.unwrap();
+    }
+
+    #[test]
     fn ical_multiple() {
         let input = include_str!("./resources/ical_multiple.ics");
         let reader = ical::IcalParser::new(input.as_bytes());

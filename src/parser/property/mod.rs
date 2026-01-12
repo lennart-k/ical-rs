@@ -45,7 +45,6 @@ pub trait GetProperty: Component {
         timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<Vec<T>, ParserError> {
         self.get_named_properties(T::NAME)
-            .into_iter()
             .map(|prop| ICalProperty::parse_prop(prop, timezones))
             .collect::<Result<Vec<_>, _>>()
     }
@@ -54,7 +53,7 @@ pub trait GetProperty: Component {
         &self,
         timezones: Option<&HashMap<String, Option<chrono_tz::Tz>>>,
     ) -> Result<Option<T>, ParserError> {
-        let mut props = self.get_named_properties(T::NAME).into_iter();
+        let mut props = self.get_named_properties(T::NAME);
         let Some(prop) = props.next() else {
             return Ok(None);
         };
