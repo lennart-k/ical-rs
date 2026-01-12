@@ -4,6 +4,7 @@ use std::{
 };
 
 use chrono::{DateTime, Duration, NaiveDate, NaiveTime, Utc};
+use derive_more::From;
 
 use crate::{
     generator::Emitter,
@@ -12,7 +13,7 @@ use crate::{
     types::{CalDate, CalDateTime, Timezone, Value},
 };
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, From)]
 pub enum CalDateOrDateTime {
     DateTime(CalDateTime),
     Date(CalDate),
@@ -83,12 +84,6 @@ impl Sub<&CalDateOrDateTime> for CalDateOrDateTime {
 
     fn sub(self, rhs: &CalDateOrDateTime) -> Self::Output {
         self.utc() - rhs.utc()
-    }
-}
-
-impl From<CalDateTime> for CalDateOrDateTime {
-    fn from(value: CalDateTime) -> Self {
-        Self::DateTime(value)
     }
 }
 
