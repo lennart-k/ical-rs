@@ -3,7 +3,7 @@ use ical::{
     generator::{Emitter, IcalCalendar},
     parser::{ICalProperty, IcalDTSTARTProperty},
     property::ContentLine,
-    types::{CalDate, CalDateTime},
+    types::{CalDate, CalDateTime, PartialDate},
 };
 
 fn parse_ical() -> IcalCalendar {
@@ -13,6 +13,11 @@ fn parse_ical() -> IcalCalendar {
 }
 
 fn benchmark(c: &mut Criterion) {
+    c.bench_function("parse PartialDate", |b| {
+        b.iter(|| {
+            PartialDate::parse("--0329").unwrap();
+        })
+    });
     c.bench_function("parse CalDate", |b| {
         b.iter(|| {
             CalDate::parse("19700329", None).unwrap();
