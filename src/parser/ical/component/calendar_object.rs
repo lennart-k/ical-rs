@@ -307,9 +307,9 @@ impl IcalCalendarObject {
 #[derive(Debug, Clone, Default)]
 /// An ICAL calendar object.
 pub struct IcalCalendarObjectBuilder {
-    properties: Vec<ContentLine>,
-    inner: Option<CalendarInnerDataBuilder>,
-    vtimezones: HashMap<String, IcalTimeZone<false>>,
+    pub properties: Vec<ContentLine>,
+    pub inner: Option<CalendarInnerDataBuilder>,
+    pub vtimezones: HashMap<String, IcalTimeZone<false>>,
 }
 
 impl IcalCalendarObjectBuilder {
