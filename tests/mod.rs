@@ -44,6 +44,7 @@ pub mod line {
 
     use insta::assert_snapshot;
     use itertools::Itertools;
+    use rstest::rstest;
 
     #[test]
     fn multioctet_line_wrapping() {
@@ -53,6 +54,15 @@ pub mod line {
             .unwrap()
             .unwrap();
         assert_eq!(line.as_str(), "ü");
+    }
+
+    #[rstest]
+    #[case(b"\xc3\r\n \x00")]
+    #[case(b"\xc3\r\n ")]
+    #[case(b"\xc3 \r\n \xbc")]
+    #[case(b"\xc3 \r\n \n\xbc")]
+    fn invalid_lines(#[case] input: &[u8]) {
+        assert!(ical::LineReader::from_slice(input).next().unwrap().is_err());
     }
 
     #[test]
