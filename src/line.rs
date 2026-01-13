@@ -172,7 +172,6 @@ impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> Iterator for LineReader<'a, T> {
             }),
         };
 
-        dbg!(&new_line);
         if new_line.is_empty() {
             None
         } else {
