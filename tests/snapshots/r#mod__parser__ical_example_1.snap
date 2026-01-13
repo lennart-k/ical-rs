@@ -140,7 +140,7 @@ IcalCalendar {
                         [],
                     ),
                     value: Some(
-                        "Einwahldaten folgen in der Veranstaltungswoche \\nSeminartitel:Software-QS-Cast - Application Performance Monitoring\\nDatum: 27.Mai 2021\\nUhrzeit: 10:30 - ca.12:00 Uhr  \\n \\n",
+                        "Einwahldaten folgen in der Veranstaltungswoche \\nSeminartitel: Software-QS-Cast - Application Performance Monitoring\\nDatum: 27.Mai 2021\\nUhrzeit: 10:30 - ca.12:00 Uhr  \\n \\n",
                     ),
                 },
                 ContentLine {

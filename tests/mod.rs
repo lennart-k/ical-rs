@@ -46,16 +46,34 @@ pub mod line {
     use itertools::Itertools;
 
     #[test]
+    fn multioctet_line_wrapping() {
+        let input = b"\xc3\r\n \xbc";
+        let line = ical::LineReader::new(input.as_slice())
+            .next()
+            .unwrap()
+            .unwrap();
+        assert_eq!(line.as_str(), "ü");
+    }
+
+    #[test]
     fn ical() {
         let input = include_bytes!("./resources/ical_multiple.ics");
-        let lines = ical::LineReader::new(input.as_slice()).join("\n");
+        let lines = ical::LineReader::new(input.as_slice())
+            .collect::<Result<Vec<_>, _>>()
+            .unwrap()
+            .iter()
+            .join("\n");
         assert_snapshot!(lines);
     }
 
     #[test]
     fn vcard() {
         let input = include_bytes!("./resources/vcard_input.vcf");
-        let lines = ical::LineReader::new(input.as_slice()).join("\n");
+        let lines = ical::LineReader::new(input.as_slice())
+            .collect::<Result<Vec<_>, _>>()
+            .unwrap()
+            .iter()
+            .join("\n");
         assert_snapshot!(lines);
     }
 }

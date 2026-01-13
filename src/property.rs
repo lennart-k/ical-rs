@@ -38,9 +38,9 @@
 //! ```
 
 use derive_more::From;
-use std::fmt;
 use std::io::BufRead;
 use std::iter::Iterator;
+use std::{fmt, string::FromUtf8Error};
 
 use crate::{
     PARAM_DELIMITER, PARAM_NAME_DELIMITER, PARAM_QUOTE, PARAM_VALUE_DELIMITER, VALUE_DELIMITER,
@@ -61,6 +61,8 @@ pub enum PropertyError {
     MissingParamKey(usize),
     #[error("Line {0}: Missing value.")]
     MissingValue(usize),
+    #[error(transparent)]
+    FromUtf8(#[from] FromUtf8Error),
 }
 
 #[derive(Debug, Clone, Default, Eq, PartialEq, Hash, From)]
@@ -228,6 +230,10 @@ impl<B: BufRead> Iterator for PropertyParser<B> {
     type Item = Result<ContentLine, PropertyError>;
 
     fn next(&mut self) -> Option<Result<ContentLine, PropertyError>> {
-        self.0.next().map(|line| self.parse(line))
+        match self.0.next() {
+            Some(Ok(line)) => Some(self.parse(line)),
+            Some(Err(err)) => Some(Err(err.into())),
+            None => None,
+        }
     }
 }

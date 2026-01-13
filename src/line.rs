@@ -36,13 +36,14 @@
 //! let reader = ical::LineReader::new(buf);
 //!
 //! for line in reader {
-//!     println!("{}", line);
+//!     println!("{}", line.unwrap());
 //! }
 //! ```
 
 use std::fmt;
-use std::io::{BufRead, Lines};
+use std::io::BufRead;
 use std::iter::{Iterator, Peekable};
+use std::string::FromUtf8Error;
 
 /// An unfolded raw line.
 ///
@@ -77,9 +78,35 @@ impl fmt::Display for Line {
     }
 }
 
+// An iterator over lines that works with binary content
+// std::io::Lines is not applicable since multi-octet sequences might be wrapped over multiple lines
+#[derive(Debug)]
+pub struct BytesLines<B>(pub B);
+
+impl<B: BufRead> Iterator for BytesLines<B> {
+    type Item = std::io::Result<Vec<u8>>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let mut buf = Vec::new();
+        match self.0.read_until(b'\n', &mut buf) {
+            Ok(0) => None,
+            Ok(_n) => {
+                if let Some(b'\n') = buf.last() {
+                    buf.pop();
+                    if let Some(b'\r') = buf.last() {
+                        buf.pop();
+                    }
+                }
+                Some(Ok(buf))
+            }
+            Err(err) => Some(Err(err)),
+        }
+    }
+}
+
 /// Take a `BufRead` and return the unfolded `Line`.
 pub struct LineReader<B: BufRead> {
-    lines: Peekable<Lines<B>>,
+    lines: Peekable<BytesLines<B>>,
     number: usize,
 }
 
@@ -87,21 +114,21 @@ impl<B: BufRead> LineReader<B> {
     /// Return a new `LineReader` from a `Reader`.
     pub fn new(reader: B) -> LineReader<B> {
         LineReader {
-            lines: reader.lines().peekable(),
+            lines: BytesLines(reader).peekable(),
             number: 0,
         }
     }
 }
 
 impl<B: BufRead> Iterator for LineReader<B> {
-    type Item = Line;
+    type Item = Result<Line, FromUtf8Error>;
 
-    fn next(&mut self) -> Option<Line> {
+    fn next(&mut self) -> Option<Self::Item> {
         let (mut new_line, line_number) = loop {
             let line = self.lines.next()?.ok()?;
             self.number += 1;
             if !line.is_empty() {
-                break (line.trim_end().to_string(), self.number);
+                break (line, self.number);
             }
         };
 
@@ -109,7 +136,9 @@ impl<B: BufRead> Iterator for LineReader<B> {
             let Some(Ok(next)) = self.lines.next_if(|line| {
                 line.as_ref()
                     .ok()
-                    .map(|line| line.starts_with(' ') || line.starts_with('\t') || line.is_empty())
+                    .map(|line| {
+                        line.starts_with(b" ") || line.starts_with(b"\t") || line.is_empty()
+                    })
                     .unwrap_or_default()
             }) else {
                 break;
@@ -117,14 +146,14 @@ impl<B: BufRead> Iterator for LineReader<B> {
             self.number += 1;
             if !next.is_empty() {
                 // String cannot be empty so this cannot panic
-                new_line.push_str(next.split_at(1).1);
+                new_line.extend_from_slice(next.split_at(1).1);
             }
         }
 
-        if new_line.is_empty() {
-            None
-        } else {
-            Some(Line::new(new_line, line_number))
+        match String::from_utf8(new_line) {
+            Ok(new_line) if new_line.is_empty() => None,
+            Ok(new_line) => Some(Ok(Line::new(new_line, line_number))),
+            Err(err) => Some(Err(err)),
         }
     }
 }
@@ -132,7 +161,6 @@ impl<B: BufRead> Iterator for LineReader<B> {
 #[cfg(test)]
 mod tests {
     use super::{Line, LineReader};
-    use itertools::Itertools;
     use rstest::rstest;
 
     #[rstest]
@@ -144,7 +172,9 @@ mod tests {
     #[case("weird with linebreak\r\n\r\n  ok", vec![Line{inner: "weird with linebreak ok".to_owned(), number: 1}])]
     #[case("line1\r\n\r\nline2", vec![Line{inner: "line1".to_owned(), number: 1}, Line{inner: "line2".to_owned(), number: 3}])]
     fn test_line_reader(#[case] input: &str, #[case] lines: Vec<Line>) {
-        let parsed_lines = LineReader::new(input.as_bytes()).collect_vec();
+        let parsed_lines = LineReader::new(input.as_bytes())
+            .collect::<Result<Vec<_>, _>>()
+            .unwrap();
         assert_eq!(parsed_lines, lines);
     }
 }
