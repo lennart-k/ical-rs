@@ -3,7 +3,9 @@ use crate::{
     parser::{Component, ComponentMut, ParserError},
     property::ContentLine,
 };
-use std::{collections::HashMap, io::BufRead};
+#[cfg(not(tarpaulin_include))]
+use std::borrow::Cow;
+use std::collections::HashMap;
 
 #[derive(Debug, Clone, Default)]
 pub struct IcalTimeZone<const VERIFIED: bool = true> {
@@ -80,10 +82,10 @@ impl ComponentMut for IcalTimeZone<false> {
         &mut self.properties
     }
 
-    fn add_sub_component<B: BufRead>(
+    fn add_sub_component<'a, I: Iterator<Item = Cow<'a, [u8]>>>(
         &mut self,
         value: &str,
-        line_parser: &mut PropertyParser<B>,
+        line_parser: &mut PropertyParser<'a, I>,
     ) -> Result<(), ParserError> {
         use self::IcalTimeZoneTransitionType::{DAYLIGHT, STANDARD};
 
@@ -188,10 +190,10 @@ impl ComponentMut for IcalTimeZoneTransition<false> {
     }
 
     #[cfg(not(tarpaulin_include))]
-    fn add_sub_component<B: BufRead>(
+    fn add_sub_component<'a, I: Iterator<Item = Cow<'a, [u8]>>>(
         &mut self,
         value: &str,
-        _: &mut PropertyParser<B>,
+        _: &mut PropertyParser<'a, I>,
     ) -> Result<(), ParserError> {
         Err(ParserError::InvalidComponent(value.to_owned()))
     }

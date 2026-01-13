@@ -7,13 +7,14 @@
 //!
 pub mod ical;
 pub mod vcard;
+use crate::line::BytesLines;
 use crate::types::{CalDateTimeError, InvalidDuration};
 use crate::{
     LineReader,
     property::{ContentLine, PropertyError, PropertyParser},
 };
+use std::borrow::Cow;
 use std::collections::HashMap;
-use std::io::BufRead;
 use std::marker::PhantomData;
 
 mod property;
@@ -99,10 +100,10 @@ pub trait ComponentMut: Component + Default {
     type Verified: Component<Unverified = Self>;
 
     /// Add the givent sub component.
-    fn add_sub_component<B: BufRead>(
+    fn add_sub_component<'a, T: Iterator<Item = Cow<'a, [u8]>>>(
         &mut self,
         value: &str,
-        line_parser: &mut PropertyParser<B>,
+        line_parser: &mut PropertyParser<'a, T>,
     ) -> Result<(), ParserError>;
 
     fn get_properties_mut(&mut self) -> &mut Vec<ContentLine>;
@@ -123,9 +124,9 @@ pub trait ComponentMut: Component + Default {
     ) -> Result<Self::Verified, ParserError>;
 
     /// Parse the content from `line_parser` and fill the component with.
-    fn parse<B: BufRead>(
+    fn parse<'a, T: Iterator<Item = Cow<'a, [u8]>>>(
         &mut self,
-        line_parser: &mut PropertyParser<B>,
+        line_parser: &mut PropertyParser<'a, T>,
     ) -> Result<(), ParserError> {
         loop {
             let line = line_parser.next().ok_or(ParserError::NotComplete)??;
@@ -143,23 +144,24 @@ pub trait ComponentMut: Component + Default {
         Ok(())
     }
 
-    fn from_parser<B: BufRead>(line_parser: &mut PropertyParser<B>) -> Result<Self, ParserError> {
+    fn from_parser<'a, T: Iterator<Item = Cow<'a, [u8]>>>(
+        line_parser: &mut PropertyParser<'a, T>,
+    ) -> Result<Self, ParserError> {
         let mut out = Self::default();
         out.parse(line_parser)?;
         Ok(out)
     }
 }
 
-/// Reader returning `IcalCalendar` object from a `BufRead`.
-pub struct ComponentParser<B: BufRead, T: Component> {
-    line_parser: PropertyParser<B>,
-    _t: PhantomData<T>,
+pub struct ComponentParser<'a, C: Component, I: Iterator<Item = Cow<'a, [u8]>>> {
+    line_parser: PropertyParser<'a, I>,
+    _t: PhantomData<C>,
 }
 
-impl<B: BufRead, T: Component> ComponentParser<B, T> {
+impl<'a, C: Component> ComponentParser<'a, C, BytesLines<'a>> {
     /// Return a new `IcalParser` from a `Reader`.
-    pub fn new(reader: B) -> ComponentParser<B, T> {
-        let line_reader = LineReader::new(reader);
+    pub fn from_slice(slice: &'a [u8]) -> Self {
+        let line_reader = LineReader::from_slice(slice);
         let line_parser = PropertyParser::new(line_reader);
 
         ComponentParser {
@@ -167,7 +169,9 @@ impl<B: BufRead, T: Component> ComponentParser<B, T> {
             _t: Default::default(),
         }
     }
+}
 
+impl<'a, C: Component, I: Iterator<Item = Cow<'a, [u8]>>> ComponentParser<'a, C, I> {
     /// Read the next line and check if it's a valid VCALENDAR start.
     #[inline]
     fn check_header(&mut self) -> Result<Option<()>, ParserError> {
@@ -178,7 +182,7 @@ impl<B: BufRead, T: Component> ComponentParser<B, T> {
 
         if line.name != "BEGIN"
             || line.value.is_none()
-            || !T::NAMES.contains(&line.value.as_ref().unwrap().to_uppercase().as_str())
+            || !C::NAMES.contains(&line.value.as_ref().unwrap().to_uppercase().as_str())
             || !line.params.is_empty()
         {
             return Err(ParserError::MissingHeader);
@@ -187,7 +191,7 @@ impl<B: BufRead, T: Component> ComponentParser<B, T> {
         Ok(Some(()))
     }
 
-    pub fn expect_one(mut self) -> Result<<T::Unverified as ComponentMut>::Verified, ParserError> {
+    pub fn expect_one(mut self) -> Result<<C::Unverified as ComponentMut>::Verified, ParserError> {
         let item = self.next().ok_or(ParserError::EmptyInput)??;
         if self.next().is_some() {
             return Err(ParserError::TooManyComponents);
@@ -196,8 +200,8 @@ impl<B: BufRead, T: Component> ComponentParser<B, T> {
     }
 }
 
-impl<B: BufRead, T: Component> Iterator for ComponentParser<B, T> {
-    type Item = Result<<T::Unverified as ComponentMut>::Verified, ParserError>;
+impl<'a, C: Component, I: Iterator<Item = Cow<'a, [u8]>>> Iterator for ComponentParser<'a, C, I> {
+    type Item = Result<<C::Unverified as ComponentMut>::Verified, ParserError>;
 
     fn next(&mut self) -> Option<Self::Item> {
         match self.check_header() {
@@ -205,7 +209,7 @@ impl<B: BufRead, T: Component> Iterator for ComponentParser<B, T> {
             Err(err) => return Some(Err(err)),
         };
 
-        let mut comp = T::Unverified::default();
+        let mut comp = C::Unverified::default();
         let result = match comp.parse(&mut self.line_parser) {
             Ok(_) => comp.build(None),
             Err(err) => Err(err),

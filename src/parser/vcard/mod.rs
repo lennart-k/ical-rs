@@ -18,13 +18,12 @@
 //! ```rust
 //! extern crate ical;
 //!
-//! use std::io::BufReader;
-//! use std::fs::File;
+//! use std::fs::read_to_string;
 //!
-//! let buf = BufReader::new(File::open("./tests/resources/vcard_input.vcf")
-//! .unwrap());
+//! let buf = read_to_string("./tests/resources/vcard_input.vcf")
+//! .unwrap();
 //!
-//! let reader = ical::VcardParser::new(buf);
+//! let reader = ical::VcardParser::from_slice(buf.as_bytes());
 //!
 //! for contact in reader {
 //!     println!("{:?}", contact);
@@ -35,4 +34,4 @@ pub mod component;
 use crate::parser::ComponentParser;
 use component::VcardContact;
 
-pub type VcardParser<B> = ComponentParser<B, VcardContact>;
+pub type VcardParser<'a, I> = ComponentParser<'a, VcardContact, I>;

@@ -9,7 +9,7 @@ use crate::{
     },
     property::ContentLine,
 };
-use std::{collections::HashMap, io::BufRead};
+use std::{borrow::Cow, collections::HashMap};
 
 #[derive(Debug, Clone, Default)]
 pub struct IcalEventBuilder {
@@ -47,10 +47,10 @@ impl ComponentMut for IcalEventBuilder {
     }
 
     #[inline]
-    fn add_sub_component<B: BufRead>(
+    fn add_sub_component<'a, I: Iterator<Item = Cow<'a, [u8]>>>(
         &mut self,
         value: &str,
-        line_parser: &mut PropertyParser<B>,
+        line_parser: &mut PropertyParser<'a, I>,
     ) -> Result<(), ParserError> {
         match value {
             "VALARM" => {

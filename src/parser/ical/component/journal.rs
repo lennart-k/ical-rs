@@ -9,8 +9,8 @@ use crate::{
 };
 use rrule::RRule;
 use std::{
+    borrow::Cow,
     collections::{HashMap, HashSet},
-    io::BufRead,
 };
 
 #[derive(Debug, Clone, Default)]
@@ -88,10 +88,10 @@ impl ComponentMut for IcalJournalBuilder {
     }
 
     #[inline]
-    fn add_sub_component<B: BufRead>(
+    fn add_sub_component<'a, I: Iterator<Item = Cow<'a, [u8]>>>(
         &mut self,
         value: &str,
-        _: &mut PropertyParser<B>,
+        _: &mut PropertyParser<'a, I>,
     ) -> Result<(), ParserError> {
         Err(ParserError::InvalidComponent(value.to_owned()))
     }

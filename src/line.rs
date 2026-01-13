@@ -28,21 +28,22 @@
 //! ```rust
 //! extern crate ical;
 //!
-//! use std::io::BufReader;
-//! use std::fs::File;
+//! use std::fs::read_to_string;
 //!
-//! let buf = BufReader::new(File::open("./tests/resources/vcard_input.vcf").unwrap());
+//! let buf = read_to_string("./tests/resources/vcard_input.vcf")
+//!     .unwrap();
 //!
-//! let reader = ical::LineReader::new(buf);
+//! let reader = ical::LineReader::from_slice(buf.as_bytes());
 //!
 //! for line in reader {
-//!     println!("{}", line.unwrap());
+//!     println!("{:?}", line);
 //! }
 //! ```
 
+use std::borrow::Cow;
 use std::fmt;
-use std::io::BufRead;
 use std::iter::{Iterator, Peekable};
+use std::str::Utf8Error;
 use std::string::FromUtf8Error;
 
 /// An unfolded raw line.
@@ -50,13 +51,13 @@ use std::string::FromUtf8Error;
 /// Its inner is only a raw line from the file. No parsing or checking have
 /// been made yet.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
-pub struct Line {
-    inner: String,
+pub struct Line<'a> {
+    inner: Cow<'a, str>,
     number: usize,
 }
 
-impl Line {
-    pub fn new(line: String, line_number: usize) -> Line {
+impl<'a> Line<'a> {
+    pub fn new(line: Cow<'a, str>, line_number: usize) -> Line<'a> {
         Line {
             inner: line,
             number: line_number,
@@ -64,7 +65,7 @@ impl Line {
     }
 
     pub fn as_str(&self) -> &str {
-        self.inner.as_str()
+        self.inner.as_ref()
     }
 
     pub fn number(&self) -> usize {
@@ -72,7 +73,7 @@ impl Line {
     }
 }
 
-impl fmt::Display for Line {
+impl<'a> fmt::Display for Line<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "Line {}: {}", self.number, self.inner)
     }
@@ -81,38 +82,53 @@ impl fmt::Display for Line {
 // An iterator over lines that works with binary content
 // std::io::Lines is not applicable since multi-octet sequences might be wrapped over multiple lines
 #[derive(Debug)]
-pub struct BytesLines<B>(pub B);
+pub struct BytesLines<'a>(&'a [u8]);
 
-impl<B: BufRead> Iterator for BytesLines<B> {
-    type Item = std::io::Result<Vec<u8>>;
+impl<'a> Iterator for BytesLines<'a> {
+    type Item = Cow<'a, [u8]>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let mut buf = Vec::new();
-        match self.0.read_until(b'\n', &mut buf) {
-            Ok(0) => None,
-            Ok(_n) => {
-                if let Some(b'\n') = buf.last() {
-                    buf.pop();
-                    if let Some(b'\r') = buf.last() {
-                        buf.pop();
-                    }
-                }
-                Some(Ok(buf))
+        match self.0.iter().position(|val| val == &b'\n') {
+            Some(pos) => {
+                // Is there a multi-octet character that ends with \r=0x0d?
+                let line_end = if pos > 0 && self.0[pos - 1] == b'\r' {
+                    pos - 1
+                } else {
+                    pos
+                };
+                let line = &self.0[..line_end];
+
+                // That's the position after the line break \n
+                self.0 = self.0.split_at(pos + 1).1;
+                Some(Cow::Borrowed(line))
             }
-            Err(err) => Some(Err(err)),
+            None if !self.0.is_empty() => {
+                let line = self.0;
+                self.0 = &[];
+                Some(Cow::Borrowed(line))
+            }
+            None => None,
         }
     }
 }
 
+#[derive(thiserror::Error, Debug, PartialEq, Eq)]
+pub enum LineError {
+    #[error(transparent)]
+    Utf8Error(#[from] Utf8Error),
+    #[error(transparent)]
+    FromUtf8Error(#[from] FromUtf8Error),
+}
+
 /// Take a `BufRead` and return the unfolded `Line`.
-pub struct LineReader<B: BufRead> {
-    lines: Peekable<BytesLines<B>>,
+pub struct LineReader<'a, I: Iterator<Item = Cow<'a, [u8]>>> {
+    lines: Peekable<I>,
     number: usize,
 }
 
-impl<B: BufRead> LineReader<B> {
+impl<'a> LineReader<'a, BytesLines<'a>> {
     /// Return a new `LineReader` from a `Reader`.
-    pub fn new(reader: B) -> LineReader<B> {
+    pub fn from_slice(reader: &'a [u8]) -> LineReader<'a, BytesLines<'a>> {
         LineReader {
             lines: BytesLines(reader).peekable(),
             number: 0,
@@ -120,12 +136,12 @@ impl<B: BufRead> LineReader<B> {
     }
 }
 
-impl<B: BufRead> Iterator for LineReader<B> {
-    type Item = Result<Line, FromUtf8Error>;
+impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> Iterator for LineReader<'a, T> {
+    type Item = Result<Line<'a>, LineError>;
 
     fn next(&mut self) -> Option<Self::Item> {
         let (mut new_line, line_number) = loop {
-            let line = self.lines.next()?.ok()?;
+            let line = self.lines.next()?;
             self.number += 1;
             if !line.is_empty() {
                 break (line, self.number);
@@ -133,27 +149,34 @@ impl<B: BufRead> Iterator for LineReader<B> {
         };
 
         loop {
-            let Some(Ok(next)) = self.lines.next_if(|line| {
-                line.as_ref()
-                    .ok()
-                    .map(|line| {
-                        line.starts_with(b" ") || line.starts_with(b"\t") || line.is_empty()
-                    })
-                    .unwrap_or_default()
+            let Some(next) = self.lines.next_if(|line| {
+                line.starts_with(b" ") || line.starts_with(b"\t") || line.is_empty()
             }) else {
                 break;
             };
             self.number += 1;
             if !next.is_empty() {
                 // String cannot be empty so this cannot panic
-                new_line.extend_from_slice(next.split_at(1).1);
+                new_line.to_mut().extend_from_slice(next.split_at(1).1);
             }
         }
 
-        match String::from_utf8(new_line) {
-            Ok(new_line) if new_line.is_empty() => None,
-            Ok(new_line) => Some(Ok(Line::new(new_line, line_number))),
-            Err(err) => Some(Err(err)),
+        let new_line = match new_line {
+            Cow::Owned(bytes) => Cow::Owned(match String::from_utf8(bytes) {
+                Ok(val) => val,
+                Err(err) => return Some(Err(err.into())),
+            }),
+            Cow::Borrowed(slice) => Cow::Borrowed(match str::from_utf8(slice) {
+                Ok(val) => val,
+                Err(err) => return Some(Err(err.into())),
+            }),
+        };
+
+        dbg!(&new_line);
+        if new_line.is_empty() {
+            None
+        } else {
+            Some(Ok(Line::new(new_line, line_number)))
         }
     }
 }
@@ -166,13 +189,13 @@ mod tests {
     #[rstest]
     #[case("", vec![])]
     #[case("\n", vec![])]
-    #[case("asd", vec![Line{inner: "asd".to_owned(), number: 1}])]
-    #[case("asd\r\n  ok", vec![Line{inner: "asd ok".to_owned(), number: 1}])]
-    #[case("asd with linebreak\r\n \r\n  ok", vec![Line{inner: "asd with linebreak ok".to_owned(), number: 1}])]
-    #[case("weird with linebreak\r\n\r\n  ok", vec![Line{inner: "weird with linebreak ok".to_owned(), number: 1}])]
-    #[case("line1\r\n\r\nline2", vec![Line{inner: "line1".to_owned(), number: 1}, Line{inner: "line2".to_owned(), number: 3}])]
+    #[case("asd", vec![Line{inner: "asd".into(), number: 1}])]
+    #[case("asd\r\n  ok", vec![Line{inner: "asd ok".into(), number: 1}])]
+    #[case("asd with linebreak\r\n \r\n  ok", vec![Line{inner: "asd with linebreak ok".into(), number: 1}])]
+    #[case("weird with linebreak\r\n\r\n  ok", vec![Line{inner: "weird with linebreak ok".into(), number: 1}])]
+    #[case("line1\r\n\r\nline2", vec![Line{inner: "line1".into(), number: 1}, Line{inner: "line2".into(), number: 3}])]
     fn test_line_reader(#[case] input: &str, #[case] lines: Vec<Line>) {
-        let parsed_lines = LineReader::new(input.as_bytes())
+        let parsed_lines = LineReader::from_slice(input.as_bytes())
             .collect::<Result<Vec<_>, _>>()
             .unwrap();
         assert_eq!(parsed_lines, lines);

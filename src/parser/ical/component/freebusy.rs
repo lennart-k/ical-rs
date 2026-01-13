@@ -6,10 +6,9 @@ use crate::{
     },
     property::ContentLine,
 };
-use std::{
-    collections::{HashMap, HashSet},
-    io::BufRead,
-};
+#[cfg(not(tarpaulin_include))]
+use std::borrow::Cow;
+use std::collections::{HashMap, HashSet};
 
 #[derive(Debug, Clone, Default)]
 pub struct IcalFreeBusyBuilder {
@@ -68,10 +67,10 @@ impl ComponentMut for IcalFreeBusyBuilder {
 
     #[cfg(not(tarpaulin_include))]
     #[inline]
-    fn add_sub_component<B: BufRead>(
+    fn add_sub_component<'a, I: Iterator<Item = Cow<'a, [u8]>>>(
         &mut self,
         value: &str,
-        _: &mut PropertyParser<B>,
+        _: &mut PropertyParser<'a, I>,
     ) -> Result<(), ParserError> {
         Err(ParserError::InvalidComponent(value.to_owned()))
     }

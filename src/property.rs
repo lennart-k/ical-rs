@@ -24,13 +24,12 @@
 //! ```rust
 //! extern crate ical;
 //!
-//! use std::io::BufReader;
-//! use std::fs::File;
+//! use std::fs::read_to_string;
 //!
-//! let buf = BufReader::new(File::open("./tests/resources/vcard_input.vcf")
-//!     .unwrap());
+//! let buf = read_to_string("./tests/resources/vcard_input.vcf")
+//!     .unwrap();
 //!
-//! let reader = ical::PropertyParser::from_reader(buf);
+//! let reader = ical::PropertyParser::from_slice(buf.as_bytes());
 //!
 //! for line in reader {
 //!     println!("{:?}", line);
@@ -38,10 +37,11 @@
 //! ```
 
 use derive_more::From;
-use std::io::BufRead;
+use std::borrow::Cow;
+use std::fmt;
 use std::iter::Iterator;
-use std::{fmt, string::FromUtf8Error};
 
+use crate::line::{BytesLines, LineError};
 use crate::{
     PARAM_DELIMITER, PARAM_NAME_DELIMITER, PARAM_QUOTE, PARAM_VALUE_DELIMITER, VALUE_DELIMITER,
     line::{Line, LineReader},
@@ -62,7 +62,7 @@ pub enum PropertyError {
     #[error("Line {0}: Missing value.")]
     MissingValue(usize),
     #[error(transparent)]
-    FromUtf8(#[from] FromUtf8Error),
+    LineError(#[from] LineError),
 }
 
 #[derive(Debug, Clone, Default, Eq, PartialEq, Hash, From)]
@@ -127,15 +127,17 @@ impl fmt::Display for ContentLine {
     }
 }
 
-pub struct PropertyParser<B: BufRead>(LineReader<B>);
+pub struct PropertyParser<'a, T: Iterator<Item = Cow<'a, [u8]>>>(LineReader<'a, T>);
 
-impl<B: BufRead> PropertyParser<B> {
-    pub fn new(line_reader: LineReader<B>) -> PropertyParser<B> {
-        PropertyParser(line_reader)
+impl<'a> PropertyParser<'a, BytesLines<'a>> {
+    pub fn from_slice(slice: &'a [u8]) -> Self {
+        PropertyParser(LineReader::from_slice(slice))
     }
+}
 
-    pub fn from_reader(reader: B) -> PropertyParser<B> {
-        PropertyParser(LineReader::new(reader))
+impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> PropertyParser<'a, T> {
+    pub fn new(line_reader: LineReader<'a, T>) -> Self {
+        PropertyParser(line_reader)
     }
 
     fn parse(&self, line: Line) -> Result<ContentLine, PropertyError> {
@@ -226,7 +228,7 @@ impl<B: BufRead> PropertyParser<B> {
     }
 }
 
-impl<B: BufRead> Iterator for PropertyParser<B> {
+impl<'a, T: Iterator<Item = Cow<'a, [u8]>>> Iterator for PropertyParser<'a, T> {
     type Item = Result<ContentLine, PropertyError>;
 
     fn next(&mut self) -> Option<Result<ContentLine, PropertyError>> {

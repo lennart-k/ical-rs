@@ -1,11 +1,10 @@
 extern crate ical;
 
-use std::{fs::File, io::BufReader};
+use std::fs::read_to_string;
 
 fn main() {
-    let buf = BufReader::new(File::open("./tests/ressources/ical_input.ics").unwrap());
-
-    let reader = ical::IcalParser::new(buf);
+    let buf = read_to_string("./tests/resources/ical_input.ics").unwrap();
+    let reader = ical::IcalParser::from_slice(buf.as_bytes());
 
     for line in reader {
         println!("{:?}", &line);

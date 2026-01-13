@@ -3,10 +3,9 @@ use crate::{
     parser::{Component, ComponentMut, ParserError},
     property::ContentLine,
 };
-use std::{
-    collections::{HashMap, HashSet},
-    io::BufRead,
-};
+#[cfg(not(tarpaulin_include))]
+use std::borrow::Cow;
+use std::collections::{HashMap, HashSet};
 
 #[derive(Debug, Clone, Default)]
 pub struct IcalAlarmBuilder {
@@ -62,10 +61,10 @@ impl ComponentMut for IcalAlarmBuilder {
     }
 
     #[cfg(not(tarpaulin_include))]
-    fn add_sub_component<B: BufRead>(
+    fn add_sub_component<'a, I: Iterator<Item = Cow<'a, [u8]>>>(
         &mut self,
         value: &str,
-        _: &mut PropertyParser<B>,
+        _: &mut PropertyParser<'a, I>,
     ) -> Result<(), ParserError> {
         Err(ParserError::InvalidComponent(value.to_owned()))
     }

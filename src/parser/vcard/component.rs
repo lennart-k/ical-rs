@@ -3,8 +3,8 @@ use crate::parser::{
     VcardBDAYProperty, VcardFNProperty, VcardNProperty,
 };
 use crate::property::{ContentLine, PropertyParser};
+use std::borrow::Cow;
 use std::collections::HashMap;
-use std::io::BufRead;
 
 #[derive(Debug, Clone)]
 pub struct VcardContact {
@@ -62,10 +62,10 @@ impl ComponentMut for VcardContactBuilder {
         &mut self.properties
     }
 
-    fn add_sub_component<B: BufRead>(
+    fn add_sub_component<'a, I: Iterator<Item = Cow<'a, [u8]>>>(
         &mut self,
         name: &str,
-        _: &mut PropertyParser<B>,
+        _line_parser: &mut PropertyParser<'a, I>,
     ) -> Result<(), ParserError> {
         Err(ParserError::InvalidComponent(name.to_owned()))
     }

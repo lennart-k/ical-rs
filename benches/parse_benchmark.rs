@@ -8,7 +8,7 @@ use ical::{
 
 fn parse_ical() -> IcalCalendar {
     let input = include_str!("../tests/resources/ical_everything.ics");
-    let reader = ical::IcalParser::new(input.as_bytes());
+    let reader = ical::IcalParser::from_slice(input.as_bytes());
     reader.into_iter().next().unwrap().unwrap()
 }
 
@@ -48,7 +48,7 @@ fn benchmark(c: &mut Criterion) {
     c.bench_function("line parse ical_everything.ics", |b| {
         b.iter(|| {
             let input = include_str!("../tests/resources/ical_everything.ics");
-            let reader = ical::LineReader::new(input.as_bytes());
+            let reader = ical::LineReader::from_slice(input.as_bytes());
             // Consume reader
             for _ in reader {}
         })

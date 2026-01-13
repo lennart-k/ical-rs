@@ -13,7 +13,7 @@ mod tests {
     #[case("DURATION:PT1H\r\n")]
     #[case("DURATION:PT15M\r\n")]
     fn roundtrip(#[case] input: &str) {
-        let content_line = crate::PropertyParser::from_reader(input.as_bytes())
+        let content_line = crate::PropertyParser::from_slice(input.as_bytes())
             .next()
             .unwrap()
             .unwrap();

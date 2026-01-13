@@ -75,7 +75,7 @@ mod tests {
     #[case("RECURRENCE-ID;VALUE=DATE:19960401\r\n")]
     #[case("RECURRENCE-ID;RANGE=THISANDFUTURE:19960120T120000Z\r\n")]
     fn roundtrip(#[case] input: &str) {
-        let content_line = crate::PropertyParser::from_reader(input.as_bytes())
+        let content_line = crate::PropertyParser::from_slice(input.as_bytes())
             .next()
             .unwrap()
             .unwrap();

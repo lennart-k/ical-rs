@@ -19,13 +19,12 @@
 //! ```rust
 //! extern crate ical;
 //!
-//! use std::io::BufReader;
-//! use std::fs::File;
+//! use std::fs::read_to_string;
 //!
-//! let buf = BufReader::new(File::open("./tests/resources/ical_multiple.ics")
-//! .unwrap());
+//! let buf = read_to_string("./tests/resources/ical_multiple.ics")
+//! .unwrap();
 //!
-//! let reader = ical::IcalParser::new(buf);
+//! let reader = ical::IcalParser::from_slice(buf.as_bytes());
 //!
 //! for line in reader {
 //!     println!("{:?}", line);
@@ -38,5 +37,5 @@ use component::IcalCalendar;
 use crate::parser::{ComponentParser, ical::component::IcalCalendarObject};
 
 /// Reader returning `IcalCalendar` object from a `BufRead`.
-pub type IcalParser<B> = ComponentParser<B, IcalCalendar>;
-pub type IcalObjectParser<B> = ComponentParser<B, IcalCalendarObject>;
+pub type IcalParser<'a, I> = ComponentParser<'a, IcalCalendar, I>;
+pub type IcalObjectParser<'a, I> = ComponentParser<'a, IcalCalendarObject, I>;

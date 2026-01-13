@@ -1,12 +1,11 @@
+use std::fs::read_to_string;
+
 extern crate ical;
 
-use std::fs::File;
-use std::io::BufReader;
-
 fn main() {
-    let buf = BufReader::new(File::open("./tests/ressources/vcard_input.vcf").unwrap());
+    let buf = read_to_string("./tests/ressources/vcard_input.vcf").unwrap();
 
-    let reader = ical::VcardParser::new(buf);
+    let reader = ical::VcardParser::from_slice(buf.as_bytes());
 
     for line in reader {
         println!("{:?}", line);

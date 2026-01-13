@@ -12,8 +12,8 @@ use crate::{
     property::ContentLine,
 };
 use std::{
+    borrow::Cow,
     collections::{HashMap, HashSet},
-    io::BufRead,
 };
 
 #[derive(Debug, Clone)]
@@ -91,10 +91,10 @@ impl ComponentMut for IcalTodoBuilder {
     }
 
     #[inline]
-    fn add_sub_component<B: BufRead>(
+    fn add_sub_component<'a, I: Iterator<Item = Cow<'a, [u8]>>>(
         &mut self,
         value: &str,
-        line_parser: &mut PropertyParser<B>,
+        line_parser: &mut PropertyParser<'a, I>,
     ) -> Result<(), ParserError> {
         match value {
             "VALARM" => {

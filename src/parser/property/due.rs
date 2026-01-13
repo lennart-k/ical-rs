@@ -10,7 +10,7 @@ mod tests {
     #[rstest]
     #[case("DUE:19960402T010000Z\r\n")]
     fn roundtrip(#[case] input: &str) {
-        let content_line = crate::PropertyParser::from_reader(input.as_bytes())
+        let content_line = crate::PropertyParser::from_slice(input.as_bytes())
             .next()
             .unwrap()
             .unwrap();

@@ -21,7 +21,7 @@ mod tests {
         "EXDATE;VALUE=DATE:19970101,19970120,19970217,19970421,19970526,19970704,199\r\n 70901,19971014,19971128,19971129,19971225\r\n"
     )]
     fn roundtrip(#[case] input: &str) {
-        let content_line = crate::PropertyParser::from_reader(input.as_bytes())
+        let content_line = crate::PropertyParser::from_slice(input.as_bytes())
             .next()
             .unwrap()
             .unwrap();

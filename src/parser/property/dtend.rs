@@ -14,7 +14,7 @@ mod tests {
     #[case("DTEND;TZID=Europe/Berlin:19980118T073000Z\r\n")]
     #[case("DTEND;TZID=W. Europe Standard Time:20210527T120000\r\n")]
     fn roundtrip(#[case] input: &str) {
-        let content_line = crate::PropertyParser::from_reader(input.as_bytes())
+        let content_line = crate::PropertyParser::from_slice(input.as_bytes())
             .next()
             .unwrap()
             .unwrap();
