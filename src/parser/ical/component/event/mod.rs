@@ -11,7 +11,6 @@ use crate::{
     types::{CalDate, CalDateOrDateTime, CalDateTime, Timezone},
 };
 use chrono::{DateTime, Duration, Utc};
-use itertools::Itertools;
 
 pub use builder::IcalEventBuilder;
 use rrule::{RRule, RRuleSet};
@@ -61,7 +60,6 @@ impl IcalEvent {
         self.properties
             .iter()
             .filter_map(|prop| prop.params.get_tzid())
-            .unique()
             .collect()
     }
 
