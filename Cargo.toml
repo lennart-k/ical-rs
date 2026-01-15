@@ -21,9 +21,9 @@ repository = "https://travis-ci.org/Peltoche/ical-rs"
 
 [dependencies]
 thiserror = "2.0"
-chrono-tz = { version = "0.10", optional = true }
-chrono = { version = "0.4" }
-regex = { version = "1.11" }
+chrono-tz = "0.10"
+chrono = "0.4"
+regex = "1.11"
 lazy_static = { version = "1.5" }
 itertools = "0.14"
 rkyv = { version = "0.8", optional = true }
@@ -41,6 +41,7 @@ name = "parse_benchmark"
 harness = false
 
 [features]
+default = []
 test = []
 rkyv = ["dep:rkyv"]
 
