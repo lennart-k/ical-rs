@@ -252,7 +252,6 @@ pub mod generator {
     }
 }
 
-#[cfg(feature = "chrono-tz")]
 pub mod chrono_tz {
     extern crate ical;
     use self::ical::parser::ical::component::IcalTimeZone;

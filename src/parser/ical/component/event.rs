@@ -50,7 +50,6 @@ impl IcalEvent<true> {
         self.get_property("DTEND")
     }
 
-    #[cfg(feature = "chrono")]
     pub fn get_duration(&self) -> Option<chrono::Duration> {
         self.get_property("DURATION")
             .and_then(|prop| Option::<chrono::Duration>::try_from(prop).unwrap())
@@ -133,7 +132,6 @@ impl ComponentMut for IcalEvent<false> {
             ));
         }
 
-        #[cfg(feature = "chrono")]
         if let Some(prop) = self.get_property("DURATION") {
             Option::<chrono::Duration>::try_from(prop)?;
         }
@@ -151,7 +149,6 @@ impl ComponentMut for IcalEvent<false> {
             // verified.get_dtstamp();
             verified.get_dtstart();
             verified.get_dtend();
-            #[cfg(feature = "chrono")]
             verified.get_duration();
             verified.get_rrule();
         }

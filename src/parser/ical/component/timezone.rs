@@ -29,7 +29,6 @@ impl IcalTimeZone {
     }
 }
 
-#[cfg(feature = "chrono-tz")]
 impl TryFrom<&IcalTimeZone> for chrono_tz::Tz {
     type Error = chrono_tz::ParseError;
 

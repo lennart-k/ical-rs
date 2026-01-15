@@ -41,8 +41,6 @@ name = "parse_benchmark"
 harness = false
 
 [features]
-default = ["chrono-tz"]
-chrono-tz = ["dep:chrono-tz"]
 test = []
 rkyv = ["dep:rkyv"]
 
