@@ -37,6 +37,10 @@ impl IcalEvent {
     pub fn get_uid(&self) -> &str {
         &self.uid
     }
+
+    pub fn get_alarms(&self) -> &[IcalAlarm] {
+        &self.alarms
+    }
 }
 
 impl Component for IcalEvent {

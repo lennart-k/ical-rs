@@ -48,6 +48,10 @@ impl IcalTodo {
             || !self.exrules.is_empty()
             || !self.exdates.is_empty()
     }
+
+    pub fn get_alarms(&self) -> &[IcalAlarm] {
+        &self.alarms
+    }
 }
 
 impl Component for IcalTodo {
