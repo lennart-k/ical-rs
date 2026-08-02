@@ -73,13 +73,32 @@ pub(crate) fn split_line(line: String) -> String {
 //     Any character except CONTROLs not needed by the current
 //     character set, DQUOTE, ";", ":", "\", ","
 //
+// The escaping rules above apply to TEXT *property values* (section
+// 3.3.11), not to *parameter* values. A parameter value has no
+// backslash-escaping mechanism at all (section 3.2):
+//
+// `param-value = paramtext / quoted-string`
+// `paramtext   = *SAFE-CHAR`
+// `quoted-string = DQUOTE *QSAFE-CHAR DQUOTE`
+// `SAFE-CHAR   = WSP / %x21 / %x23-2B / %x2D-39 / %x3C-7E / NON-US-ASCII`
+//     Any character except CONTROL, DQUOTE, ";", ":", ","
+// `QSAFE-CHAR  = WSP / %x21 / %x23-7E / NON-US-ASCII`
+//     Any character except CONTROL and DQUOTE
+//
+// So if a parameter value contains ";", ":", or ",", it must be wrapped in
+// DQUOTE (those characters are legal, literal QSAFE-CHARs), never
+// backslash-escaped: a reader has no way to know a "\:" in an unquoted
+// param-value means anything other than a literal backslash followed by
+// the delimiter ":".
 pub(crate) fn protect_param(param: &str) -> String {
-    // let len = param.len() - 1;
     // starts and ends the param with quotes?
     let in_quotes = param.len() > 1 && param.starts_with('"') && param.ends_with('"');
+    let needs_quoting = !in_quotes && param.contains([';', ':', ',']);
 
-    let mut escaped = String::with_capacity(param.len());
-    let mut previous_char = None;
+    let mut escaped = String::with_capacity(param.len() + 2);
+    if needs_quoting {
+        escaped.push('"');
+    }
     for (pos, char) in param.chars().enumerate() {
         match char {
             '\n' => {
@@ -88,15 +107,13 @@ pub(crate) fn protect_param(param: &str) -> String {
             '"' if !in_quotes || (pos > 0 && pos < param.len() - 1) => {
                 escaped.push_str("\\\"");
             }
-            ';' | ':' | ',' | '\\' if !in_quotes && previous_char != Some('\\') => {
-                escaped.push('\\');
-                escaped.push(char)
-            }
             _ => {
                 escaped.push(char);
             }
         }
-        previous_char = Some(char);
+    }
+    if needs_quoting {
+        escaped.push('"');
     }
     escaped
 }
@@ -164,7 +181,7 @@ mod should {
         );
         assert_eq!(
             protect_param("value, \"with\" something"),
-            "value\\, \\\"with\\\" something"
+            "\"value, \\\"with\\\" something\""
         );
         assert_eq!(
             protect_param("\"Directory; C:\\\\Programme\""),
@@ -179,7 +196,48 @@ mod should {
         );
         assert_eq!(protect_param("ÄÖÜßø"), "ÄÖÜßø");
         assert_eq!(protect_param("\""), "\\\"");
-        assert_eq!(protect_param("ÄÖsÜa,ßø"), "ÄÖsÜa\\,ßø");
+        assert_eq!(protect_param("ÄÖsÜa,ßø"), "\"ÄÖsÜa,ßø\"");
+    }
+
+    // Regression test for a parameter value containing a URI (e.g. ALTREP),
+    // which routinely contains ':' and sometimes ','. RFC 5545 section 3.2.1
+    // additionally mandates ALTREP always be double-quoted:
+    // `altrepparam = "ALTREP" "=" DQUOTE uri DQUOTE`.
+    #[test]
+    fn protect_param_quotes_uri_valued_params() {
+        assert_eq!(
+            protect_param("data:text/html,Hello%20World"),
+            "\"data:text/html,Hello%20World\""
+        );
+        assert_eq!(
+            protect_param("mailto:someone@example.com"),
+            "\"mailto:someone@example.com\""
+        );
+        // No delimiters that require quoting: stays unquoted.
+        assert_eq!(protect_param("John Doe"), "John Doe");
+    }
+
+    #[test]
+    fn altrep_param_round_trips_through_content_line_generate() {
+        use crate::generator::Emitter;
+        use crate::parser::ContentLineParser;
+
+        let line =
+            "DESCRIPTION;ALTREP=\"data:text/html,Hello%20World\":Hello World\r\n";
+        let mut parser = ContentLineParser::from_slice(line.as_bytes());
+        let parsed = parser.next().unwrap().unwrap();
+
+        let regenerated = parsed.generate();
+        assert!(
+            regenerated.contains("ALTREP=\"data:text/html,Hello%20World\""),
+            "expected quoted ALTREP value, got: {regenerated:?}"
+        );
+
+        // The fix must also be a stable fixed point: re-parsing and
+        // re-generating must not change the output any further.
+        let mut reparser = ContentLineParser::from_slice(regenerated.as_bytes());
+        let reparsed = reparser.next().unwrap().unwrap();
+        assert_eq!(regenerated, reparsed.generate());
     }
 }
 
