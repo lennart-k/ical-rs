@@ -22,9 +22,9 @@ unexpected_cfgs = { level = "warn", check-cfg = ['cfg(tarpaulin_include)'] }
 thiserror = "2.0"
 chrono-tz = { version = "0.10", optional = true }
 chrono = { version = "0.4" }
-regex = { version = "1.12" }
+regex = { version = "1.13" }
 lazy_static = { version = "1.5" }
-itertools = "0.14"
+itertools = "0.15"
 rkyv = { version = "0.8", optional = true }
 derive_more = { version = "2.1", features = [
   "display",
@@ -32,12 +32,12 @@ derive_more = { version = "2.1", features = [
   "deref",
   "into",
 ] }
-phf = { version = "0.13", features = ["macros"] }
+phf = { version = "0.14", features = ["macros"] }
 vtimezones-rs = { version = "0.3" }
 log = "0.4"
 
 [dev-dependencies]
-insta = { version = "1.47", features = ["filters"] }
+insta = { version = "1.48", features = ["filters"] }
 similar-asserts = "2.0"
 criterion = { version = "0.8", features = ["html_reports"] }
 rstest = "0.26"
