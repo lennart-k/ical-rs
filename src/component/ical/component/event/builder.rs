@@ -178,13 +178,13 @@ mod tests {
         generator::Emitter,
         parser::ParserOptions,
     };
-    use chrono::Utc;
+    use chrono::{TimeZone, Utc};
 
     #[test]
     fn test_builder() {
         let ical_event = IcalEvent::builder()
-            .with_dtstamp(Utc::now().into())
-            .with_dtstart(Utc::now().into())
+            .with_dtstamp(Utc.with_ymd_and_hms(2026, 6, 28, 10, 3, 12).unwrap().into())
+            .with_dtstart(Utc.with_ymd_and_hms(2026, 6, 28, 10, 3, 12).unwrap().into())
             .with_uid("alskdj".to_string())
             .with_summary("Hello World!".to_string())
             .build(&ParserOptions { rfc7809: false }, None)
