@@ -10,7 +10,7 @@ impl Emitter for IcalTimeZoneTransition {
         let compname = &crate::component::Component::get_comp_name(self);
         format!(
             "BEGIN:{compname}\r\n{inner}END:{compname}\r\n",
-            inner = &self
+            inner = self
                 .properties
                 .iter()
                 .map(Emitter::generate)

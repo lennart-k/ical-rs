@@ -654,7 +654,7 @@ impl<S> Display for RRule<S> {
     #[allow(clippy::too_many_lines)]
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let mut res = Vec::with_capacity(15);
-        res.push(format!("FREQ={}", &self.freq));
+        res.push(format!("FREQ={}", self.freq));
 
         if let Some(until) = &self.until {
             let maybe_zulu = if until.timezone().is_local() { "" } else { "Z" };
@@ -671,7 +671,7 @@ impl<S> Display for RRule<S> {
 
         // One interval is the default, no need to expose it.
         if self.interval != 1 {
-            res.push(format!("INTERVAL={}", &self.interval));
+            res.push(format!("INTERVAL={}", self.interval));
         }
 
         // Monday is the default, no need to expose it.
