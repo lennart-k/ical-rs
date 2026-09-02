@@ -194,7 +194,7 @@ pub mod calendar_object {
     use caldata::{
         IcalObjectParser, IcalParser, component::CalendarInnerData, generator::Emitter, types::Tz,
     };
-    use chrono::{DateTime, Timelike};
+    use chrono::{DateTime, Timelike, Utc};
     use itertools::Itertools;
 
     #[rstest::rstest]
@@ -264,10 +264,21 @@ pub mod calendar_object {
         let reader = IcalObjectParser::from_slice(input.as_bytes());
         for (i, res) in reader.enumerate() {
             let cal = res.unwrap();
-            let recurrence = cal.expand_recurrence(None, None);
+            let recurrence = cal.expand_recurrence(None, None).unwrap();
             assert!(recurrence.get_tzids().is_empty());
             insta::assert_snapshot!(format!("{i}_ics"), recurrence.generate());
             insta::assert_debug_snapshot!(format!("{i}_data"), recurrence.get_inner());
+        }
+    }
+
+    #[rstest::rstest]
+    #[case(include_str!("./resources/ical_recurrence_date_2.ics"))]
+    fn rrule_expansion_empty(#[case] input: &str) {
+        let reader = IcalObjectParser::from_slice(input.as_bytes());
+        for (i, res) in reader.enumerate() {
+            let cal = res.unwrap();
+            let recurrence = cal.expand_recurrence(Some(DateTime::<Utc>::MAX_UTC), None);
+            assert!(recurrence.is_none());
         }
     }
 }

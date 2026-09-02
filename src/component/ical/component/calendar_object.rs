@@ -278,19 +278,22 @@ impl IcalCalendarObject {
         &self,
         start: Option<DateTime<Utc>>,
         end: Option<DateTime<Utc>>,
-    ) -> Cow<'_, Self> {
+    ) -> Option<Cow<'_, Self>> {
         match &self.inner {
             CalendarInnerData::Event(main, overrides) => {
                 let mut events = main.expand_recurrence(start, end, overrides);
+                if events.is_empty() {
+                    return None;
+                }
                 let first = events.remove(0);
-                Cow::Owned(Self {
+                Some(Cow::Owned(Self {
                     properties: self.properties.clone(),
                     inner: CalendarInnerData::Event(first, events),
                     timezones: HashMap::new(),
                     vtimezones: BTreeMap::new(),
-                })
+                }))
             }
-            _ => Cow::Borrowed(self),
+            _ => Some(Cow::Borrowed(self)),
         }
     }
 
