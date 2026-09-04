@@ -101,10 +101,16 @@ impl CalendarInnerData {
                 .chain(overrides.iter().map(|over| &over.dtstart.0))
                 .min(),
             Self::Todo(main, overrides) => std::iter::once(main.dtstart.as_ref().map(|dt| &dt.0))
+                .chain(std::iter::once(main.due.as_ref().map(|dt| &dt.0)))
                 .chain(
                     overrides
                         .iter()
-                        .map(|over| over.dtstart.as_ref().map(|dt| &dt.0)),
+                        .flat_map(|over| {
+                            [
+                                over.dtstart.as_ref().map(|dt| &dt.0),
+                                over.due.as_ref().map(|dt| &dt.0),
+                            ]
+                        }),
                 )
                 .flatten()
                 .min(),
