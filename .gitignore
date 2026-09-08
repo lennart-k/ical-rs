@@ -12,3 +12,6 @@ target
 
 flamegraph.svg
 perf.data*
+
+.direnv
+.envrc.local
